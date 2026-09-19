@@ -1,6 +1,6 @@
 # Cmd-F
 
-Ask what you are looking for. Reach the actual passage, page, or control.
+A universal search in your browser that finds the relevant passage, page, or control on the site you’re viewing.
 
 Cmd-F is a local-first Chrome extension with a keyboard-invoked in-page prompt with a bounded, anonymous site-search backend. It searches the current page first, returns source text, and highlights only when asked. It never clicks website controls or navigates the source tab during a search.
 
