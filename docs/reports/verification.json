@@ -1,0 +1,263 @@
+{
+  "verifiedAt": "2026-09-19T05:46:47.357848+00:00",
+  "product": "Cmd-F",
+  "release": "0.1.0 local preview",
+  "runtime": "Node 26.4.0 on macOS arm64",
+  "provider": "Vercel AI Gateway / typesafe-ai/jev (live smoke); deterministic mock for regression suites",
+  "checks": {
+    "typecheck": "passed",
+    "lint": "passed",
+    "format": "passed",
+    "production_build": "passed",
+    "unit_integration": {
+      "passed": 82,
+      "failed": 0
+    },
+    "chromium": {
+      "passed": 21,
+      "failed": 0,
+      "durationSeconds": 20.4,
+      "fixtureActionViolations": 0,
+      "notes": "Production bundles: 14 fixture-interface checks plus 7 in-page pill checks. OS shortcut dispatch and toolbar permission granting require a manual Chrome check."
+    },
+    "semanticEvaluation": {
+      "tasks": 60,
+      "live": false,
+      "report": "evaluation-mock.json"
+    },
+    "benchmark": {
+      "currentSamples": 20,
+      "siteSamples": 20,
+      "report": "latency-mock.json"
+    },
+    "gatewayLiveSmoke": {
+      "passed": true,
+      "model": "typesafe-ai/jev",
+      "transport": "gateway",
+      "selectedId": "c0",
+      "support": 0.98,
+      "calls": 2,
+      "inputTokens": 850,
+      "outputTokens": 61
+    },
+    "gatewayLiveEvaluation": {
+      "tasks": 60,
+      "providerErrors": 59,
+      "status": "incomplete",
+      "reason": "HTTP 429 free-tier model rate limit confirmed by a follow-up diagnostic",
+      "report": "evaluation-live.json",
+      "validSemanticEvaluation": false
+    },
+    "extensionCredentialLeaks": 0,
+    "overlay": {
+      "collapsedHeightUnder100px": true,
+      "sourceHighlight": true,
+      "openReference": true,
+      "escapeDismissal": true,
+      "crossTabInspectionRejected": true,
+      "inlineNoAnswerAndErrors": true,
+      "narrowViewport": true,
+      "shortcutRegistered": true,
+      "physicalShortcutDispatch": "manual verification required"
+    },
+    "launchUpdate": {
+      "verifiedAt": "2026-09-19T15:24:25.874276+00:00",
+      "unitIntegrationPassed": 89,
+      "overlayBrowserPassed": 8,
+      "defaultShortcut": "Alt+Shift+F (Option+Shift+F on Mac)",
+      "helpSeparatesRestrictedPermissionAndInstallation": true,
+      "shortcutSettingsButton": true,
+      "physicalShortcutDispatch": "manual verification required on installed browser"
+    },
+    "typesafeDirectSmoke": {
+      "verifiedAt": "2026-09-19T15:34:55.562227+00:00",
+      "passed": true,
+      "transport": "typesafe",
+      "model": "jev-1.13.0",
+      "selectedId": "c0",
+      "support": 0.97,
+      "calls": 2,
+      "inputTokens": 953,
+      "outputTokens": 61,
+      "note": "Synthetic passage selection and separate Noul support validation. No full semantic-evaluation claim."
+    },
+    "immediatePillSearch": {
+      "verifiedAt": "2026-09-19T15:44:47.375845+00:00",
+      "overlayBrowserPassed": 9,
+      "overlayBrowserFailed": 0,
+      "durationSeconds": 7.4,
+      "provider": "mock",
+      "enterAndSendStartImmediately": true,
+      "defaultScope": "site",
+      "confirmationRemoved": true,
+      "inlineFailures": true,
+      "typecheck": "passed",
+      "lint": "passed",
+      "format": "passed",
+      "productionBuild": "passed"
+    },
+    "highlightRecovery": {
+      "verifiedAt": "2026-09-19T15:49:43.341447+00:00",
+      "chromiumPassed": 30,
+      "chromiumFailed": 0,
+      "durationSeconds": 24.4,
+      "provider": "mock",
+      "unrelatedMutations": "passed",
+      "rerenderRelocation": "passed",
+      "changedTextAndRouteRejected": "passed",
+      "ambiguousAndDisappearingDuplicatesRejected": "passed",
+      "hiddenTargetRetry": "passed",
+      "typecheck": "passed",
+      "lint": "passed",
+      "format": "passed",
+      "productionBuild": "passed",
+      "note": "Same-document exact matches only. No arbitrary real-site completeness claim."
+    },
+    "siteRoutingUpdate": {
+      "verifiedAt": "2026-09-19T16:00:09.285301+00:00",
+      "unitIntegrationPassed": 92,
+      "browserPassed": 31,
+      "browserDurationSeconds": 25.2,
+      "typecheck": "passed",
+      "lint": "passed",
+      "format": "passed",
+      "productionBuild": "passed",
+      "regression": "650 unrelated navigation links before the relevant tutorial link and article",
+      "liveW3Schools": {
+        "query": "how do for loops work",
+        "transport": "typesafe",
+        "snapshotSource": "Chromium on https://www.w3schools.com/python/",
+        "resultUrl": "https://www.w3schools.com/python/python_for_loops.asp",
+        "evidence": "candidate_only",
+        "pagesChecked": 4,
+        "publicPageBudget": 3,
+        "providerCalls": 9,
+        "elapsedMs": 3310,
+        "note": "Correct destination and fetched article passage. Model did not verify a complete answer; no broader semantic-accuracy claim."
+      }
+    },
+    "resultProgressLayout": {
+      "verifiedAt": "2026-09-19T16:04:21.391505+00:00",
+      "overlayBrowserPassed": 18,
+      "durationSeconds": 11.4,
+      "progressBelowAllSources": true,
+      "keywordLabelsPerResult": true,
+      "mixedAiAndFallbackLabelsPreserved": true,
+      "provider": "mock",
+      "typecheck": "passed",
+      "lint": "passed",
+      "format": "passed",
+      "productionBuild": "passed"
+    },
+    "jevValidatedOnly": {
+      "verifiedAt": "2026-09-19T16:14:45.297734+00:00",
+      "unitIntegrationPassed": 102,
+      "browserPassed": 32,
+      "browserDurationSeconds": 20.5,
+      "typecheck": "passed",
+      "lint": "passed",
+      "format": "passed",
+      "productionBuild": "passed",
+      "defaultPublicSubpages": 5,
+      "maxAiCallsIncludingRetries": 18,
+      "lexicalFallback": false,
+      "validationThreshold": 0.85,
+      "openSourceOnlyForFetchedDestinations": true,
+      "liveW3Schools": {
+        "query": "how do for loops work",
+        "transport": "typesafe",
+        "validation": "destination directly covers the requested topic; not a claim of a complete standalone answer",
+        "resultUrl": "https://www.w3schools.com/python/python_for_loops.asp",
+        "resultKind": "page",
+        "evidence": "direct",
+        "pagesChecked": 2,
+        "providerCalls": 4,
+        "elapsedMs": 1212
+      }
+    },
+    "recallRecovery": {
+      "verifiedAt": "2026-09-19T16:36:39.577442+00:00",
+      "unitIntegrationPassed": 106,
+      "browserPassed": 33,
+      "browserDurationSeconds": 19.9,
+      "typecheck": "passed",
+      "lint": "passed",
+      "format": "passed",
+      "productionBuild": "passed",
+      "provider": "Direct TypeSafe / jev-1.13.0 for Wikipedia checks; deterministic mock for automated regression suites",
+      "validation": "Independent typed relevance verdict; probability is diagnostic, not an acceptance cutoff",
+      "lexicalFallback": false,
+      "originalPageContextPreserved": true,
+      "articlePassagesPrioritizedOverReferences": true,
+      "truncationCheckedPerCandidate": true,
+      "liveWikipediaHighlightChecks": [
+        {
+          "query": "was Sam attacked?",
+          "local": true,
+          "heading": [
+            "Sam Altman",
+            "Personal life"
+          ],
+          "evidence": "direct",
+          "openSource": false,
+          "highlighted": true,
+          "calls": 2,
+          "pages": 1
+        },
+        {
+          "query": "sam's house attacked",
+          "local": true,
+          "heading": [
+            "Sam Altman",
+            "Personal life"
+          ],
+          "evidence": "direct",
+          "openSource": false,
+          "highlighted": true,
+          "calls": 2,
+          "pages": 1
+        },
+        {
+          "query": "partnership with microsoft",
+          "local": true,
+          "heading": [
+            "Sam Altman",
+            "Business career",
+            "OpenAI",
+            "Removal and reinstatement as OpenAI CEO"
+          ],
+          "evidence": "direct",
+          "openSource": false,
+          "highlighted": true,
+          "calls": 2,
+          "pages": 1
+        },
+        {
+          "query": "when did Sam Altman testify",
+          "local": true,
+          "heading": [
+            "Sam Altman",
+            "Business career",
+            "OpenAI",
+            "Release of ChatGPT"
+          ],
+          "evidence": "direct",
+          "openSource": false,
+          "highlighted": true,
+          "calls": 2,
+          "pages": 1
+        }
+      ],
+      "developmentDiagnosticReport": "search-recall-regression.json",
+      "note": "Four live Wikipedia queries returned local passages and highlighted them, using two Jev calls each. No broad accuracy or installed Arc shortcut verification claim."
+    }
+  },
+  "unverified": [
+    "complete live Jev semantic evaluation without provider errors",
+    "OS keyboard shortcut dispatch and manual activeTab invocation",
+    "arbitrary real-site completeness",
+    "hosted identity and egress deployment",
+    "optional renderer",
+    "cross-document exact quote relocation"
+  ]
+}

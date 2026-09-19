@@ -1,0 +1,13 @@
+node_modules/
+**/dist/
+.env
+.local/
+test-results/
+playwright-report/
+*.tsbuildinfo
+.DS_Store
+artifacts/
+.pnpm-store/
+.env.*
+!.env.example
+.vercel/

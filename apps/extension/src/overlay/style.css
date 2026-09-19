@@ -1,0 +1,480 @@
+@import 'tailwindcss';
+:root {
+  font-family:
+    ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color: #25362f;
+  background: transparent;
+  font-synthesis: none;
+  color-scheme: light;
+  font-size: 14px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  border-radius: 8px;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+button:hover {
+  background: #eaece5;
+}
+button:active {
+  transform: scale(0.98);
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #648977;
+  outline-offset: 2px;
+}
+.chat {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #fbfaf7;
+  overflow: hidden;
+  border: 1px solid #dce0d5;
+  border-radius: 18px;
+  animation: appear 0.18s ease-out;
+}
+header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #e8e9e1;
+  padding: 14px 12px 14px 18px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  font-weight: 650;
+  font-size: 16px;
+  letter-spacing: -0.5px;
+}
+.host {
+  color: #7d857c;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-left: auto;
+  max-width: 120px;
+}
+.conversation {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 24px 20px;
+  overscroll-behavior: contain;
+}
+.welcome {
+  padding: 12px 2px 30px;
+}
+.eyebrow {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  color: #7b8579;
+}
+h1 {
+  font-size: 32px;
+  line-height: 1.12;
+  font-weight: 500;
+  letter-spacing: -1.4px;
+  margin: 17px 0;
+}
+p {
+  line-height: 1.6;
+}
+.welcome p {
+  font-size: 13px;
+  color: #7a8277;
+  max-width: 260px;
+}
+.example {
+  font-size: 12px;
+  border: 1px solid #e1e5da;
+  margin-top: 18px;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px;
+}
+.user-message {
+  background: #e9eee3;
+  border-radius: 14px 14px 3px 14px;
+  padding: 12px 15px;
+  margin: 8px 0 18px 34px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.reply {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 12px 0 20px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.error {
+  padding-left: 12px;
+  border-left: 2px solid #bb836b;
+  color: #86553f;
+}
+.source h2,
+.setup h2 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 8px 0;
+}
+.setup p {
+  font-size: 12px;
+  color: #707b6f;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.actions button {
+  font-size: 12px;
+}
+.primary,
+.send {
+  background: #315b45;
+  color: white;
+}
+.primary:hover,
+.send:hover {
+  background: #254b38;
+}
+.source {
+  padding: 18px 0;
+  border-top: 1px solid #e0e4d8;
+}
+.source h2 {
+  font-size: 16px;
+  letter-spacing: -0.2px;
+}
+.crumb {
+  font-size: 10px;
+  color: #88917f;
+}
+.source blockquote {
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 12px 0;
+  padding-left: 12px;
+  border-left: 2px solid #a7b892;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.coverage {
+  font-size: 10px;
+  color: #858d80;
+  margin-top: 18px;
+}
+.composer {
+  margin: 0 12px;
+  padding: 13px 14px 8px;
+  border: 1px solid #d9dfd1;
+  border-radius: 13px;
+  background: white;
+}
+.composer label {
+  display: block;
+  font-size: 8px;
+}
+.composer textarea {
+  display: block;
+  width: 100%;
+  resize: none;
+  min-height: 55px;
+  max-height: 120px;
+  border: 0;
+  background: none;
+  padding: 9px 0 2px;
+  line-height: 1.5;
+  color: inherit;
+  font-size: 14px;
+  outline-offset: 1px;
+}
+.composer textarea::placeholder {
+  color: #969e91;
+}
+.composer-bottom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.composer-bottom select {
+  font-size: 11px;
+  color: #59684f;
+  background: #f1f4ec;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px;
+}
+.composer-bottom > span {
+  font-size: 9px;
+  color: #9ba391;
+  margin-left: auto;
+}
+.send {
+  padding: 7px;
+  border-radius: 8px;
+}
+footer {
+  text-align: center;
+  font-size: 9px;
+  color: #8a9580;
+  padding: 10px 6px 12px;
+}
+.setup label {
+  display: block;
+  font-size: 12px;
+  margin: 12px 0 7px;
+}
+.setup input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cfd8c4;
+  border-radius: 8px;
+  background: white;
+}
+.loading {
+  display: grid;
+  gap: 7px;
+  margin: 15px 0 25px;
+}
+.loading span {
+  height: 7px;
+  background: #e9ede1;
+  border-radius: 8px;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+.loading span:nth-child(2) {
+  width: 80%;
+  animation-delay: 0.12s;
+}
+.loading span:nth-child(3) {
+  width: 55%;
+  animation-delay: 0.24s;
+}
+.demo {
+  min-height: 100dvh;
+  background: #f4f5ed;
+}
+.demo > iframe {
+  width: 100%;
+  height: 100dvh;
+  border: 0;
+}
+.demo-chat {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: min(400px, calc(100vw - 32px));
+  height: min(640px, calc(100dvh - 32px));
+  box-shadow: 0 18px 60px #17232030;
+  border-radius: 18px;
+}
+.demo-chat .chat {
+  height: 100%;
+}
+.back {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  background: #fff9;
+  padding: 10px;
+  border-radius: 8px;
+  color: #315b45;
+  font-size: 11px;
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes shimmer {
+  50% {
+    opacity: 0.4;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The primary surface is a single pill; responses occupy only the space they need. */
+.chat {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+  padding: 4px;
+}
+.composer {
+  order: 0;
+  margin: 0;
+  min-height: 58px;
+  padding: 10px 10px 10px 17px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #d9dfd2;
+  border-radius: 40px;
+  background: #fffffc;
+  box-shadow: 0 3px 12px #27392816;
+}
+.mark {
+  display: flex;
+  color: #496a50;
+  margin-right: 5px;
+}
+.composer textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 24px;
+  height: 24px;
+  max-height: 24px;
+  line-height: 24px;
+  padding: 0;
+  font-size: 14px;
+}
+.composer button {
+  padding: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.composer .send {
+  width: 30px;
+  height: 30px;
+}
+.conversation {
+  order: 1;
+  flex: none;
+  margin-top: 10px;
+  max-height: min(440px, var(--response-height, 440px));
+  border: 1px solid #e0e4d9;
+  background: #fffffc;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px #27392814;
+  padding: 15px 20px;
+}
+.conversation[hidden] {
+  display: none;
+}
+.context {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: #84917b;
+  margin-bottom: 14px;
+}
+.context span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.context select {
+  font-size: 10px;
+  color: #627358;
+  border: 0;
+  background: #f2f4eb;
+  border-radius: 6px;
+  padding: 5px;
+}
+.user-message {
+  font-size: 13px;
+}
+.demo-chat {
+  width: min(440px, calc(100vw - 32px));
+  height: auto;
+  box-shadow: none;
+}
+.demo-chat .chat {
+  height: auto;
+}
+@media (max-height: 550px) {
+  .demo-chat .conversation {
+    max-height: calc(100dvh - 130px);
+  }
+}
+
+.launch-help {
+  width: min(520px, calc(100% - 40px));
+  margin: 64px auto;
+  padding: 28px;
+  border: 1px solid #e0e4d9;
+  border-radius: 20px;
+  background: #fffffc;
+  box-shadow: 0 6px 24px #27392812;
+}
+.launch-help h1 {
+  font-size: 26px;
+  margin-top: 28px;
+}
+.launch-help h2 {
+  font-size: 16px;
+  margin-top: 28px;
+}
+.launch-help p {
+  color: #65705f;
+  font-size: 14px;
+}
+.launch-help .assigned {
+  background: #eff2e9;
+  border-radius: 8px;
+  padding: 10px;
+}
+.launch-help .hint {
+  font-size: 12px;
+}
+.launch-help .brand {
+  font-weight: 600;
+}

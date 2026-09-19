@@ -1,0 +1,3482 @@
+[
+  {
+    "id": "python-loop-1",
+    "split": "dev",
+    "template": "python-loop",
+    "question": "How do loops work in Python?",
+    "expectedId": "c0",
+    "expectedQuote": "A for loop repeats a block of code for each item in a sequence. Python iterates over the items in the order they appear.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Control flow",
+        "text": "A for loop repeats a block of code for each item in a sequence. Python iterates over the items in the order they appear.",
+        "headingPath": ["Control flow"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      }
+    ]
+  },
+  {
+    "id": "python-loop-2",
+    "split": "dev",
+    "template": "python-loop",
+    "question": "How does a for loop repeat code?",
+    "expectedId": "c5",
+    "expectedQuote": "A for loop repeats a block of code for each item in a sequence. Python iterates over the items in the order they appear.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Control flow",
+        "text": "A for loop repeats a block of code for each item in a sequence. Python iterates over the items in the order they appear.",
+        "headingPath": ["Control flow"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      }
+    ]
+  },
+  {
+    "id": "python-loop-3",
+    "split": "dev",
+    "template": "python-loop",
+    "question": "How does Python iterate over items?",
+    "expectedId": "c2",
+    "expectedQuote": "A for loop repeats a block of code for each item in a sequence. Python iterates over the items in the order they appear.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Control flow",
+        "text": "A for loop repeats a block of code for each item in a sequence. Python iterates over the items in the order they appear.",
+        "headingPath": ["Control flow"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      }
+    ]
+  },
+  {
+    "id": "python-loop-4",
+    "split": "dev",
+    "template": "python-loop",
+    "question": "How can I go through every element?",
+    "expectedId": "c7",
+    "expectedQuote": "A for loop repeats a block of code for each item in a sequence. Python iterates over the items in the order they appear.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Control flow",
+        "text": "A for loop repeats a block of code for each item in a sequence. Python iterates over the items in the order they appear.",
+        "headingPath": ["Control flow"]
+      }
+    ]
+  },
+  {
+    "id": "python-loop-5",
+    "split": "dev",
+    "template": "python-loop",
+    "question": "What is the capital of Brazil?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Control flow",
+        "text": "A for loop repeats a block of code for each item in a sequence. Python iterates over the items in the order they appear.",
+        "headingPath": ["Control flow"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      }
+    ]
+  },
+  {
+    "id": "family-news-1",
+    "split": "dev",
+    "template": "family-news",
+    "question": "What is the baby’s name?",
+    "expectedId": "c1",
+    "expectedQuote": "The couple named their baby daughter Juniper. She was born on Tuesday morning.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "A family announcement",
+        "text": "The couple named their baby daughter Juniper. She was born on Tuesday morning.",
+        "headingPath": ["A family announcement"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      }
+    ]
+  },
+  {
+    "id": "family-news-2",
+    "split": "dev",
+    "template": "family-news",
+    "question": "What did the couple name their daughter?",
+    "expectedId": "c6",
+    "expectedQuote": "The couple named their baby daughter Juniper. She was born on Tuesday morning.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "A family announcement",
+        "text": "The couple named their baby daughter Juniper. She was born on Tuesday morning.",
+        "headingPath": ["A family announcement"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      }
+    ]
+  },
+  {
+    "id": "family-news-3",
+    "split": "dev",
+    "template": "family-news",
+    "question": "What is the child called?",
+    "expectedId": "c3",
+    "expectedQuote": "The couple named their baby daughter Juniper. She was born on Tuesday morning.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "A family announcement",
+        "text": "The couple named their baby daughter Juniper. She was born on Tuesday morning.",
+        "headingPath": ["A family announcement"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      }
+    ]
+  },
+  {
+    "id": "family-news-4",
+    "split": "dev",
+    "template": "family-news",
+    "question": "Who is the newest member of the family?",
+    "expectedId": "c0",
+    "expectedQuote": "The couple named their baby daughter Juniper. She was born on Tuesday morning.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "A family announcement",
+        "text": "The couple named their baby daughter Juniper. She was born on Tuesday morning.",
+        "headingPath": ["A family announcement"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      }
+    ]
+  },
+  {
+    "id": "family-news-5",
+    "split": "dev",
+    "template": "family-news",
+    "question": "What is their bank balance?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "A family announcement",
+        "text": "The couple named their baby daughter Juniper. She was born on Tuesday morning.",
+        "headingPath": ["A family announcement"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      }
+    ]
+  },
+  {
+    "id": "cancel-help-1",
+    "split": "dev",
+    "template": "cancel-help",
+    "question": "How do I cancel my membership?",
+    "expectedId": "c2",
+    "expectedQuote": "To cancel your membership, open Account, select Membership, and choose Cancel membership. Access continues until the end of the billing period.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Membership help",
+        "text": "To cancel your membership, open Account, select Membership, and choose Cancel membership. Access continues until the end of the billing period.",
+        "headingPath": ["Membership help"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      }
+    ]
+  },
+  {
+    "id": "cancel-help-2",
+    "split": "dev",
+    "template": "cancel-help",
+    "question": "How do I unsubscribe?",
+    "expectedId": "c7",
+    "expectedQuote": "To cancel your membership, open Account, select Membership, and choose Cancel membership. Access continues until the end of the billing period.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Membership help",
+        "text": "To cancel your membership, open Account, select Membership, and choose Cancel membership. Access continues until the end of the billing period.",
+        "headingPath": ["Membership help"]
+      }
+    ]
+  },
+  {
+    "id": "cancel-help-3",
+    "split": "dev",
+    "template": "cancel-help",
+    "question": "Can I cancel my subscription?",
+    "expectedId": "c4",
+    "expectedQuote": "To cancel your membership, open Account, select Membership, and choose Cancel membership. Access continues until the end of the billing period.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Membership help",
+        "text": "To cancel your membership, open Account, select Membership, and choose Cancel membership. Access continues until the end of the billing period.",
+        "headingPath": ["Membership help"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      }
+    ]
+  },
+  {
+    "id": "cancel-help-4",
+    "split": "dev",
+    "template": "cancel-help",
+    "question": "How do I stop paying for this?",
+    "expectedId": "c1",
+    "expectedQuote": "To cancel your membership, open Account, select Membership, and choose Cancel membership. Access continues until the end of the billing period.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Membership help",
+        "text": "To cancel your membership, open Account, select Membership, and choose Cancel membership. Access continues until the end of the billing period.",
+        "headingPath": ["Membership help"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      }
+    ]
+  },
+  {
+    "id": "cancel-help-5",
+    "split": "dev",
+    "template": "cancel-help",
+    "question": "What is the CEO’s phone number?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Membership help",
+        "text": "To cancel your membership, open Account, select Membership, and choose Cancel membership. Access continues until the end of the billing period.",
+        "headingPath": ["Membership help"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      }
+    ]
+  },
+  {
+    "id": "visible-control-1",
+    "split": "dev",
+    "template": "visible-control",
+    "question": "Where can I cancel membership?",
+    "expectedId": "c3",
+    "expectedQuote": "Cancel membership",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "control",
+        "label": "Cancel membership",
+        "text": null,
+        "headingPath": ["Account panel"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      }
+    ]
+  },
+  {
+    "id": "visible-control-2",
+    "split": "dev",
+    "template": "visible-control",
+    "question": "Find the cancel membership button",
+    "expectedId": "c0",
+    "expectedQuote": "Cancel membership",
+    "candidates": [
+      {
+        "kind": "control",
+        "label": "Cancel membership",
+        "text": null,
+        "headingPath": ["Account panel"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      }
+    ]
+  },
+  {
+    "id": "visible-control-3",
+    "split": "dev",
+    "template": "visible-control",
+    "question": "Where do I unsubscribe?",
+    "expectedId": "c5",
+    "expectedQuote": "Cancel membership",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "control",
+        "label": "Cancel membership",
+        "text": null,
+        "headingPath": ["Account panel"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      }
+    ]
+  },
+  {
+    "id": "visible-control-4",
+    "split": "dev",
+    "template": "visible-control",
+    "question": "Which control ends my subscription?",
+    "expectedId": "c2",
+    "expectedQuote": "Cancel membership",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "control",
+        "label": "Cancel membership",
+        "text": null,
+        "headingPath": ["Account panel"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      }
+    ]
+  },
+  {
+    "id": "visible-control-5",
+    "split": "dev",
+    "template": "visible-control",
+    "question": "Where can I launch a rocket?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "control",
+        "label": "Cancel membership",
+        "text": null,
+        "headingPath": ["Account panel"]
+      }
+    ]
+  },
+  {
+    "id": "array-doc-1",
+    "split": "dev",
+    "template": "array-doc",
+    "question": "How does append work?",
+    "expectedId": "c4",
+    "expectedQuote": "The append method adds one item to the end of a list. It changes the existing list in place.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Collections",
+        "text": "The append method adds one item to the end of a list. It changes the existing list in place.",
+        "headingPath": ["Collections"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      }
+    ]
+  },
+  {
+    "id": "array-doc-2",
+    "split": "dev",
+    "template": "array-doc",
+    "question": "How can I add an item to a list?",
+    "expectedId": "c1",
+    "expectedQuote": "The append method adds one item to the end of a list. It changes the existing list in place.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Collections",
+        "text": "The append method adds one item to the end of a list. It changes the existing list in place.",
+        "headingPath": ["Collections"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      }
+    ]
+  },
+  {
+    "id": "array-doc-3",
+    "split": "dev",
+    "template": "array-doc",
+    "question": "Which method adds to the end of a list?",
+    "expectedId": "c6",
+    "expectedQuote": "The append method adds one item to the end of a list. It changes the existing list in place.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Collections",
+        "text": "The append method adds one item to the end of a list. It changes the existing list in place.",
+        "headingPath": ["Collections"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      }
+    ]
+  },
+  {
+    "id": "array-doc-4",
+    "split": "dev",
+    "template": "array-doc",
+    "question": "How do I put one more value in the collection?",
+    "expectedId": "c3",
+    "expectedQuote": "The append method adds one item to the end of a list. It changes the existing list in place.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Collections",
+        "text": "The append method adds one item to the end of a list. It changes the existing list in place.",
+        "headingPath": ["Collections"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      }
+    ]
+  },
+  {
+    "id": "array-doc-5",
+    "split": "dev",
+    "template": "array-doc",
+    "question": "How many moons does Neptune have?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Collections",
+        "text": "The append method adds one item to the end of a list. It changes the existing list in place.",
+        "headingPath": ["Collections"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      }
+    ]
+  },
+  {
+    "id": "opening-hours-1",
+    "split": "dev",
+    "template": "opening-hours",
+    "question": "When does the museum open?",
+    "expectedId": "c5",
+    "expectedQuote": "The museum opens at ten in the morning on weekdays. It is closed on Mondays.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Visitor information",
+        "text": "The museum opens at ten in the morning on weekdays. It is closed on Mondays.",
+        "headingPath": ["Visitor information"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      }
+    ]
+  },
+  {
+    "id": "opening-hours-2",
+    "split": "dev",
+    "template": "opening-hours",
+    "question": "What are the museum hours?",
+    "expectedId": "c2",
+    "expectedQuote": "The museum opens at ten in the morning on weekdays. It is closed on Mondays.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Visitor information",
+        "text": "The museum opens at ten in the morning on weekdays. It is closed on Mondays.",
+        "headingPath": ["Visitor information"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      }
+    ]
+  },
+  {
+    "id": "opening-hours-3",
+    "split": "dev",
+    "template": "opening-hours",
+    "question": "Is the museum closed on Mondays?",
+    "expectedId": "c7",
+    "expectedQuote": "The museum opens at ten in the morning on weekdays. It is closed on Mondays.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Visitor information",
+        "text": "The museum opens at ten in the morning on weekdays. It is closed on Mondays.",
+        "headingPath": ["Visitor information"]
+      }
+    ]
+  },
+  {
+    "id": "opening-hours-4",
+    "split": "dev",
+    "template": "opening-hours",
+    "question": "Can I visit on the first day of the week?",
+    "expectedId": "c4",
+    "expectedQuote": "The museum opens at ten in the morning on weekdays. It is closed on Mondays.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Visitor information",
+        "text": "The museum opens at ten in the morning on weekdays. It is closed on Mondays.",
+        "headingPath": ["Visitor information"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      }
+    ]
+  },
+  {
+    "id": "opening-hours-5",
+    "split": "dev",
+    "template": "opening-hours",
+    "question": "Who won the national election?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Visitor information",
+        "text": "The museum opens at ten in the morning on weekdays. It is closed on Mondays.",
+        "headingPath": ["Visitor information"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      }
+    ]
+  },
+  {
+    "id": "ruby-iteration-1",
+    "split": "held_out",
+    "template": "ruby-iteration",
+    "question": "How do I visit every element in Ruby?",
+    "expectedId": "c6",
+    "expectedQuote": "Ruby’s each iterator visits every element in a collection and runs the supplied block for that element.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Traversing collections",
+        "text": "Ruby’s each iterator visits every element in a collection and runs the supplied block for that element.",
+        "headingPath": ["Traversing collections"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      }
+    ]
+  },
+  {
+    "id": "ruby-iteration-2",
+    "split": "held_out",
+    "template": "ruby-iteration",
+    "question": "What does the each iterator do?",
+    "expectedId": "c3",
+    "expectedQuote": "Ruby’s each iterator visits every element in a collection and runs the supplied block for that element.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Traversing collections",
+        "text": "Ruby’s each iterator visits every element in a collection and runs the supplied block for that element.",
+        "headingPath": ["Traversing collections"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      }
+    ]
+  },
+  {
+    "id": "ruby-iteration-3",
+    "split": "held_out",
+    "template": "ruby-iteration",
+    "question": "How do I run a block on a collection?",
+    "expectedId": "c0",
+    "expectedQuote": "Ruby’s each iterator visits every element in a collection and runs the supplied block for that element.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Traversing collections",
+        "text": "Ruby’s each iterator visits every element in a collection and runs the supplied block for that element.",
+        "headingPath": ["Traversing collections"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      }
+    ]
+  },
+  {
+    "id": "ruby-iteration-4",
+    "split": "held_out",
+    "template": "ruby-iteration",
+    "question": "How can I repeat an operation for all entries?",
+    "expectedId": "c5",
+    "expectedQuote": "Ruby’s each iterator visits every element in a collection and runs the supplied block for that element.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Traversing collections",
+        "text": "Ruby’s each iterator visits every element in a collection and runs the supplied block for that element.",
+        "headingPath": ["Traversing collections"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      }
+    ]
+  },
+  {
+    "id": "ruby-iteration-5",
+    "split": "held_out",
+    "template": "ruby-iteration",
+    "question": "What is the author’s home address?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Traversing collections",
+        "text": "Ruby’s each iterator visits every element in a collection and runs the supplied block for that element.",
+        "headingPath": ["Traversing collections"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      }
+    ]
+  },
+  {
+    "id": "botanical-news-1",
+    "split": "held_out",
+    "template": "botanical-news",
+    "question": "What is the new orchid called?",
+    "expectedId": "c7",
+    "expectedQuote": "Researchers named the newly discovered orchid Luminara. The flower opens only after dusk.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "An unexpected bloom",
+        "text": "Researchers named the newly discovered orchid Luminara. The flower opens only after dusk.",
+        "headingPath": ["An unexpected bloom"]
+      }
+    ]
+  },
+  {
+    "id": "botanical-news-2",
+    "split": "held_out",
+    "template": "botanical-news",
+    "question": "What did researchers name the orchid?",
+    "expectedId": "c4",
+    "expectedQuote": "Researchers named the newly discovered orchid Luminara. The flower opens only after dusk.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "An unexpected bloom",
+        "text": "Researchers named the newly discovered orchid Luminara. The flower opens only after dusk.",
+        "headingPath": ["An unexpected bloom"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      }
+    ]
+  },
+  {
+    "id": "botanical-news-3",
+    "split": "held_out",
+    "template": "botanical-news",
+    "question": "When does the flower open?",
+    "expectedId": "c1",
+    "expectedQuote": "Researchers named the newly discovered orchid Luminara. The flower opens only after dusk.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "An unexpected bloom",
+        "text": "Researchers named the newly discovered orchid Luminara. The flower opens only after dusk.",
+        "headingPath": ["An unexpected bloom"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      }
+    ]
+  },
+  {
+    "id": "botanical-news-4",
+    "split": "held_out",
+    "template": "botanical-news",
+    "question": "What name was given to the discovery?",
+    "expectedId": "c6",
+    "expectedQuote": "Researchers named the newly discovered orchid Luminara. The flower opens only after dusk.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "An unexpected bloom",
+        "text": "Researchers named the newly discovered orchid Luminara. The flower opens only after dusk.",
+        "headingPath": ["An unexpected bloom"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      }
+    ]
+  },
+  {
+    "id": "botanical-news-5",
+    "split": "held_out",
+    "template": "botanical-news",
+    "question": "How much does the researcher earn?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "An unexpected bloom",
+        "text": "Researchers named the newly discovered orchid Luminara. The flower opens only after dusk.",
+        "headingPath": ["An unexpected bloom"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      }
+    ]
+  },
+  {
+    "id": "refund-policy-1",
+    "split": "held_out",
+    "template": "refund-policy",
+    "question": "When are refunds available?",
+    "expectedId": "c0",
+    "expectedQuote": "Refunds are available within thirty days of delivery. Open your order history and select Request return to begin.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Returns policy",
+        "text": "Refunds are available within thirty days of delivery. Open your order history and select Request return to begin.",
+        "headingPath": ["Returns policy"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      }
+    ]
+  },
+  {
+    "id": "refund-policy-2",
+    "split": "held_out",
+    "template": "refund-policy",
+    "question": "How do I request a return?",
+    "expectedId": "c5",
+    "expectedQuote": "Refunds are available within thirty days of delivery. Open your order history and select Request return to begin.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Returns policy",
+        "text": "Refunds are available within thirty days of delivery. Open your order history and select Request return to begin.",
+        "headingPath": ["Returns policy"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      }
+    ]
+  },
+  {
+    "id": "refund-policy-3",
+    "split": "held_out",
+    "template": "refund-policy",
+    "question": "Where can I begin a refund?",
+    "expectedId": "c2",
+    "expectedQuote": "Refunds are available within thirty days of delivery. Open your order history and select Request return to begin.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Returns policy",
+        "text": "Refunds are available within thirty days of delivery. Open your order history and select Request return to begin.",
+        "headingPath": ["Returns policy"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      }
+    ]
+  },
+  {
+    "id": "refund-policy-4",
+    "split": "held_out",
+    "template": "refund-policy",
+    "question": "Can I get my money back after delivery?",
+    "expectedId": "c7",
+    "expectedQuote": "Refunds are available within thirty days of delivery. Open your order history and select Request return to begin.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Returns policy",
+        "text": "Refunds are available within thirty days of delivery. Open your order history and select Request return to begin.",
+        "headingPath": ["Returns policy"]
+      }
+    ]
+  },
+  {
+    "id": "refund-policy-5",
+    "split": "held_out",
+    "template": "refund-policy",
+    "question": "Where does the mayor live?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Returns policy",
+        "text": "Refunds are available within thirty days of delivery. Open your order history and select Request return to begin.",
+        "headingPath": ["Returns policy"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      }
+    ]
+  },
+  {
+    "id": "export-control-1",
+    "split": "held_out",
+    "template": "export-control",
+    "question": "Where is Export project?",
+    "expectedId": "c1",
+    "expectedQuote": "Export project",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "control",
+        "label": "Export project",
+        "text": null,
+        "headingPath": ["Project settings"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      }
+    ]
+  },
+  {
+    "id": "export-control-2",
+    "split": "held_out",
+    "template": "export-control",
+    "question": "Find the project export control",
+    "expectedId": "c6",
+    "expectedQuote": "Export project",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "control",
+        "label": "Export project",
+        "text": null,
+        "headingPath": ["Project settings"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      }
+    ]
+  },
+  {
+    "id": "export-control-3",
+    "split": "held_out",
+    "template": "export-control",
+    "question": "How do I export my project?",
+    "expectedId": "c3",
+    "expectedQuote": "Export project",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "control",
+        "label": "Export project",
+        "text": null,
+        "headingPath": ["Project settings"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      }
+    ]
+  },
+  {
+    "id": "export-control-4",
+    "split": "held_out",
+    "template": "export-control",
+    "question": "Which button lets me take my work elsewhere?",
+    "expectedId": "c0",
+    "expectedQuote": "Export project",
+    "candidates": [
+      {
+        "kind": "control",
+        "label": "Export project",
+        "text": null,
+        "headingPath": ["Project settings"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      }
+    ]
+  },
+  {
+    "id": "export-control-5",
+    "split": "held_out",
+    "template": "export-control",
+    "question": "Where is the airplane throttle?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "control",
+        "label": "Export project",
+        "text": null,
+        "headingPath": ["Project settings"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      }
+    ]
+  },
+  {
+    "id": "recipe-guide-1",
+    "split": "held_out",
+    "template": "recipe-guide",
+    "question": "How long should the dough rest?",
+    "expectedId": "c2",
+    "expectedQuote": "Let the dough rest for forty minutes before shaping it. Cover the bowl with a damp towel to prevent drying.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Resting the dough",
+        "text": "Let the dough rest for forty minutes before shaping it. Cover the bowl with a damp towel to prevent drying.",
+        "headingPath": ["Resting the dough"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      }
+    ]
+  },
+  {
+    "id": "recipe-guide-2",
+    "split": "held_out",
+    "template": "recipe-guide",
+    "question": "What should I cover the bowl with?",
+    "expectedId": "c7",
+    "expectedQuote": "Let the dough rest for forty minutes before shaping it. Cover the bowl with a damp towel to prevent drying.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Resting the dough",
+        "text": "Let the dough rest for forty minutes before shaping it. Cover the bowl with a damp towel to prevent drying.",
+        "headingPath": ["Resting the dough"]
+      }
+    ]
+  },
+  {
+    "id": "recipe-guide-3",
+    "split": "held_out",
+    "template": "recipe-guide",
+    "question": "How do I prevent the dough from drying?",
+    "expectedId": "c4",
+    "expectedQuote": "Let the dough rest for forty minutes before shaping it. Cover the bowl with a damp towel to prevent drying.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Resting the dough",
+        "text": "Let the dough rest for forty minutes before shaping it. Cover the bowl with a damp towel to prevent drying.",
+        "headingPath": ["Resting the dough"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      }
+    ]
+  },
+  {
+    "id": "recipe-guide-4",
+    "split": "held_out",
+    "template": "recipe-guide",
+    "question": "What do I do before shaping it?",
+    "expectedId": "c1",
+    "expectedQuote": "Let the dough rest for forty minutes before shaping it. Cover the bowl with a damp towel to prevent drying.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Resting the dough",
+        "text": "Let the dough rest for forty minutes before shaping it. Cover the bowl with a damp towel to prevent drying.",
+        "headingPath": ["Resting the dough"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      }
+    ]
+  },
+  {
+    "id": "recipe-guide-5",
+    "split": "held_out",
+    "template": "recipe-guide",
+    "question": "What is the train departure time?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Resting the dough",
+        "text": "Let the dough rest for forty minutes before shaping it. Cover the bowl with a damp towel to prevent drying.",
+        "headingPath": ["Resting the dough"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      }
+    ]
+  },
+  {
+    "id": "observatory-guide-1",
+    "split": "held_out",
+    "template": "observatory-guide",
+    "question": "What is the observatory access phrase?",
+    "expectedId": "c3",
+    "expectedQuote": "The observatory access phrase is silver heron. Visitors enter through the east gate after sunset.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Visitor access",
+        "text": "The observatory access phrase is silver heron. Visitors enter through the east gate after sunset.",
+        "headingPath": ["Visitor access"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      }
+    ]
+  },
+  {
+    "id": "observatory-guide-2",
+    "split": "held_out",
+    "template": "observatory-guide",
+    "question": "Which gate do visitors enter through?",
+    "expectedId": "c0",
+    "expectedQuote": "The observatory access phrase is silver heron. Visitors enter through the east gate after sunset.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Visitor access",
+        "text": "The observatory access phrase is silver heron. Visitors enter through the east gate after sunset.",
+        "headingPath": ["Visitor access"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      }
+    ]
+  },
+  {
+    "id": "observatory-guide-3",
+    "split": "held_out",
+    "template": "observatory-guide",
+    "question": "When can visitors enter the observatory?",
+    "expectedId": "c5",
+    "expectedQuote": "The observatory access phrase is silver heron. Visitors enter through the east gate after sunset.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Visitor access",
+        "text": "The observatory access phrase is silver heron. Visitors enter through the east gate after sunset.",
+        "headingPath": ["Visitor access"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      }
+    ]
+  },
+  {
+    "id": "observatory-guide-4",
+    "split": "held_out",
+    "template": "observatory-guide",
+    "question": "What words unlock the visitor guide?",
+    "expectedId": "c2",
+    "expectedQuote": "The observatory access phrase is silver heron. Visitors enter through the east gate after sunset.",
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Visitor access",
+        "text": "The observatory access phrase is silver heron. Visitors enter through the east gate after sunset.",
+        "headingPath": ["Visitor access"]
+      },
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      }
+    ]
+  },
+  {
+    "id": "observatory-guide-5",
+    "split": "held_out",
+    "template": "observatory-guide",
+    "question": "What is the cryptocurrency price?",
+    "expectedId": null,
+    "expectedQuote": null,
+    "candidates": [
+      {
+        "kind": "passage",
+        "label": "About this site",
+        "text": "This site is maintained by a small independent editorial team. Contact the editors through the public contact page.",
+        "headingPath": ["About"]
+      },
+      {
+        "kind": "passage",
+        "label": "Latest update",
+        "text": "The new release updates the navigation layout and improves readability on small screens.",
+        "headingPath": ["Updates"]
+      },
+      {
+        "kind": "passage",
+        "label": "Getting started",
+        "text": "Choose a chapter from the contents to begin. The introductory guide explains the structure of this reference.",
+        "headingPath": ["Getting started"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive contains older announcements and previous editions. Dates are shown beside each entry.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Use the keyboard to move between links. Text size follows the browser settings.",
+        "headingPath": ["Accessibility"]
+      },
+      {
+        "kind": "passage",
+        "label": "Community",
+        "text": "Readers can discuss ideas in the community forum. Moderators review questions before publication.",
+        "headingPath": ["Community"]
+      },
+      {
+        "kind": "passage",
+        "label": "Search tips",
+        "text": "Search accepts words and phrases. Start with a short question and refine it if the results are too broad.",
+        "headingPath": ["Search tips"]
+      },
+      {
+        "kind": "passage",
+        "label": "Visitor access",
+        "text": "The observatory access phrase is silver heron. Visitors enter through the east gate after sunset.",
+        "headingPath": ["Visitor access"]
+      }
+    ]
+  }
+]
