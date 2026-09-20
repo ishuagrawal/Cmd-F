@@ -38,6 +38,7 @@ try {
     session.show(snap.id, candidate.id, snap.documentId, { start, end: start + quote.length });
     const highlights = (CSS as typeof CSS & { highlights: Map<string, Set<Range>> }).highlights;
     const shown = [...highlights.get('cmd-f-match')!][0].toString();
+    const outlined = !!document.querySelector('[data-cmd-f=outline]');
     let rejected = false;
     try {
       session.show(snap.id, candidate.id, snap.documentId, { start: 0, end: 100000 });
@@ -52,9 +53,10 @@ try {
       stale = true;
     }
     session.stop();
-    return { shown, quote, rejected, stale };
+    return { shown, quote, rejected, stale, outlined };
   });
   assert.equal(result.shown, result.quote);
+  assert.equal(result.outlined, false);
   assert.equal(result.rejected, true);
   assert.equal(result.stale, true);
   console.log(

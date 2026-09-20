@@ -9,8 +9,12 @@
   color: #25362f;
   background: transparent;
   font-synthesis: none;
-  color-scheme: light;
   font-size: 14px;
+}
+html,
+body,
+#root {
+  background: transparent;
 }
 * {
   box-sizing: border-box;
@@ -58,10 +62,10 @@ summary:focus-visible {
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: #fbfaf7;
+  background: transparent;
   overflow: hidden;
-  border: 1px solid #dce0d5;
-  border-radius: 18px;
+  border: 0;
+  border-radius: 0;
   animation: none;
 }
 header {
@@ -355,7 +359,15 @@ footer {
   border: 0;
   border-radius: 0;
   overflow: visible;
-  padding: 4px;
+  padding: 0;
+  color: #25362f;
+  font-family:
+    ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  font-size: 14px;
 }
 .composer {
   order: 0;

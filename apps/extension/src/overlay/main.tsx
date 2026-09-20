@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import { ArrowUp, ArrowUpRight, Command, Cursor, GearSix, X, Stop } from '@phosphor-icons/react';
 import { z } from 'zod';
 import {
@@ -19,9 +18,9 @@ import {
   readClientToken,
   saveClientToken,
 } from '../sidepanel/client-token';
-import './style.css';
+import { pageHoldsFocus } from './focus';
 
-function Chat() {
+export function Chat() {
   const [question, setQuestion] = useState(() => {
     const draft = sessionStorage.getItem('cmd-f-reconnect-draft') || '';
     sessionStorage.removeItem('cmd-f-reconnect-draft');
@@ -68,12 +67,12 @@ function Chat() {
 
   useEffect(() => {
     const root = measure.current;
-    if (!root || !isExtension) return;
+    if (!root || !isExtension || location.protocol !== 'chrome-extension:') return;
     const observer = new ResizeObserver(() => {
       void chrome.runtime
         .sendMessage({
           type: 'RESIZE_OVERLAY',
-          height: Math.ceil(root.getBoundingClientRect().height) + 8,
+          height: Math.ceil(root.getBoundingClientRect().height),
         })
         .catch(() => {});
     });
@@ -116,6 +115,7 @@ function Chat() {
   }
   useEffect(() => {
     if (unavailable) return;
+    input.current?.focus();
     void (async () => {
       try {
         const t = await readClientToken();
@@ -130,21 +130,21 @@ function Chat() {
         );
         src.current = page.tabId;
         setHost(page.url ? new URL(page.url).hostname : 'Current page');
-        input.current?.focus();
+        if (!pageHoldsFocus(document.activeElement, measure.current)) input.current?.focus();
       } catch {
         setError('Could not connect to this page. Reopen Cmd-F with the shortcut.');
       }
     })();
     const escape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        void close();
-      }
+      if (e.key !== 'Escape' || pageHoldsFocus(document.activeElement, measure.current)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      void close();
     };
-    window.addEventListener('keydown', escape);
+    window.addEventListener('keydown', escape, true);
     window.addEventListener('pagehide', cleanup);
     return () => {
-      window.removeEventListener('keydown', escape);
+      window.removeEventListener('keydown', escape, true);
       window.removeEventListener('pagehide', cleanup);
       cleanup();
     };
@@ -192,7 +192,8 @@ function Chat() {
   }
   function reconnect() {
     sessionStorage.setItem('cmd-f-reconnect-draft', question || asked);
-    location.reload();
+    if (location.protocol.startsWith('chrome-extension')) location.reload();
+    else window.dispatchEvent(new Event('cmd-f-reconnect'));
   }
   async function submit() {
     const query = question.trim();
@@ -605,7 +606,7 @@ function LaunchHelp() {
     </main>
   );
 }
-function App() {
+export function App() {
   if (new URLSearchParams(location.search).has('unavailable')) return <LaunchHelp />;
   return isExtension ? (
     <Chat />
@@ -621,4 +622,3 @@ function App() {
     </main>
   );
 }
-createRoot(document.getElementById('root')!).render(<App />);

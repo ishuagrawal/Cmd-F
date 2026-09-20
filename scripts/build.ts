@@ -1,9 +1,15 @@
 import { build as viteBuild } from 'vite';
 import { apiOrigin } from './api-origin';
+import { ensureClientToken } from './client-token';
 const api = apiOrigin();
 import { build } from 'esbuild';
-import { writeFile, mkdir } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 await viteBuild({ configFile: 'apps/extension/vite.config.ts' });
+const overlayCssName = (await readdir('apps/extension/dist/assets')).find((file) =>
+  /^overlay-[\w-]+\.css$/.test(file),
+);
+if (!overlayCssName) throw new Error('Overlay CSS was not built.');
+const overlayCss = await readFile(`apps/extension/dist/assets/${overlayCssName}`, 'utf8');
 for (const name of ['background', 'content', 'overlay-host'])
   await build({
     entryPoints: [`apps/extension/src/${name}/index.ts`],
@@ -12,6 +18,28 @@ for (const name of ['background', 'content', 'overlay-host'])
     target: 'chrome120',
     outfile: `apps/extension/dist/${name}.js`,
     sourcemap: true,
+    jsx: 'automatic',
+    define:
+      name === 'overlay-host'
+        ? {
+            __OVERLAY_CSS__: JSON.stringify(overlayCss),
+            'import.meta.env.VITE_API_BASE_URL': JSON.stringify(api),
+            'import.meta.env.VITE_CLIENT_TOKEN': JSON.stringify(ensureClientToken()),
+          }
+        : name === 'background'
+          ? { __CMD_F_API__: JSON.stringify(api) }
+          : undefined,
+    plugins:
+      name === 'overlay-host'
+        ? [
+            {
+              name: 'css-stub',
+              setup(build) {
+                build.onLoad({ filter: /\.css$/ }, () => ({ contents: '', loader: 'js' }));
+              },
+            },
+          ]
+        : undefined,
   });
 const test = process.env.TEST_EXTENSION === '1';
 await writeFile(

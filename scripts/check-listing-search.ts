@@ -56,6 +56,7 @@ try {
       );
     session.show(first.id, listing.id, first.documentId);
     const highlighted = !!document.querySelector('[data-cmd-f=outline]');
+    const listingUsedTextHighlight = CSS.highlights?.has('cmd-f-match') ?? false;
     const lastPassage = batches
       .flatMap((b) => b.candidates)
       .find((c) => c.text?.startsWith('Entry 219:'))!;
@@ -74,7 +75,8 @@ try {
           ),
       );
     session.show(current.id, lastPassage.id, current.documentId);
-    const endHighlighted = !!document.querySelector('[data-cmd-f=outline]');
+    const endOutlined = !!document.querySelector('[data-cmd-f=outline]');
+    const endHighlighted = CSS.highlights?.has('cmd-f-match') ?? false;
     document.querySelector('main')!.append(document.createElement('p'));
     await new Promise((resolve) => setTimeout(resolve, 0));
     let staleRejected = false;
@@ -84,7 +86,14 @@ try {
       staleRejected = true;
     }
     session.stop();
-    return { batches, highlighted, endHighlighted, staleRejected };
+    return {
+      batches,
+      highlighted,
+      listingUsedTextHighlight,
+      endOutlined,
+      endHighlighted,
+      staleRejected,
+    };
   });
   output.batches.forEach((b) => SnapshotSchema.parse(b));
   const ids = output.batches.flatMap((b) =>
@@ -97,9 +106,10 @@ try {
     'all entries in a partially selected section remain accessible',
   );
   assert.ok(output.batches.length > 1);
+  assert.ok(output.highlighted && !output.listingUsedTextHighlight, 'listings keep a bounding box');
   assert.ok(
-    output.highlighted && output.endHighlighted,
-    'old and new candidate anchors remain valid',
+    output.endHighlighted && !output.endOutlined,
+    'passage text is highlighted without a bounding box',
   );
   assert.ok(output.staleRejected, 'mutation invalidates section reads');
   console.log(

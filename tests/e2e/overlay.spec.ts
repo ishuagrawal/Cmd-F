@@ -5,14 +5,14 @@ import {
   type BrowserContext,
   type Worker,
   type Page,
-  type FrameLocator,
+  type Locator,
 } from '@playwright/test';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 let context: BrowserContext;
 let worker: Worker;
 let site: Page;
-let chat: FrameLocator;
+let chat: Locator;
 let extensionId: string;
 const origin = 'http://127.0.0.1:4318';
 test.beforeAll(async () => {
@@ -55,7 +55,7 @@ async function open(name = 'journal') {
       files: ['overlay-host.js'],
     });
   }, site.url());
-  chat = site.frameLocator('iframe[title="Cmd-F chat"]');
+  chat = site.locator('[data-cmd-f=overlay]');
   await expect(chat.getByLabel('Your request')).toBeVisible();
   await chat.getByLabel('Your request').fill('hi');
   await expect(chat.getByRole('button', { name: 'Send request' })).toBeEnabled();
@@ -73,6 +73,65 @@ async function ask(question: string, scope: 'site' | 'page' = 'site') {
   await expect(chat.getByRole('button', { name: 'Send request' })).toBeEnabled();
   await chat.getByLabel('Your request').press('Enter');
 }
+test('keeps overlay typing out of the page search', async () => {
+  await open();
+  await site.evaluate(() => {
+    const keys: string[] = [];
+    (window as Window & { __cmdFPageKeys?: string[] }).__cmdFPageKeys = keys;
+    document.addEventListener('keydown', (e) => {
+      keys.push(e.key);
+    });
+    const input = document.createElement('input');
+    input.setAttribute('aria-label', 'Page search');
+    document.body.prepend(input);
+    document.addEventListener('keydown', (e) => {
+      if (e.target === input) return;
+      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        input.focus();
+        input.value += e.key;
+        e.preventDefault();
+      }
+    });
+  });
+  await chat.getByLabel('Your request').click();
+  await chat.getByLabel('Your request').pressSequentially('abc');
+  expect(
+    await site.evaluate(() => (window as Window & { __cmdFPageKeys?: string[] }).__cmdFPageKeys),
+  ).toEqual([]);
+  await expect(chat.getByLabel('Your request')).toHaveValue('abc');
+  await expect(site.getByLabel('Page search')).toHaveValue('');
+});
+test('does not steal typing from the page after connecting', async () => {
+  await context.route('**/v1/config', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    await route.continue();
+  });
+  try {
+    await site.goto(origin + '/fixtures/journal');
+    await site.evaluate(() => {
+      const input = document.createElement('input');
+      input.setAttribute('aria-label', 'Page search');
+      document.body.prepend(input);
+    });
+    await worker.evaluate(async (url) => {
+      const [tab] = await chrome.tabs.query({ url });
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id! },
+        files: ['overlay-host.js'],
+      });
+    }, site.url());
+    chat = site.locator('[data-cmd-f=overlay]');
+    await expect(chat.getByLabel('Your request')).toBeVisible();
+    const pageSearch = site.getByLabel('Page search');
+    await pageSearch.click();
+    await pageSearch.pressSequentially('github query', { delay: 80 });
+    await expect(pageSearch).toHaveValue('github query');
+    await expect(pageSearch).toBeFocused();
+    await expect(chat.getByLabel('Your request')).toHaveValue('');
+  } finally {
+    await context.unroute('**/v1/config');
+  }
+});
 test('registers the shortcut and opens a small pill without extracting its own UI', async () => {
   const commands = await worker.evaluate(() => chrome.commands.getAll());
   expect(commands.some((c) => c.name === '_execute_action' && c.shortcut)).toBe(true);
@@ -80,14 +139,15 @@ test('registers the shortcut and opens a small pill without extracting its own U
   await expect(chat.locator('.conversation')).toBeHidden();
   const bounds = await site.locator('[data-cmd-f=overlay]').boundingBox();
   expect(bounds!.width).toBeLessThanOrEqual(440);
-  expect(bounds!.height).toBeLessThan(100);
+  expect(bounds!.height).toBeLessThan(70);
   expect(bounds!.x).toBeGreaterThan(800);
   await site.screenshot({ path: 'docs/screenshots/overlay-pill.png', animations: 'disabled' });
   await ask('Which beacon is marked amber?', 'page');
   await expect(chat.locator('blockquote')).toContainText('amber');
   await expect(chat.getByRole('button', { name: 'Open source' })).toHaveCount(0);
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await expect(site.locator('[data-cmd-f=overlay]')).toHaveCount(1);
   await site.screenshot({ path: 'docs/screenshots/overlay-result.png' });
   await chat.getByLabel('Your request').press('Escape');
@@ -107,7 +167,8 @@ test('Show on page tolerates unrelated mutations and repeated highlighting', asy
     passage.style.marginTop = '200px';
   });
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await expect(chat.getByRole('alert')).toHaveCount(0);
 });
 test('Show on page recovers an exact passage after a website re-render', async () => {
@@ -124,11 +185,16 @@ test('Show on page recovers an exact passage after a website re-render', async (
     replacement.style.marginTop = '600px';
   });
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await expect(chat.getByRole('alert')).toHaveCount(0);
-  const target = await site.locator('#rerendered-passage').boundingBox();
-  const outline = await site.locator('[data-cmd-f=outline]').boundingBox();
-  expect(Math.abs(outline!.y - (target!.y - 4))).toBeLessThan(2);
+  const aligned = await site.evaluate(() => {
+    const highlight = CSS.highlights.get('cmd-f-match');
+    const range = highlight && ([...highlight][0] as Range);
+    const target = document.getElementById('rerendered-passage');
+    return !!(range && target && range.intersectsNode(target));
+  });
+  expect(aligned).toBe(true);
 });
 for (const change of ['changed-text', 'ambiguous-replacement', 'route-change'] as const) {
   test(`Show on page rejects ${change}`, async () => {
@@ -146,6 +212,7 @@ for (const change of ['changed-text', 'ambiguous-replacement', 'route-change'] a
     }, change);
     await chat.getByRole('button', { name: 'Show on page' }).click();
     await expect(chat.getByRole('alert')).toContainText(/changed|again/);
+    expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
     await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   });
 }
@@ -159,6 +226,7 @@ test('a disappearing duplicate never redirects the highlight to another occurren
     .evaluate((el) => el.remove());
   await chat.getByRole('button', { name: 'Show on page' }).click();
   await expect(chat.getByRole('alert')).toContainText('could not be located reliably');
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
 });
 test('a hidden result can be shown after it becomes visible without another search', async () => {
@@ -175,7 +243,8 @@ test('a hidden result can be shown after it becomes visible without another sear
     (el as HTMLElement).hidden = false;
   });
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await expect(chat.getByRole('alert')).toHaveCount(0);
 });
 test('Send immediately searches the page and public site without a confirmation', async () => {
@@ -205,9 +274,14 @@ test('finds and highlights the article event instead of references despite an un
   await expect(chat.locator('blockquote')).toHaveText('The report was presented on May 16, 2023.');
   await expect(chat.getByRole('button', { name: 'Open source' })).toHaveCount(0);
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  const target = await site.locator('#event').boundingBox();
-  const outline = await site.locator('[data-cmd-f=outline]').boundingBox();
-  expect(Math.abs(outline!.y - (target!.y - 4))).toBeLessThan(2);
+  const aligned = await site.evaluate(() => {
+    const highlight = CSS.highlights.get('cmd-f-match');
+    const range = highlight && ([...highlight][0] as Range);
+    const target = document.getElementById('event');
+    return !!(range && target && range.intersectsNode(target));
+  });
+  expect(aligned).toBe(true);
+  await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
 });
 test('finds the fixed-cycle subpage beyond hundreds of unrelated navigation links', async () => {
   await open('reference-index');
@@ -257,18 +331,24 @@ test('rejects cross-tab inspection from the overlay', async () => {
   await open();
   const other = await context.newPage();
   await other.goto(origin + '/fixtures/settings');
-  const otherId = await worker.evaluate(
-    async (url) => (await chrome.tabs.query({ url }))[0].id!,
-    other.url(),
+  const [tabId, otherId] = await worker.evaluate(
+    async (urls: [string, string]) => {
+      const [siteTab] = await chrome.tabs.query({ url: urls[0] });
+      const [otherTab] = await chrome.tabs.query({ url: urls[1] });
+      return [siteTab.id!, otherTab.id!];
+    },
+    [site.url(), other.url()] as [string, string],
   );
-  const frame = site
-    .frames()
-    .find((f) => f.url() === `chrome-extension://${extensionId}/overlay.html`)!;
-  const response = await frame.evaluate(
-    async (tabId) => chrome.runtime.sendMessage({ tabId, operation: { type: 'INSPECT' } }),
-    otherId,
+  const [{ result }] = await worker.evaluate(
+    async ({ tabId, otherId }) =>
+      chrome.scripting.executeScript({
+        target: { tabId },
+        func: (id) => chrome.runtime.sendMessage({ tabId: id, operation: { type: 'INSPECT' } }),
+        args: [otherId],
+      }),
+    { tabId, otherId },
   );
-  expect(response.error).toBeTruthy();
+  expect(result.error).toBeTruthy();
   await other.close();
 });
 test('stays within a narrow viewport and toggles without duplicate hosts', async () => {

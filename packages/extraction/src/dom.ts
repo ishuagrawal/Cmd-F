@@ -503,38 +503,28 @@ export class DomSession {
     this.observer.disconnect();
     this.clear();
     const d = el.ownerDocument;
-    const style = d.createElement('style');
-    style.dataset.cmdF = 'style';
-    style.textContent = '::highlight(cmd-f-match){background:#f6e6a4;color:#222}';
-    d.documentElement.append(style);
     const css = d.defaultView?.CSS as typeof CSS & { highlights?: Map<string, unknown> };
     const H = (d.defaultView as unknown as { Highlight?: new (...ranges: Range[]) => unknown })
       .Highlight;
-    if (c.kind === 'passage' && css?.highlights && H) {
+    const textHighlight = c.kind === 'passage' && !!css?.highlights && !!H;
+    let style: HTMLStyleElement | undefined;
+    if (textHighlight) {
+      style = d.createElement('style');
+      style.dataset.cmdF = 'style';
+      style.textContent = '::highlight(cmd-f-match){background:#f6e6a4;color:#222}';
+      d.documentElement.append(style);
       const range = focusedRange || d.createRange();
       if (!focusedRange) range.selectNodeContents(el);
       css.highlights.set('cmd-f-match', new H(range));
     }
-    const overlay = d.createElement('div');
-    overlay.dataset.cmdF = 'outline';
-    overlay.setAttribute('aria-hidden', 'true');
-    overlay.style.cssText =
-      'position:fixed;pointer-events:none;border:2px solid #b49b42;border-radius:5px;background:#d2b85814;z-index:2147483647;';
-    d.documentElement.append(overlay);
-    this.outline = overlay;
     el.scrollIntoView({ block: 'center', behavior: 'instant' });
     if (focusedRange) {
       const target = focusedRange.startContainer.parentElement;
       target?.scrollIntoView({ block: 'center', behavior: 'instant' });
     }
-    const rect = focusedRange?.getBoundingClientRect() || el.getBoundingClientRect();
-    Object.assign(overlay.style, {
-      left: `${rect.left - 4}px`,
-      top: `${rect.top - 4}px`,
-      width: `${rect.width + 8}px`,
-      height: `${rect.height + 8}px`,
-    });
+    let overlay: HTMLElement | undefined;
     const update = () => {
+      if (!overlay) return;
       if (!el.isConnected) {
         overlay.remove();
         return;
@@ -547,11 +537,21 @@ export class DomSession {
         height: `${r.height + 8}px`,
       });
     };
-    d.defaultView?.addEventListener('scroll', update, { passive: true });
-    d.defaultView?.addEventListener('resize', update);
+    if (!textHighlight) {
+      overlay = d.createElement('div');
+      overlay.dataset.cmdF = 'outline';
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.style.cssText =
+        'position:fixed;pointer-events:none;border:2px solid #b49b42;border-radius:5px;background:#d2b85814;z-index:2147483647;';
+      d.documentElement.append(overlay);
+      this.outline = overlay;
+      update();
+      d.defaultView?.addEventListener('scroll', update, { passive: true });
+      d.defaultView?.addEventListener('resize', update);
+    }
     this.cleanups.push(() => {
-      overlay.remove();
-      style.remove();
+      overlay?.remove();
+      style?.remove();
       css?.highlights?.delete('cmd-f-match');
       d.defaultView?.removeEventListener('scroll', update);
       d.defaultView?.removeEventListener('resize', update);

@@ -1,4 +1,10 @@
-// This isolated-world script runs only after the user invokes the extension.
+import { createElement } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { Chat } from '../overlay/main';
+import { isolateOverlayEvents } from '../overlay/focus';
+
+declare const __OVERLAY_CSS__: string;
+
 const globals = globalThis as typeof globalThis & {
   __cmdFOverlay?: () => void;
   __cmdFOverlayAlive?: () => boolean;
@@ -16,8 +22,11 @@ if (globals.__cmdFOverlay && globals.__cmdFOverlayAlive?.()) {
     }
   };
   let host: HTMLDivElement | undefined;
+  let reactRoot: Root | undefined;
   let previous: HTMLElement | null = null;
   const close = () => {
+    reactRoot?.unmount();
+    reactRoot = undefined;
     host?.remove();
     host = undefined;
     previous?.focus({ preventScroll: true });
@@ -31,31 +40,28 @@ if (globals.__cmdFOverlay && globals.__cmdFOverlayAlive?.()) {
     host = document.createElement('div');
     host.dataset.cmdF = 'overlay';
     host.style.cssText =
-      'all:initial!important;position:fixed!important;top:16px!important;right:16px!important;width:min(440px,calc(100vw - 32px))!important;height:74px!important;z-index:2147483647!important;display:block!important;color-scheme:light!important;';
+      'all:initial!important;position:fixed!important;top:16px!important;right:16px!important;width:min(440px,calc(100vw - 32px))!important;z-index:2147483647!important;display:block!important;background:transparent!important;';
     const shadow = host.attachShadow({ mode: 'open' });
-    const frame = document.createElement('iframe');
-    frame.src = chrome.runtime.getURL('overlay.html');
-    frame.title = 'Cmd-F chat';
-    frame.style.cssText =
-      'display:block;width:100%;height:100%;border:0;background:transparent;color-scheme:normal;';
-    shadow.append(frame);
+    isolateOverlayEvents(shadow);
+    const style = document.createElement('style');
+    style.textContent = __OVERLAY_CSS__;
+    const root = document.createElement('div');
+    shadow.append(style, root);
     document.documentElement.append(host);
-    frame.addEventListener('load', () => frame.contentWindow?.focus(), { once: true });
+    reactRoot = createRoot(root);
+    reactRoot.render(createElement(Chat));
   };
   globals.__cmdFOverlay = toggle;
+  window.addEventListener('cmd-f-reconnect', () => {
+    if (!globals.__cmdFOverlayAlive?.()) return;
+    close();
+    toggle();
+  });
   chrome.runtime.onMessage.addListener((message, sender, respond) => {
     if (sender.id !== chrome.runtime.id || sender.url !== chrome.runtime.getURL('background.js'))
       return;
     if (message?.type === 'CLOSE_OVERLAY') {
       close();
-      respond({ ok: true });
-    }
-    if (message?.type === 'RESIZE_OVERLAY' && host && typeof message.height === 'number') {
-      host.style.setProperty(
-        'height',
-        `${Math.min(innerHeight - 32, Math.max(74, message.height))}px`,
-        'important',
-      );
       respond({ ok: true });
     }
   });
