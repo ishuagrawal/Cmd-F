@@ -4,8 +4,6 @@ A universal search in your browser that finds the relevant passage, page, or con
 
 Cmd-F is a local-first Chrome extension with a keyboard-invoked in-page prompt with a bounded, anonymous site-search backend. It searches the current page first, returns source text, and highlights only when asked. It never clicks website controls or navigates the source tab during a search.
 
-![Cmd-F in-page pill](docs/screenshots/overlay-pill.png)
-
 ## Run the playground
 
 Use Node **24.21.0 LTS** (`.node-version`) and pnpm **11.19.0**. The package supports Node 24.19+; the initial build was also exercised on Node 26.4.0.
@@ -15,14 +13,7 @@ pnpm install --frozen-lockfile
 pnpm demo
 ```
 
-Open **http://127.0.0.1:5173/overlay.html** for the pill preview, or **http://127.0.0.1:5173/sidepanel.html** for the full fixture playground. The playground embeds owned documentation, news, and account fixtures. In the pill, Enter or Send immediately searches the current page and public pages on the same site. The legacy fixture playground retains its preview and confirmation controls. With no provider key, the backend uses a clearly labeled deterministic keyword provider.
-
-Try these flows:
-
-1. **Documentation:** “How do loops work in Python?” → This site → consent → the Control flow source page.
-2. **A news article:** “What is the baby’s name?” → This page → consent → Show here.
-3. **An account menu:** “Where can I cancel my membership?” → This page → consent → search the available content. Closed menus do not trigger manual inspection prompts; if no source is verified, the search finishes without a result. The cancellation button is never clicked.
-4. Ask “What is the temperature on Mars?” for an honest no-answer result.
+Open **http://127.0.0.1:5173/overlay.html** for the pill preview, or **http://127.0.0.1:5173/sidepanel.html** for the full local fixture playground. The playground uses owned pages that exercise passages, destination pages, controls, hidden content, and honest no-answer behavior. In the pill, Enter or Send immediately searches the current page and public pages on the same site. The legacy fixture playground retains its preview and explicit consent controls. With no provider key, the backend uses a clearly labeled deterministic keyword provider.
 
 `pnpm demo` uses the normal public-site network policy and adds a **fixed allowlist for owned loopback fixtures**. Public websites remain searchable. The fixture exception is never imported by the production API entrypoint. `pnpm dev` runs the same UI and fixtures but uses the normal public-only fetch policy; it cannot crawl loopback fixtures. Never expose either development server to a network.
 
@@ -40,7 +31,7 @@ pnpm dev:api
 5. Open Connection settings in the pill. Copy the local client token from `.local/client-token` into the token field. This is application authentication, not your Gateway API key.
 6. Type a question and press Enter or Send. Cmd-F immediately searches the current page and public pages on the same site, with no additional confirmation. Select This page in settings to limit the scope.
 
-Enter submits a request; Shift+Enter inserts a newline. The pill expands beneath the input for search progress and the conversation. Only Jev-validated sources are displayed in live mode. Results offer **Show on page** for local passages and **Open source** only for a validated destination page, using its fetched URL; destination links open in a new tab. Searches default to five public subpages and at most 18 AI calls including retries. Show on page tolerates unrelated layout updates and automatically relocates a uniquely matching unchanged passage after a re-render. Changed or ambiguous sources still require a new search. Rate limits, connection errors, and no-answer outcomes appear in the same conversation. The browser’s normal Cmd+F / Ctrl+F stays unchanged.
+Enter submits a request; Shift+Enter inserts a newline. The pill expands beneath the input for search progress and the conversation. Live results include semantically matched links, labeled with unverified destination details, and independently verified source passages. Results offer **Show on page** for local passages **Open listing** for matched links, and **Open source** for a verified destination excerpt; destination links open in a new tab. Searches default to five public subpages and at most 96 AI requests including retries, with three screening requests in parallel and a 30-second deadline. Show on page tolerates unrelated layout updates and automatically relocates a uniquely matching unchanged passage after a re-render. Changed or ambiguous sources still require a new search. Rate limits, connection errors, and no-answer outcomes appear in the same conversation. The browser’s normal Cmd+F / Ctrl+F stays unchanged.
 
 The unpacked production manifest has `activeTab`, `scripting`, and `storage`, plus access to the exact loopback API origin. Only the overlay HTML is web-accessible so it can be embedded; this does not grant page-reading access. The UI runs in an extension-origin iframe and inspection is bound to its actual source tab. It has no blanket website host permission, cookies, debugger, history, or automatically injected page scripts. Browser-internal pages, extension pages, and the Chrome Web Store cannot be inspected.
 
@@ -82,7 +73,7 @@ Direct TypeSafe defaults to `jev-1.13.0`; Gateway defaults to `typesafe-ai/jev`.
 pnpm test:live
 ```
 
-This runs the same 60-task evaluation with real inference and writes `docs/reports/evaluation-live.json`, recording the transport and model. It exits clearly when credentials are missing. A live Gateway smoke test passed. The larger evaluation hit free-tier model rate limits and is marked incomplete; deterministic mock results and rate-limited runs are not semantic-accuracy evidence. Live searches stop with a specific error when AI verification fails; they never return keyword fallback results.
+This runs the same evaluation corpus with real inference and writes `docs/reports/evaluation-live.json`, recording the transport and model. It exits clearly when credentials are missing. A live Gateway smoke test passed. The larger evaluation hit free-tier model rate limits and is marked incomplete; deterministic mock results and rate-limited runs are not semantic-accuracy evidence. Live searches stop with a specific error when AI verification fails; they never return keyword fallback results.
 
 ## Commands
 
@@ -98,7 +89,7 @@ This runs the same 60-task evaluation with real inference and writes `docs/repor
 | `pnpm format:check` | Source formatting check                                  |
 | `pnpm test`         | Unit, security, and API integration suites               |
 | `pnpm test:e2e`     | Build and test the real extension in Chromium            |
-| `pnpm test:eval`    | 60-task deterministic evaluation report                  |
+| `pnpm test:eval`    | deterministic evaluation report                          |
 | `pnpm test:live`    | Opt-in Jev evaluation on the same corpus                 |
 
 Browser regression tests require a mock backend. Stop a running live preview first; the test runner starts its own mock preview and refuses to reuse a live one.

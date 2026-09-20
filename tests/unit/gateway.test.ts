@@ -8,7 +8,7 @@ import {
 import { extractHtml } from '../../packages/extraction/src/html';
 
 const candidates = extractHtml(
-  '<p>The couple named their baby daughter Juniper.</p><p>Morgan is a musician.</p>',
+  '<p>The beacon is marked amber.</p><p>The guide opens at sunrise.</p>',
   'https://site.test',
 ).candidates;
 const budget = (): ProviderBudget => ({ calls: 0, bytes: 0, inputTokens: 0, outputTokens: 0 });
@@ -39,7 +39,7 @@ describe('Jev through Vercel AI Gateway', () => {
     }) as typeof fetch;
     const b = budget();
     const decision = await new GatewayJevProvider('test-gateway-key', undefined, transport).select(
-      'What is the baby name?',
+      'Which beacon is marked amber?',
       candidates,
       new AbortController().signal,
       b,
@@ -57,7 +57,7 @@ describe('Jev through Vercel AI Gateway', () => {
     }
     expect(requests[0].body.questions).toMatchObject({ selection: { type: 'choice' } });
     expect(requests[1].body.questions).toMatchObject({ supported: { type: 'choice' } });
-    expect(JSON.stringify(requests[1].body)).not.toContain('Morgan');
+    expect(JSON.stringify(requests[1].body)).not.toContain('unrelated-private-value');
     expect(b).toMatchObject({ calls: 2, inputTokens: 80, outputTokens: 4 });
     expect(b.bytes).toBe(requests.reduce((n, r) => n + Buffer.byteLength(String(r.init.body)), 0));
   });
@@ -76,7 +76,7 @@ describe('Jev through Vercel AI Gateway', () => {
       true,
     );
     await expect(
-      provider.select('baby name', candidates, new AbortController().signal, budget()),
+      provider.select('beacon color', candidates, new AbortController().signal, budget()),
     ).rejects.toThrow();
     expect(calls).toBe(1);
   });
@@ -90,7 +90,7 @@ describe('Jev through Vercel AI Gateway', () => {
     await expect(
       new GatewayJevProvider('test', undefined, (async () =>
         reply({ selection })) as typeof fetch).select(
-        'baby name',
+        'beacon color',
         candidates,
         new AbortController().signal,
         b,
@@ -115,7 +115,7 @@ describe('Jev through Vercel AI Gateway', () => {
       )) as typeof fetch;
     await expect(
       new GatewayJevProvider('test', undefined, transport).select(
-        'baby name',
+        'beacon color',
         candidates,
         new AbortController().signal,
         budget(),
@@ -127,7 +127,7 @@ describe('Jev through Vercel AI Gateway', () => {
     const provider = new GatewayJevProvider('test', undefined, (async () =>
       reply({ selection: choice })) as typeof fetch);
     const route = await provider.select(
-      'baby name',
+      'beacon color',
       candidates,
       new AbortController().signal,
       b,
@@ -144,7 +144,7 @@ describe('Jev through Vercel AI Gateway', () => {
         },
       })) as typeof fetch);
     expect(
-      (await none.select('baby name', candidates, new AbortController().signal, b)).candidate,
+      (await none.select('beacon color', candidates, new AbortController().signal, b)).candidate,
     ).toBeUndefined();
     expect(b.calls).toBe(2);
   });
@@ -156,22 +156,22 @@ describe('Jev through Vercel AI Gateway', () => {
         { status: 503, headers: { 'retry-after': '0' } },
       )) as typeof fetch);
     await expect(
-      provider.select('baby name', candidates, new AbortController().signal, b),
+      provider.select('beacon color', candidates, new AbortController().signal, b),
     ).rejects.toThrow();
     expect(b.calls).toBe(2);
   });
   it('enforces remaining call budget across retries', async () => {
-    const b = { ...budget(), calls: 17 };
+    const b = { ...budget(), calls: 95 };
     let sent = 0;
     const provider = new GatewayJevProvider('test', undefined, (async () => {
       sent++;
       return Response.json({}, { status: 429, headers: { 'retry-after': '0' } });
     }) as typeof fetch);
     await expect(
-      provider.select('baby name', candidates, new AbortController().signal, b),
+      provider.select('beacon color', candidates, new AbortController().signal, b),
     ).rejects.toThrow();
     expect(sent).toBe(1);
-    expect(b.calls).toBe(18);
+    expect(b.calls).toBe(96);
   });
   it('does not retry authentication failures or send cancelled searches', async () => {
     let sent = 0;
@@ -180,10 +180,10 @@ describe('Jev through Vercel AI Gateway', () => {
       return Response.json({}, { status: 401 });
     }) as typeof fetch);
     await expect(
-      provider.select('baby name', candidates, new AbortController().signal, budget()),
+      provider.select('beacon color', candidates, new AbortController().signal, budget()),
     ).rejects.toThrow();
     await expect(
-      provider.select('baby name', candidates, AbortSignal.abort(), budget()),
+      provider.select('beacon color', candidates, AbortSignal.abort(), budget()),
     ).rejects.toThrow();
     expect(sent).toBe(1);
   });
@@ -194,7 +194,7 @@ describe('Jev through Vercel AI Gateway', () => {
       (async () => new Response('x'.repeat(200001))) as typeof fetch,
     );
     await expect(
-      provider.select('baby name', candidates, new AbortController().signal, budget()),
+      provider.select('beacon color', candidates, new AbortController().signal, budget()),
     ).rejects.toThrow();
   });
 });
@@ -265,7 +265,7 @@ it('validates destination relevance with a separate verification call', async ()
     );
   }) as typeof fetch);
   const decision = await provider.select(
-    'Find the baby announcement',
+    'Find the beacon detail',
     candidates,
     new AbortController().signal,
     budget(),
@@ -293,9 +293,9 @@ it('passes the original page context to selection and independent verification',
           },
     );
   }) as typeof fetch);
-  const context = { sourceTitle: 'A person biography', sourceUrl: 'https://site.test/biography' };
+  const context = { sourceTitle: 'A project timeline', sourceUrl: 'https://site.test/timeline' };
   const decision = await provider.select(
-    'company partnership',
+    'project timeline',
     candidates,
     new AbortController().signal,
     budget(),
@@ -325,7 +325,12 @@ it('retries a malformed choice once and still independently verifies the recover
             },
     );
   }) as typeof fetch);
-  const decision = await provider.select('baby name', candidates, new AbortController().signal, b);
+  const decision = await provider.select(
+    'beacon color',
+    candidates,
+    new AbortController().signal,
+    b,
+  );
   expect(decision.verified).toBe(true);
   expect(calls).toBe(3);
   expect(b.validationFailures).toEqual(['selection:response_schema']);

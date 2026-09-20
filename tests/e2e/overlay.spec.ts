@@ -48,7 +48,7 @@ test.beforeEach(async () => {
 test.afterEach(async () => {
   await site.close();
 });
-async function open(name = 'news') {
+async function open(name = 'journal') {
   await site.goto(origin + '/fixtures/' + name);
   // Same injected entrypoint as the action/keyboard command. OS hotkey dispatch is a manual gate.
   await worker.evaluate(async (url) => {
@@ -82,8 +82,8 @@ test('registers the shortcut and opens a small pill without extracting its own U
   expect(bounds!.height).toBeLessThan(100);
   expect(bounds!.x).toBeGreaterThan(800);
   await site.screenshot({ path: 'docs/screenshots/overlay-pill.png', animations: 'disabled' });
-  await ask('What is the baby name?', 'page');
-  await expect(chat.locator('blockquote')).toContainText('Juniper');
+  await ask('Which beacon is marked amber?', 'page');
+  await expect(chat.locator('blockquote')).toContainText('amber');
   await expect(chat.getByRole('button', { name: 'Open source' })).toHaveCount(0);
   await chat.getByRole('button', { name: 'Show on page' }).click();
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(1);
@@ -94,14 +94,14 @@ test('registers the shortcut and opens a small pill without extracting its own U
 });
 test('Show on page tolerates unrelated mutations and repeated highlighting', async () => {
   await open();
-  await ask('What is the baby name?', 'page');
-  await expect(chat.locator('blockquote')).toContainText('Juniper');
+  await ask('Which beacon is marked amber?', 'page');
+  await expect(chat.locator('blockquote')).toContainText('amber');
   await chat.getByRole('button', { name: 'Show on page' }).click();
   await site.evaluate(() => {
     document.body.classList.add('layout-updated');
     document.querySelector('footer')!.textContent = 'Updated just now';
     const passage = [...document.querySelectorAll('p')].find((p) =>
-      p.textContent?.includes('Juniper'),
+      p.textContent?.includes('amber'),
     )!;
     passage.style.marginTop = '200px';
   });
@@ -111,11 +111,11 @@ test('Show on page tolerates unrelated mutations and repeated highlighting', asy
 });
 test('Show on page recovers an exact passage after a website re-render', async () => {
   await open();
-  await ask('What is the baby name?', 'page');
-  await expect(chat.locator('blockquote')).toContainText('Juniper');
+  await ask('Which beacon is marked amber?', 'page');
+  await expect(chat.locator('blockquote')).toContainText('amber');
   await site.evaluate(() => {
     const passage = [...document.querySelectorAll('p')].find((p) =>
-      p.textContent?.includes('Juniper'),
+      p.textContent?.includes('amber'),
     )!;
     const replacement = passage.cloneNode(true) as HTMLElement;
     replacement.id = 'rerendered-passage';
@@ -132,11 +132,11 @@ test('Show on page recovers an exact passage after a website re-render', async (
 for (const change of ['changed-text', 'ambiguous-replacement', 'route-change'] as const) {
   test(`Show on page rejects ${change}`, async () => {
     await open();
-    await ask('What is the baby name?', 'page');
-    await expect(chat.locator('blockquote')).toContainText('Juniper');
+    await ask('Which beacon is marked amber?', 'page');
+    await expect(chat.locator('blockquote')).toContainText('amber');
     await site.evaluate((change) => {
       const passage = [...document.querySelectorAll('p')].find((p) =>
-        p.textContent?.includes('Juniper'),
+        p.textContent?.includes('amber'),
       )!;
       if (change === 'changed-text')
         passage.textContent = 'The original information was corrected.';
@@ -162,9 +162,9 @@ test('a disappearing duplicate never redirects the highlight to another occurren
 });
 test('a hidden result can be shown after it becomes visible without another search', async () => {
   await open();
-  await ask('What is the baby name?', 'page');
-  await expect(chat.locator('blockquote')).toContainText('Juniper');
-  const passage = site.locator('main p').filter({ hasText: 'Juniper' });
+  await ask('Which beacon is marked amber?', 'page');
+  await expect(chat.locator('blockquote')).toContainText('amber');
+  const passage = site.locator('main p').filter({ hasText: 'amber' });
   await passage.evaluate((el) => {
     (el as HTMLElement).hidden = true;
   });
@@ -185,10 +185,10 @@ test('Send immediately searches the page and public site without a confirmation'
   });
   try {
     await open('docs');
-    await chat.getByLabel('Your request').fill('How do loops work in Python?');
+    await chat.getByLabel('Your request').fill('How does a cycle repeat?');
     expect(requests).toHaveLength(0);
     await chat.getByRole('button', { name: 'Send request' }).click();
-    await expect(chat.locator('blockquote').first()).toContainText('for loop');
+    await expect(chat.locator('blockquote').first()).toContainText('fixed cycle');
     expect(requests).toHaveLength(1);
     expect(requests[0]).toMatchObject({ scope: 'site', consent: true, publicSearchConsent: true });
     await expect(chat.getByRole('heading', { name: 'Share this text to search?' })).toHaveCount(0);
@@ -199,60 +199,63 @@ test('Send immediately searches the page and public site without a confirmation'
   }
 });
 test('finds and highlights the article event instead of references despite an unrelated truncated block', async () => {
-  await open('biography');
-  await ask('when did Morgan testify');
-  await expect(chat.locator('blockquote')).toHaveText(
-    'Morgan testified before the committee on May 16, 2023.',
-  );
+  await open('timeline');
+  await ask('when was the report presented');
+  await expect(chat.locator('blockquote')).toHaveText('The report was presented on May 16, 2023.');
   await expect(chat.getByRole('button', { name: 'Open source' })).toHaveCount(0);
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  const target = await site.locator('#testimony').boundingBox();
+  const target = await site.locator('#event').boundingBox();
   const outline = await site.locator('[data-cmd-f=outline]').boundingBox();
   expect(Math.abs(outline!.y - (target!.y - 4))).toBeLessThan(2);
 });
-test('finds the For Loops subpage beyond hundreds of unrelated navigation links', async () => {
-  await open('large-tutorial');
-  await ask('how do for loops work');
+test('finds the fixed-cycle subpage beyond hundreds of unrelated navigation links', async () => {
+  await open('reference-index');
+  await ask('how do fixed cycles work');
   await expect(chat.locator('blockquote').first()).toContainText('each item in a sequence');
-  await expect(chat.locator('.source h2').first()).toHaveText('Python For Loops');
+  await expect(chat.locator('.source h2').first()).toHaveText('Fixed cycles');
   await expect(chat.locator('.coverage')).toContainText('2 pages checked');
-  await chat.getByText('Pages inspected', { exact: true }).click();
+  await chat.getByText('Search details', { exact: true }).click();
   await expect(chat.locator('.page-details')).toContainText('verified');
   const opened = context.waitForEvent('page');
   await chat.getByRole('button', { name: 'Open source' }).first().click();
   const reference = await opened;
   await reference.waitForLoadState();
-  expect(reference.url()).toContain('/fixtures/for-loops');
+  expect(reference.url()).toContain('/fixtures/fixed-cycles');
   await reference.close();
 });
 test('finds a public subpage and opens the actual reference', async () => {
   await open('docs');
   const initial = site.url();
-  await ask('How do loops work in Python?');
-  await expect(chat.locator('blockquote').first()).toContainText('for loop');
+  await ask('How does a cycle repeat?');
+  await expect(chat.locator('blockquote').first()).toContainText('fixed cycle');
   const next = context.waitForEvent('page');
   await chat.getByRole('button', { name: 'Open source' }).first().click();
   const reference = await next;
   await reference.waitForLoadState();
-  expect(reference.url()).toContain('/fixtures/docs/control-flow');
+  expect(reference.url()).toContain('/fixtures/docs/processes');
+  const fragment = new URL(reference.url()).hash.split(':~:text=')[1];
+  expect(fragment).toBeTruthy();
+  expect(decodeURIComponent(fragment)).toBe(
+    (await chat.locator('blockquote').first().innerText()).replace(/\s+/g, ' ').trim(),
+  );
   expect(site.url()).toBe(initial);
   await reference.close();
 });
 test('shows no-answer and connection failures inside the response panel', async () => {
   await open();
-  await ask('What is the temperature on Mars?', 'page');
+  await ask('Which instrument measures rainfall?', 'page');
   await expect(
     chat.getByText('No answer found in the pages checked.', { exact: false }),
   ).toBeVisible();
   await context.route('**/v1/searches', (route) => route.abort());
-  await ask('What is the baby name?', 'page');
+  await ask('Which beacon is marked amber?', 'page');
   await expect(chat.getByRole('alert')).toBeVisible();
   await context.unroute('**/v1/searches');
 });
 test('rejects cross-tab inspection from the overlay', async () => {
   await open();
   const other = await context.newPage();
-  await other.goto(origin + '/fixtures/account');
+  await other.goto(origin + '/fixtures/settings');
   const otherId = await worker.evaluate(
     async (url) => (await chrome.tabs.query({ url }))[0].id!,
     other.url(),
@@ -302,7 +305,7 @@ test('keeps progress below verified sources and hides unverified results', async
     id: 'ai-result',
     kind: 'passage',
     title: 'AI-assessed source',
-    url: origin + '/fixtures/news',
+    url: origin + '/fixtures/journal',
     origin,
     quote: 'A source passage',
     headingPath: [],
@@ -411,7 +414,7 @@ for (const failure of ['rate_limit', 'failed'] as const) {
         body: `id: 1\ndata: ${JSON.stringify({ protocol: 1, id: 1, searchId: state.id, type: 'completed', state })}\n\n`,
       }),
     );
-    await ask('Find the baby name', 'page');
+    await ask('Find the beacon detail', 'page');
     await expect(
       chat.getByText(
         failure === 'failed' ? 'The search failed.' : 'TypeSafe rate-limited this search.',

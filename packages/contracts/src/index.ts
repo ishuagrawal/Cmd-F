@@ -35,6 +35,13 @@ export const SnapshotSchema = z
     limitations: z.array(z.string().max(100)).max(30),
     sectionIds: z.array(z.string().max(80)).max(400),
     private: z.boolean().default(true),
+    discovery: z
+      .object({
+        candidates: z.number().int().nonnegative(),
+        links: z.number().int().nonnegative(),
+        complete: z.boolean(),
+      })
+      .optional(),
   })
   .superRefine((s, ctx) => {
     const ids = new Set<string>();
@@ -57,13 +64,20 @@ export const SearchRequestSchema = z
   })
   .refine((x) => x.scope === 'page' || x.publicSearchConsent, 'Site search needs consent');
 export type SearchRequest = z.infer<typeof SearchRequestSchema>;
+export const ExcerptSchema = z
+  .object({
+    start: z.number().int().nonnegative(),
+    end: z.number().int().positive(),
+  })
+  .refine((x) => x.end > x.start, 'Invalid excerpt range');
 export const ResultSchema = z.object({
   id: z.string(),
-  kind: z.enum(['passage', 'page', 'control']),
+  kind: z.enum(['passage', 'page', 'control', 'listing']),
   title: z.string(),
   url: z.string().optional(),
   origin: z.string(),
   quote: z.string(),
+  excerpt: ExcerptSchema.optional(),
   headingPath: z.array(z.string()),
   observedAt: z.string(),
   evidence: z.enum(['direct', 'partial', 'candidate_only', 'none']),
@@ -76,7 +90,11 @@ export const ResultSchema = z.object({
 });
 export type EvidenceResult = z.infer<typeof ResultSchema>;
 export const CoverageSchema = z.object({
+  candidatesObserved: z.number().optional(),
+  candidatesAssessed: z.number().optional(),
+  linksObserved: z.number().optional(),
   pagesChecked: z.number(),
+  fetchAttempts: z.number().optional(),
   urlsDiscovered: z.number(),
   blocked: z.number(),
   cacheHits: z.number(),
@@ -96,6 +114,7 @@ export const CoverageSchema = z.object({
           'checking',
           'verified',
           'no_evidence',
+          'matched_links',
           'verification_failed',
           'fetch_failed',
           'blocked',
@@ -150,6 +169,7 @@ export const LocalMessageSchema = z.discriminatedUnion('type', [
     type: z.literal('SHOW'),
     snapshotId: z.string(),
     candidateId: z.string(),
+    excerpt: ExcerptSchema.optional(),
     documentId: z.string(),
   }),
   z.object({ type: z.literal('CLEAR') }),

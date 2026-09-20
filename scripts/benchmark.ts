@@ -21,7 +21,7 @@ const counts: Record<string, number[]> = { current: [], site: [] };
 try {
   for (const mode of ['current', 'site'])
     for (let i = 0; i < 20; i++) {
-      const path = mode === 'current' ? '/fixtures/news' : '/fixtures/docs';
+      const path = mode === 'current' ? '/fixtures/journal' : '/fixtures/docs';
       const snapshot = extractHtml(
         (await fixtures.inject(path)).body,
         'http://127.0.0.1:4318' + path,
@@ -33,7 +33,7 @@ try {
         body: JSON.stringify({
           protocol: 1,
           question:
-            mode === 'current' ? "What is the baby's name?" : 'How do loops work in Python?',
+            mode === 'current' ? 'Which beacon is marked amber?' : 'How does a cycle repeat?',
           scope: mode === 'current' ? 'page' : 'site',
           snapshot,
           consent: true,

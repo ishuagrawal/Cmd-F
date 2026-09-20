@@ -71,31 +71,31 @@ it('requires authentication before parsing or scheduling work', async () => {
   const r = await api.inject({ method: 'POST', url: '/v1/searches', payload: {} });
   expect(r.statusCode).toBe(401);
 });
-it('finds the actual child excerpt on the current page', async () => {
-  const initial = await search('/fixtures/news', "What is the baby's name?");
+it('finds the requested detail on the current page', async () => {
+  const initial = await search('/fixtures/journal', 'Which beacon is marked amber?');
   const s = await finish(initial.id);
   expect(s.evidence).toBe('direct');
-  expect(s.results[0].quote).toContain('Juniper');
+  expect(s.results[0].quote).toContain('marked amber');
   expect(s.coverage.pagesChecked).toBe(1);
 });
-it('finds control-flow subpage without fetching actions', async () => {
+it('finds a handbook subpage without fetching actions', async () => {
   await fixtures.inject({ method: 'POST', url: '/__reset' });
-  const initial = await search('/fixtures/docs', 'How do loops work in Python?', 'site');
+  const initial = await search('/fixtures/docs', 'How does a cycle repeat?', 'site');
   const s = await finish(initial.id);
   expect(s.evidence).toBe('direct');
-  expect(s.results[0].url).toContain('/control-flow');
-  expect(s.results[0].quote).toContain('for loop');
+  expect(s.results[0].url).toContain('/processes');
+  expect(s.results[0].quote).toContain('fixed cycle');
   const stats = (await fixtures.inject('/__stats')).json();
   expect(stats.actions).toBe(0);
   expect(stats.requests).not.toContain('/logout');
 });
 it('does not force an answer for unrelated questions', async () => {
-  const s = await finish((await search('/fixtures/news', 'What is the temperature on Mars?')).id);
+  const s = await finish((await search('/fixtures/journal', 'Which instrument measures rainfall?')).id);
   expect(s.evidence).toBe('none');
   expect(s.message).toBe('No answer found in the pages checked.');
 });
 it('does not expose another owner session or accept updates', async () => {
-  const s = await search('/fixtures/news', 'baby name');
+  const s = await search('/fixtures/journal', 'beacon color');
   for (const method of ['GET', 'POST'] as const) {
     const r = await api.inject({
       method,
@@ -169,7 +169,7 @@ it('rate-limited searches stop without emitting unverified results or repeating 
       headers,
       payload: {
         protocol: 1,
-        question: 'How do loops work in Python?',
+        question: 'How does a cycle repeat?',
         scope: 'site',
         snapshot,
         consent: true,
@@ -207,7 +207,7 @@ async function verifySearch(provider: Provider) {
     'owner',
     {
       protocol: 1,
-      question: 'How do loops work in Python?',
+      question: 'How does a cycle repeat?',
       scope: 'site',
       snapshot,
       consent: true,
@@ -252,13 +252,13 @@ it('displays a fetched destination only after destination verification passes', 
         return {
           mode: 'jev',
           support: 0.6,
-          candidate: candidates.find((c) => c.safeUrl?.includes('/control-flow')),
+          candidate: candidates.find((c) => c.safeUrl?.includes('/processes')),
         };
       if (purpose === 'destination')
         return {
           mode: 'jev',
           support: 0.96,
-          candidate: candidates.find((c) => c.text?.includes('A for loop')),
+          candidate: candidates.find((c) => c.text?.includes('A fixed cycle')),
         };
       return { mode: 'jev', support: 0 };
     },
@@ -271,7 +271,7 @@ it('displays a fetched destination only after destination verification passes', 
     provider: 'jev',
     evidence: 'direct',
   });
-  expect(state.results[0].url).toContain('/control-flow');
+  expect(state.results[0].url).toContain('/processes');
 });
 it('propagates route verification errors instead of treating them as fetch errors', async () => {
   const state = await verifySearch({

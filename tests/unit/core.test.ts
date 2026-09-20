@@ -21,14 +21,14 @@ describe('URL policy', () => {
   it.each([
     '/logout',
     '/sign-out',
-    '/account/membership',
+    '/settings/apply',
     '/checkout',
-    '/cancel',
+    '/activate',
     '/anything?action=delete',
   ])('does not navigate action %s', (path) =>
     expect(actionPolicy('https://site.test' + path)).not.toBe('read_candidate'),
   );
-  it.each(['/help/cancel', '/docs/how-to-cancel', '/support/unsubscribe'])(
+  it.each(['/help/preferences', '/docs/how-to-adjust', '/support/notifications'])(
     'permits help article %s',
     (path) => expect(actionPolicy('https://site.test' + path)).toBe('read_candidate'),
   );
@@ -78,18 +78,18 @@ describe('URL policy', () => {
 describe('source extraction', () => {
   it('excludes credentials and drafts, preserves code and heading provenance', () => {
     const snap = extractHtml(
-      '<title>Guide</title><h1>Python</h1><h2 id="for">Control flow</h2><p>Repeat a block.</p><pre>for x in xs:\n    print(x)</pre><input value="input-secret"><textarea>draft-secret</textarea><div contenteditable>edited-secret</div><script>script-secret</script>',
+      '<title>Guide</title><h1>Reference</h1><h2 id="process">Processes</h2><p>Repeat a block.</p><pre>sequence: north, east, south\n  record each item</pre><input value="input-secret"><textarea>draft-secret</textarea><div contenteditable>edited-secret</div><script>script-secret</script>',
       'https://docs.test/',
     );
     expect(JSON.stringify(snap)).not.toMatch(
       /input-secret|draft-secret|edited-secret|script-secret/,
     );
-    expect(snap.candidates.find((x) => x.text?.includes('print'))?.text).toContain('\n    ');
-    expect(snap.candidates.find((x) => x.text?.includes('print'))?.headingPath).toEqual([
-      'Python',
-      'Control flow',
+    expect(snap.candidates.find((x) => x.text?.includes('record each item'))?.text).toContain('\n  ');
+    expect(snap.candidates.find((x) => x.text?.includes('record each item'))?.headingPath).toEqual([
+      'Reference',
+      'Processes',
     ]);
-    expect(snap.candidates.find((x) => x.text?.includes('print'))?.headingId).toBe('for');
+    expect(snap.candidates.find((x) => x.text?.includes('record each item'))?.headingId).toBe('process');
   });
   it('resolves base and rejects dangerous destinations', () => {
     const s = extractHtml(
@@ -127,24 +127,24 @@ describe('source extraction', () => {
 });
 describe('provider validation', () => {
   const candidates = extractHtml(
-    '<p>The couple named their baby daughter Juniper.</p><p>Morgan is a musician.</p>',
+    '<p>The beacon is marked amber.</p><p>The guide opens at sunrise.</p>',
     'https://site.test',
   ).candidates;
   it('mock returns actual candidate and honest mode', async () => {
     const d = await new MockProvider().select(
-      "What is the baby's name?",
+      'Which beacon is marked amber?',
       candidates,
       signal,
       budget(),
     );
-    expect(d.candidate?.text).toContain('Juniper');
+    expect(d.candidate?.text).toContain('amber');
     expect(d.mode).toBe('mock');
   });
   it('does not force no-answer match', async () =>
     expect(
       (
         await new MockProvider().select(
-          'What is the temperature on Mars?',
+          'Which instrument measures rainfall?',
           candidates,
           signal,
           budget(),
@@ -186,14 +186,14 @@ describe('provider validation', () => {
       );
     }) as typeof fetch;
     const d = await new JevProvider('fake-key', 'jev-1.13.0', transport).select(
-      'baby name',
+      'beacon color',
       candidates,
       signal,
       budget(),
     );
     expect(d.support).toBe(0.94);
     expect(bodies.length).toBe(2);
-    expect(JSON.stringify(bodies[1])).not.toContain('Morgan');
+    expect(JSON.stringify(bodies[1])).not.toContain('unrelated-private-value');
   });
   it('retry attempts consume budget and unknown IDs fail', async () => {
     let calls = 0;
@@ -203,7 +203,7 @@ describe('provider validation', () => {
     }) as typeof fetch;
     const b = budget();
     await expect(
-      new JevProvider('fake', 'jev-1.13.0', transport).select('baby name', candidates, signal, b),
+      new JevProvider('fake', 'jev-1.13.0', transport).select('beacon color', candidates, signal, b),
     ).rejects.toThrow('rate_limited');
     expect(calls).toBe(1);
     expect(b.calls).toBe(1);
@@ -241,10 +241,10 @@ describe('public cache', () => {
 
 it('mock support does not promote a half-answer to direct', async () => {
   const candidates = extractHtml(
-    '<p>Manage your membership from this page.</p>',
+    '<p>Manage preferences from this page.</p>',
     'https://site.test/',
   ).candidates;
   expect(
-    (await new MockProvider().select('cancel membership', candidates, signal, budget())).candidate,
+    (await new MockProvider().select('change alerts', candidates, signal, budget())).candidate,
   ).toBeUndefined();
 });

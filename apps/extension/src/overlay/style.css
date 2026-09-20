@@ -62,7 +62,7 @@ summary:focus-visible {
   overflow: hidden;
   border: 1px solid #dce0d5;
   border-radius: 18px;
-  animation: appear 0.18s ease-out;
+  animation: none;
 }
 header {
   display: flex;
@@ -398,7 +398,7 @@ footer {
   order: 1;
   flex: none;
   margin-top: 10px;
-  max-height: min(440px, var(--response-height, 440px));
+  max-height: min(520px, var(--response-height, 520px));
   border: 1px solid #e0e4d9;
   background: #fffffc;
   border-radius: 20px;
@@ -477,4 +477,77 @@ footer {
 }
 .launch-help .brand {
   font-weight: 600;
+}
+
+/* Compact source cards keep multi-result searches readable. */
+.source.listing {
+  padding: 12px 0;
+}
+.listing-note {
+  font-size: 11px;
+  color: #737e6c;
+  margin: 8px 0 14px;
+}
+.source.listing h2 {
+  font-size: 15px;
+  line-height: 1.45;
+  margin: 6px 0 4px;
+}
+.source-domain {
+  color: #64735d;
+  font-size: 11px;
+  margin: 3px 0;
+  overflow-wrap: anywhere;
+}
+.source .crumb {
+  line-height: 1.5;
+  margin: 5px 0;
+}
+.source .actions {
+  margin-top: 10px;
+  gap: 6px;
+}
+.coverage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding-top: 12px;
+  border-top: 1px solid #e8eade;
+  font-variant-numeric: tabular-nums;
+  margin: 0 0 12px;
+  padding-top: 0;
+  border-top: 0;
+}
+.page-details {
+  color: #64705d;
+  font-size: 11px;
+  margin: 12px 0 6px;
+}
+.page-details summary {
+  cursor: pointer;
+  padding: 5px 0;
+}
+.page-details p {
+  padding: 7px 0;
+  margin: 0;
+  border-top: 1px solid #eef0e8;
+  overflow-wrap: anywhere;
+}
+.page-details small {
+  color: #87917e;
+}
+.search-status:has(.loading) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.search-status .loading {
+  margin: 0;
+  display: flex;
+  gap: 3px;
+}
+.search-status .loading span {
+  width: 4px;
+  height: 4px;
+  background: #708565;
 }

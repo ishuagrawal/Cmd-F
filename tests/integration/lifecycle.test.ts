@@ -8,8 +8,8 @@ import { publicNetworkPolicy } from '../../packages/security/src/network';
 import { PublicCache } from '../../apps/api/src/cache/public-cache';
 function session(section = false) {
   const snapshot = extractHtml(
-    '<h1>Account</h1><button>Account menu</button><button>Cancel membership</button>',
-    'https://example.com/account',
+    '<h1>Preferences</h1><button>Preferences</button><button>Change alerts</button>',
+    'https://fixture.test/settings',
   );
   snapshot.candidates = snapshot.candidates.filter((candidate) => candidate.kind === 'control');
   snapshot.candidates[0].expanded = false;
@@ -21,18 +21,18 @@ function session(section = false) {
       {
         ...snapshot.candidates[0],
         kind: 'group',
-        label: 'Cancel membership',
-        sectionId: 'account-section',
+        label: 'Change alerts',
+        sectionId: 'settings-section',
       },
     ];
-    snapshot.sectionIds = ['account-section'];
+    snapshot.sectionIds = ['settings-section'];
   }
   const cache = new PublicCache();
   const s = new SearchSession(
     'owner',
     {
       protocol: 1,
-      question: 'cancel membership',
+      question: 'change alerts',
       scope: 'page',
       snapshot,
       consent: true,
@@ -95,7 +95,7 @@ it('turns legacy manual waits into a terminal result without masking real sectio
   expect(legacy.lifecycle).toBe('completed');
   expect(legacy.message).not.toMatch(/reading|open|inspect again/i);
   expect(legacy.coverage.stopReason).toBe('manual_inspection_unsupported');
-  s.state.requestedSections = ['account-section'];
+  s.state.requestedSections = ['settings-section'];
   expect(normalizeSearchState(s.state)).toBe(s.state);
   s.clear();
   cache.close();

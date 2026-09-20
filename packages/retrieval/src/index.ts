@@ -5,25 +5,11 @@ const stop = new Set(
   ),
 );
 const synonyms: Record<string, string> = {
-  loops: 'loop',
-  looping: 'loop',
-  iteration: 'loop',
-  iterate: 'loop',
-  iterating: 'loop',
-  repetition: 'loop',
-  repeat: 'loop',
-  repeated: 'loop',
-  repeating: 'loop',
-  unsubscribe: 'cancel',
-  cancellation: 'cancel',
-  cancelling: 'cancel',
-  subscription: 'membership',
-  subscriptions: 'membership',
-  baby: 'child',
-  babys: 'child',
-  newborn: 'child',
-  daughter: 'child',
-  son: 'child',
+  cycles: 'cycle',
+  cycling: 'cycle',
+  repetition: 'repeat',
+  repeated: 'repeat',
+  repeating: 'repeat',
   named: 'name',
   called: 'name',
   name: 'name',
@@ -48,8 +34,8 @@ export function rank<
   T extends Pick<Candidate, 'label' | 'text' | 'context' | 'headingPath'> & { safeUrl?: string },
 >(question: string, candidates: T[]): Array<{ candidate: T; score: number; overlap: number }> {
   const q = [...new Set(tokens(question))];
-  // Keep ordered phrases for routing: removing stop words alone makes "for loops"
-  // indistinguishable from "while loops". This applies to any matching phrase.
+  // Keep ordered phrases for routing: removing stop words alone can make
+  // similarly worded destinations indistinguishable. This applies to any matching phrase.
   const words = (text: string) =>
     text
       .toLowerCase()
@@ -71,15 +57,23 @@ export function rank<
     tokens([c.label, c.text, c.context, ...c.headingPath, paths[i]].join(' ')),
   );
   const avg = docs.reduce((a, d) => a + d.length, 0) / Math.max(1, docs.length);
+  const frequencies = docs.map((doc) => {
+    const freq = new Map<string, number>();
+    for (const word of doc) freq.set(word, (freq.get(word) || 0) + 1);
+    return freq;
+  });
+  const documentFrequency = new Map(
+    q.map((term) => [term, frequencies.filter((f) => f.has(term)).length]),
+  );
   return candidates
     .map((candidate, i) => {
       let score = 0,
         matched = 0;
       for (const term of q) {
-        const tf = docs[i].filter((x) => x === term).length;
+        const tf = frequencies[i].get(term) || 0;
         if (!tf) continue;
         matched++;
-        const df = docs.filter((d) => d.includes(term)).length;
+        const df = documentFrequency.get(term)!;
         score +=
           (Math.log(1 + (docs.length - df + 0.5) / (df + 0.5)) * (tf * 2.2)) /
           (tf + 1.2 * (0.25 + (0.75 * docs[i].length) / Math.max(avg, 1)));

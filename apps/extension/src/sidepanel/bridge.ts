@@ -1,3 +1,4 @@
+import { passageUrl } from '../source-link';
 import { DomSession } from '../../../../packages/extraction/src/dom';
 import {
   SnapshotSchema,
@@ -39,9 +40,9 @@ export async function local(tabId: number, operation: LocalMessage): Promise<unk
 export async function inspect(tabId: number, question = ''): Promise<PageSnapshot> {
   return SnapshotSchema.parse(await local(tabId, { type: 'INSPECT', question }));
 }
-export async function openSource(url: string) {
+export async function openSource(url: string, quote?: string) {
   if (isExtension) {
-    const result = await chrome.runtime.sendMessage({ type: 'OPEN_SOURCE', url });
+    const result = await chrome.runtime.sendMessage({ type: 'OPEN_SOURCE', url, quote });
     if (result?.error) throw new Error(result.error);
-  } else window.open(url, '_blank', 'noopener,noreferrer');
+  } else window.open(passageUrl(url, quote), '_blank', 'noopener,noreferrer');
 }

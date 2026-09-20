@@ -17,6 +17,58 @@ export function safeText(el: Element): string {
     ? (clone.textContent || '').trim()
     : normalize(clone.textContent || '');
 }
+// Mirror safeText's whitespace normalization while retaining exact DOM offsets,
+// including inline links, emphasis and citation nodes.
+export function excerptRange(
+  el: Element,
+  text: string,
+  span: { start: number; end: number },
+): Range {
+  if (
+    !Number.isInteger(span.start) ||
+    !Number.isInteger(span.end) ||
+    span.start < 0 ||
+    span.end <= span.start ||
+    span.end > text.length
+  )
+    throw new Error('Invalid excerpt. Search this page again.');
+  const walker = el.ownerDocument.createTreeWalker(el, 4);
+  const points: { node: Text; offset: number }[] = [];
+  let normalized = '';
+  let pending: { node: Text; offset: number } | undefined;
+  const pre = el.tagName === 'PRE';
+  while (walker.nextNode()) {
+    const node = walker.currentNode as Text;
+    if (node.parentElement?.closest(excluded + ',[hidden],[aria-hidden="true"]')) continue;
+    for (let offset = 0; offset < node.data.length; offset++) {
+      const char = node.data[offset];
+      if (!pre && /\s/.test(char)) {
+        if (normalized && !pending) pending = { node, offset };
+        continue;
+      }
+      if (pending) {
+        normalized += ' ';
+        points.push(pending);
+        pending = undefined;
+      }
+      normalized += char;
+      points.push({ node, offset });
+    }
+  }
+  if (pre) {
+    const leading = normalized.length - normalized.trimStart().length;
+    normalized = normalized.trim();
+    points.splice(0, leading);
+    points.length = normalized.length;
+  }
+  if (normalized !== text) throw new Error('The source text changed. Search this page again.');
+  const first = points[span.start];
+  const last = points[span.end - 1];
+  const range = el.ownerDocument.createRange();
+  range.setStart(first.node, first.offset);
+  range.setEnd(last.node, last.offset + 1);
+  return range;
+}
 function accessibleName(el: Element, root: Document | ShadowRoot, text: string): string {
   return (
     el.getAttribute('aria-label') ||
@@ -65,6 +117,7 @@ export class DomSession {
   private snapshot?: PageSnapshot;
   private nodes = new Map<string, Element>();
   private all: Candidate[] = [];
+  private delivered = new Set<string>();
   private anchors = new Map<string, LocalAnchor>();
   private sections = new Map<string, Candidate[]>();
   private outline?: HTMLElement;
@@ -106,11 +159,13 @@ export class DomSession {
     this.anchors.clear();
     this.sections.clear();
     this.all = [];
+    this.delivered.clear();
     const limitations = new Set<string>();
     let headingPath: string[] = [];
     let headingId: string | undefined;
     let sectionId = 's0';
     let count = 0;
+    let traversalComplete = true;
     const start = performance.now();
     const controllerByContainer = new Map<string, string>();
     const elementIds = new Map<Element, string>();
@@ -123,6 +178,7 @@ export class DomSession {
       for (const el of elements) {
         if (++count > 16000 || performance.now() - start > 500) {
           limitations.add('snapshot_truncated');
+          traversalComplete = false;
           break;
         }
         if (
@@ -186,7 +242,7 @@ export class DomSession {
           snapshotId: id,
           kind,
           label: name.slice(0, 500),
-          text: kind === 'passage' ? text.slice(0, 9000) : undefined,
+          text: kind !== 'control' ? text.slice(0, 9000) : undefined,
           safeUrl,
           headingPath: [...headingPath],
           headingId,
@@ -302,27 +358,14 @@ export class DomSession {
       selected.push(c);
       bytes += size;
     }
+    selected.forEach((c) => this.delivered.add(c.id));
     if (selected.length < this.all.length) {
       limitations.add('snapshot_truncated');
-      for (const [sid, cs] of this.sections) {
-        if (!cs.length || selected.some((c) => c.sectionId === sid)) continue;
-        const c = cs[0];
-        const group: Candidate = {
-          ...c,
-          id: `g${sid}`,
-          kind: 'group',
-          label: c.headingPath.at(-1) || 'Page section',
-          text: undefined,
-          context: (c.text || c.label).slice(0, 120),
-          sectionId: sid,
-        };
-        if (
-          bytes + new TextEncoder().encode(JSON.stringify(group)).byteLength > 76000 ||
-          selected.length >= 590
-        )
-          break;
+      for (const group of this.remainingGroups(id, question)) {
+        const size = new TextEncoder().encode(JSON.stringify(group)).byteLength;
+        if (bytes + size > 76000 || selected.length >= 590) break;
+        bytes += size;
         selected.push(group);
-        bytes += new TextEncoder().encode(JSON.stringify(group)).byteLength;
       }
     }
     this.snapshot = {
@@ -337,6 +380,12 @@ export class DomSession {
       limitations: [...limitations],
       sectionIds: [...this.sections.keys()],
       private: true,
+      discovery: {
+        candidates: this.all.filter((c) => c.textRole !== 'heading' && c.visibility !== 'hidden')
+          .length,
+        links: this.all.filter((c) => c.kind === 'link' && c.visibility !== 'hidden').length,
+        complete: traversalComplete,
+      },
     };
     this.observer.observe(this.doc, {
       subtree: true,
@@ -347,6 +396,25 @@ export class DomSession {
     });
     return this.snapshot;
   }
+  private remainingGroups(snapshotId: string, question = ''): Candidate[] {
+    const groups: Candidate[] = [];
+    for (const [sid, cs] of this.sections) {
+      const omitted = cs.filter((c) => !this.delivered.has(c.id) && c.visibility !== 'hidden');
+      if (!omitted.length) continue;
+      const c = rank(question, omitted)[0].candidate;
+      groups.push({
+        ...c,
+        snapshotId,
+        id: `g${sid}`,
+        kind: 'group',
+        label: c.headingPath.at(-1) || 'Page section',
+        text: undefined,
+        context: (c.text || c.label).slice(0, 120),
+        sectionId: sid,
+      });
+    }
+    return groups;
+  }
   readSections(snapshotId: string, ids: string[]) {
     if (
       this.dirty ||
@@ -355,9 +423,35 @@ export class DomSession {
       ids.some((id) => !this.sections.has(id))
     )
       throw new Error('Source changed. Inspect the page again.');
-    return this.inspect('', ids);
+    // Page through the immutable extraction, retaining the node identities used by SHOW.
+    // Re-extracting used to return the same first window on every section request.
+    const wanted = new Set(ids);
+    const selected: Candidate[] = [];
+    let bytes = 0;
+    for (const c of this.all) {
+      if (!wanted.has(c.sectionId || '') || this.delivered.has(c.id) || c.visibility === 'hidden')
+        continue;
+      const size = new TextEncoder().encode(JSON.stringify(c)).byteLength;
+      if (bytes + size > 55000 || selected.length >= 350) continue;
+      bytes += size;
+      selected.push(c);
+      this.delivered.add(c.id);
+    }
+    for (const group of this.remainingGroups(snapshotId)) {
+      const size = new TextEncoder().encode(JSON.stringify(group)).byteLength;
+      if (bytes + size > 76000 || selected.length >= 590) break;
+      selected.push(group);
+      bytes += size;
+    }
+    this.snapshot = { ...this.snapshot, candidates: selected };
+    return this.snapshot;
   }
-  show(snapshotId: string, candidateId: string, documentId: string) {
+  show(
+    snapshotId: string,
+    candidateId: string,
+    documentId: string,
+    excerpt?: { start: number; end: number },
+  ) {
     if (
       this.doc.URL !== this.url ||
       this.snapshot?.id !== snapshotId ||
@@ -404,6 +498,8 @@ export class DomSession {
         'This target is hidden or unavailable. Open its menu, then try Show on page again.',
       );
     if (!matches(el)) throw new Error('The source text or link changed. Search this page again.');
+    const focusedRange =
+      excerpt && c.kind === 'passage' ? excerptRange(el, c.text || c.label, excerpt) : undefined;
     this.observer.disconnect();
     this.clear();
     const d = el.ownerDocument;
@@ -415,8 +511,8 @@ export class DomSession {
     const H = (d.defaultView as unknown as { Highlight?: new (...ranges: Range[]) => unknown })
       .Highlight;
     if (c.kind === 'passage' && css?.highlights && H) {
-      const range = d.createRange();
-      range.selectNodeContents(el);
+      const range = focusedRange || d.createRange();
+      if (!focusedRange) range.selectNodeContents(el);
       css.highlights.set('cmd-f-match', new H(range));
     }
     const overlay = d.createElement('div');
@@ -427,7 +523,11 @@ export class DomSession {
     d.documentElement.append(overlay);
     this.outline = overlay;
     el.scrollIntoView({ block: 'center', behavior: 'instant' });
-    const rect = el.getBoundingClientRect();
+    if (focusedRange) {
+      const target = focusedRange.startContainer.parentElement;
+      target?.scrollIntoView({ block: 'center', behavior: 'instant' });
+    }
+    const rect = focusedRange?.getBoundingClientRect() || el.getBoundingClientRect();
     Object.assign(overlay.style, {
       left: `${rect.left - 4}px`,
       top: `${rect.top - 4}px`,
@@ -439,7 +539,7 @@ export class DomSession {
         overlay.remove();
         return;
       }
-      const r = el.getBoundingClientRect();
+      const r = focusedRange?.getBoundingClientRect() || el.getBoundingClientRect();
       Object.assign(overlay.style, {
         left: `${r.left - 4}px`,
         top: `${r.top - 4}px`,
@@ -472,7 +572,7 @@ export class DomSession {
       case 'READ_SECTION':
         return this.readSections(msg.snapshotId, msg.sectionIds);
       case 'SHOW':
-        return this.show(msg.snapshotId, msg.candidateId, msg.documentId);
+        return this.show(msg.snapshotId, msg.candidateId, msg.documentId, msg.excerpt);
       case 'CLEAR':
         this.clear();
         return { ok: true };

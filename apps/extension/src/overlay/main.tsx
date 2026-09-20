@@ -53,8 +53,11 @@ function Chat() {
   const log = useRef<HTMLDivElement>(null);
   const running = busy || state?.lifecycle === 'running';
   const sources =
-    state?.results.filter((r) => r.evidence === 'direct' && r.provider !== 'lexical_fallback') ||
-    [];
+    state?.results.filter(
+      (r) =>
+        (r.evidence === 'direct' && r.provider !== 'lexical_fallback') ||
+        (r.kind === 'listing' && r.evidence === 'candidate_only'),
+    ) || [];
   const unavailable = new URLSearchParams(location.search).has('unavailable');
 
   useEffect(() => {
@@ -143,7 +146,7 @@ function Chat() {
   }, []);
   useEffect(() => {
     log.current?.scrollTo({ top: log.current.scrollHeight, behavior: 'instant' });
-  }, [state, asked, error, history]);
+  }, [asked, error, history]);
   useEffect(() => {
     if (!state?.id) return;
     const id = state.id;
@@ -257,6 +260,7 @@ function Chat() {
         snapshotId: result.snapshotId,
         documentId: result.documentId,
         candidateId: result.candidate.id,
+        excerpt: result.excerpt,
       });
     } catch (e) {
       setError((e as Error).message);
@@ -299,7 +303,8 @@ function Chat() {
                 </p>
                 <p>
                   Submitting a request searches this page and, with This site selected, public pages
-                  on the same site. Your query and selected page text go to the local backend
+                  on this site and relevant linked websites. Your query and selected page text go to
+                  the local backend
                   {provider && provider !== 'Demo keyword provider' ? ` and ${provider}` : ''}. Form
                   values and drafts are excluded.
                 </p>
@@ -332,14 +337,35 @@ function Chat() {
             )}
             {state && (
               <>
+                <div className="coverage" aria-label="Search coverage">
+                  <span>
+                    {state.coverage.pagesChecked}{' '}
+                    {state.coverage.pagesChecked === 1 ? 'page' : 'pages'} checked
+                  </span>
+                  <span>{state.coverage.linksObserved ?? 0} links seen</span>
+                  <span>{(state.coverage.elapsedMs / 1000).toFixed(1)}s</span>
+                </div>
+                {sources.some((r) => r.kind === 'listing') && (
+                  <p className="listing-note">Destination details not verified.</p>
+                )}
                 {sources.map((r) => (
-                  <article className="source" key={r.id}>
+                  <article
+                    className={`source ${r.kind === 'listing' ? 'listing' : 'passage'}`}
+                    key={r.id}
+                  >
                     <span className="eyebrow">
-                      {r.provider === 'mock' ? 'DEMO MATCH' : 'SOURCE FOUND'}
+                      {r.kind === 'listing'
+                        ? 'MATCHING LISTING'
+                        : r.provider === 'mock'
+                          ? 'DEMO MATCH'
+                          : 'SOURCE FOUND'}
                     </span>
                     <h2>{r.title || r.origin}</h2>
-                    {!!r.headingPath.length && <p className="crumb">{r.headingPath.join(' / ')}</p>}
-                    <blockquote>{r.quote}</blockquote>
+                    {r.url && <p className="source-domain">{new URL(r.url).hostname}</p>}
+                    {r.kind !== 'listing' && !!r.headingPath.length && (
+                      <p className="crumb">{r.headingPath.join(' / ')}</p>
+                    )}
+                    {r.kind !== 'listing' && <blockquote>{r.quote}</blockquote>}
                     <div className="actions">
                       {r.local && (
                         <button className="primary" onClick={() => void show(r)}>
@@ -347,17 +373,19 @@ function Chat() {
                           Show on page
                         </button>
                       )}
-                      {r.kind === 'page' &&
-                        !r.local &&
+                      {((r.kind === 'page' && !r.local) || r.kind === 'listing') &&
                         r.url &&
                         shareableUrl(r.url) &&
                         actionPolicy(r.url) === 'read_candidate' && (
                           <button
                             onClick={() =>
-                              void openSource(r.url!).catch((e) => setError(e.message))
+                              void openSource(
+                                r.url!,
+                                r.kind === 'listing' ? undefined : r.quote,
+                              ).catch((e) => setError(e.message))
                             }
                           >
-                            Open source
+                            {r.kind === 'listing' ? 'Open listing' : 'Open source'}
                             <ArrowUpRight size={15} />
                           </button>
                         )}
@@ -379,30 +407,35 @@ function Chat() {
                     </div>
                   )}
                 </div>
-                {!running && (
-                  <>
-                    <p className="coverage">
-                      {state.coverage.pagesChecked} pages checked · {state.coverage.urlsDiscovered}{' '}
-                      links discovered
-                    </p>
-                    {!!state.coverage.checkedPages?.length && (
-                      <details className="page-details">
-                        <summary>Pages inspected</summary>
-                        {state.coverage.checkedPages.map((page, index) => (
-                          <p key={index}>
-                            {page.title || page.url || 'Current page'} —{' '}
-                            {page.outcome.replaceAll('_', ' ')}
-                            {page.url && (
-                              <small style={{ display: 'block', overflowWrap: 'anywhere' }}>
-                                {page.url}
-                              </small>
-                            )}
-                          </p>
-                        ))}
-                      </details>
-                    )}
-                  </>
-                )}
+                <>
+                  {!!state.coverage.checkedPages?.length && (
+                    <details className="page-details">
+                      <summary>Search details</summary>
+                      <p>
+                        {state.coverage.candidatesAssessed ?? 0} of{' '}
+                        {state.coverage.candidatesObserved ?? 0} candidates reviewed ·{' '}
+                        {state.coverage.fetchAttempts ?? 0} page fetches ·{' '}
+                        {state.coverage.urlsDiscovered} crawl destinations
+                      </p>
+                      {state.coverage.limitations.some((x) =>
+                        ['more_local_candidates', 'more_candidates', 'snapshot_truncated'].includes(
+                          x,
+                        ),
+                      ) && <p>Some page content remains unchecked.</p>}
+                      {state.coverage.checkedPages.map((page, index) => (
+                        <p key={index}>
+                          {page.title || page.url || 'Current page'} —{' '}
+                          {page.outcome.replaceAll('_', ' ')}
+                          {page.url && (
+                            <small style={{ display: 'block', overflowWrap: 'anywhere' }}>
+                              {page.url}
+                            </small>
+                          )}
+                        </p>
+                      ))}
+                    </details>
+                  )}
+                </>
               </>
             )}
             {/extension context invalidated/i.test(error) && (
@@ -486,11 +519,18 @@ function summary(state: SearchState) {
   if (state.lifecycle === 'running')
     return state.message || 'Looking through this page and its sources…';
   const results = state.results.filter(
-    (r) => r.evidence === 'direct' && r.provider !== 'lexical_fallback',
+    (r) =>
+      (r.evidence === 'direct' && r.provider !== 'lexical_fallback') ||
+      (r.kind === 'listing' && r.evidence === 'candidate_only'),
   );
+  if (state.coverage.stopReason.endsWith('reached')) return state.message;
+  if (results.length && results.every((r) => r.kind === 'listing'))
+    return 'Matching listings found. Destination details have not been verified.';
   if (!results.length) {
     if (state.coverage.stopReason === 'deadline_reached')
-      return 'Search time limit reached. No verified source found; try a narrower request.';
+      return 'Search time limit reached before a source was verified.';
+    if (state.coverage.stopReason === 'fetch_budget_reached')
+      return `Search fetch limit reached. ${state.message}`;
     if (state.coverage.stopReason === 'page_budget_reached')
       return `Search page limit reached. ${state.message}`;
     return state.message || 'No relevant source found in the pages checked.';

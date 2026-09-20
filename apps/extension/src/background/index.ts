@@ -1,3 +1,4 @@
+import { passageUrl } from '../source-link';
 import { z } from 'zod';
 import { launchFailure } from './launch-error';
 import { LocalMessageSchema } from '../../../../packages/contracts/src';
@@ -63,7 +64,8 @@ chrome.runtime.onMessage.addListener((raw, sender, respond) => {
       const safe = shareableUrl(url);
       if (!safe || actionPolicy(safe) !== 'read_candidate')
         throw new Error('Use the existing website control directly.');
-      await chrome.tabs.create({ url: safe });
+      const quote = z.string().max(10000).optional().parse(raw.quote);
+      await chrome.tabs.create({ url: passageUrl(safe, quote) });
       return { ok: true };
     }
     const msg = Envelope.parse(raw);

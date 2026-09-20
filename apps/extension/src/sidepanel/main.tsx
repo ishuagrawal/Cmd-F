@@ -18,7 +18,6 @@ import {
   LockSimple,
   CaretDown,
   ArrowClockwise,
-  BookOpen,
   Sparkle,
 } from '@phosphor-icons/react';
 import {
@@ -280,6 +279,7 @@ function Panel() {
         type: 'SHOW',
         snapshotId: r.snapshotId,
         candidateId: r.candidate.id,
+        excerpt: r.excerpt,
         documentId: r.documentId,
       });
       setHighlighted(true);
@@ -353,7 +353,7 @@ function Panel() {
               value={question}
               maxLength={500}
               onChange={(e) => setQuestion(e.target.value)}
-              placeholder="How do loops work in Python?"
+              placeholder="Ask about this page..."
               rows={3}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -485,7 +485,11 @@ function Panel() {
               <span>{state.results.length.toString().padStart(2, '0')}</span>
             </div>
             {state.results
-              .filter((r) => r.evidence === 'direct' && r.provider !== 'lexical_fallback')
+              .filter(
+                (r) =>
+                  (r.evidence === 'direct' && r.provider !== 'lexical_fallback') ||
+                  (r.kind === 'listing' && r.evidence === 'candidate_only'),
+              )
               .map((r, i) => (
                 <article key={r.id} className="result">
                   <div className="result-meta">
@@ -494,11 +498,13 @@ function Panel() {
                       {r.kind}
                     </span>
                     <span>
-                      {r.provider === 'mock'
-                        ? 'Demo match'
-                        : r.evidence === 'direct'
-                          ? 'Direct evidence'
-                          : r.evidence.replaceAll('_', ' ')}
+                      {r.kind === 'listing'
+                        ? 'Matching listing'
+                        : r.provider === 'mock'
+                          ? 'Demo match'
+                          : r.evidence === 'direct'
+                            ? 'Direct evidence'
+                            : r.evidence.replaceAll('_', ' ')}
                     </span>
                   </div>
                   <h2>{r.title || r.origin}</h2>
@@ -506,6 +512,7 @@ function Panel() {
                     <div className="breadcrumb">{r.headingPath.join(' / ')}</div>
                   )}
                   <blockquote>{r.quote}</blockquote>
+                  {r.kind === 'listing' && <p>Destination details not verified.</p>}
                   <div className="source-path">
                     {r.url
                       ? `${new URL(r.url).hostname}${new URL(r.url).pathname}`
@@ -523,12 +530,32 @@ function Panel() {
                     ) : r.url && shareableUrl(r.url) && actionPolicy(r.url) === 'read_candidate' ? (
                       <button
                         className={i === 0 ? 'primary' : 'secondary'}
-                        onClick={() => void openSource(r.url!).catch((e) => setError(e.message))}
+                        onClick={() =>
+                          void openSource(r.url!, r.kind === 'listing' ? undefined : r.quote).catch(
+                            (e) => setError(e.message),
+                          )
+                        }
                       >
                         Open source
                         <ArrowUpRight size={15} />
                       </button>
                     ) : null}
+                    {r.kind === 'listing' &&
+                      r.url &&
+                      shareableUrl(r.url) &&
+                      actionPolicy(r.url) === 'read_candidate' && (
+                        <button
+                          onClick={() =>
+                            void openSource(
+                              r.url!,
+                              r.kind === 'listing' ? undefined : r.quote,
+                            ).catch((e) => setError(e.message))
+                          }
+                        >
+                          Open listing
+                          <ArrowUpRight size={15} />
+                        </button>
+                      )}
                     <button
                       className="iconbutton"
                       aria-label="Copy quote"
@@ -624,29 +651,7 @@ function Panel() {
         )}
         {!state && !running && !consentOpen && (
           <section className="suggestions">
-            <div className="section-label">A FEW WAYS TO FIND YOUR WAY</div>
-            {[
-              ['How do loops work in Python?', 'Find an explanation'],
-              ['What is the baby’s name?', 'Locate a detail'],
-              ['Where can I cancel my membership?', 'Find a control'],
-            ].map(([q, sub], i) => (
-              <button key={q} onClick={() => setQuestion(q)}>
-                <span className="suggestion-icon">
-                  {i === 0 ? (
-                    <BookOpen size={18} />
-                  ) : i === 1 ? (
-                    <MagnifyingGlass size={18} />
-                  ) : (
-                    <Cursor size={18} />
-                  )}
-                </span>
-                <span>
-                  <b>{q}</b>
-                  <small>{sub}</small>
-                </span>
-                <ArrowUpRight size={15} />
-              </button>
-            ))}
+            <div className="section-label">A SHORTCUT TO THE SOURCE</div>
             <div className="how-it-works">
               <div className="line-illustration">
                 <span />
@@ -654,9 +659,9 @@ function Panel() {
                 <span />
               </div>
               <p>
-                The answer is already out there.
+                Ask in your own words.
                 <br />
-                Let’s take you to it.
+                Cmd-F will take you to the source.
               </p>
             </div>
           </section>
@@ -729,7 +734,7 @@ function Panel() {
                   checked={siteConsent}
                   onChange={(e) => setSiteConsent(e.target.checked)}
                 />
-                <span>Also check public pages on this exact site anonymously.</span>
+                <span>Also check this site and relevant linked websites anonymously.</span>
               </label>
             )}
             <button
@@ -757,9 +762,9 @@ function Playground() {
         </a>
         <div className="fixture-tabs" role="group" aria-label="Fixture website">
           {[
-            ['docs', 'Documentation'],
-            ['news', 'A news article'],
-            ['account', 'An account menu'],
+            ['docs', 'Handbook'],
+            ['journal', 'Journal'],
+            ['settings', 'Settings'],
           ].map(([value, label]) => (
             <button aria-pressed={fixture === value} onClick={() => setFixture(value)} key={value}>
               {label}
@@ -781,7 +786,7 @@ function Playground() {
             </div>
             <div className="address">
               <LockSimple size={12} />
-              <span>fieldnotes.local / {fixture === 'docs' ? 'handbook' : fixture}</span>
+              <span>local fixture / {fixture === 'docs' ? 'handbook' : fixture}</span>
             </div>
             <ArrowClockwise size={14} />
           </div>

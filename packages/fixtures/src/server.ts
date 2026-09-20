@@ -1,7 +1,7 @@
 import Fastify from 'fastify';
 const style = `*{box-sizing:border-box}body{margin:0;background:#f8f9fa;color:#27323b;font:16px/1.75 -apple-system,BlinkMacSystemFont,sans-serif}header{height:78px;border-bottom:1px solid #dce1e4;display:flex;align-items:center;padding:0 6%;gap:18px;background:white}header b{font-size:20px;letter-spacing:-.7px}header span{font-size:12px;color:#6c7a86;border-left:1px solid #dce1e4;padding-left:18px}nav{display:flex;gap:20px;margin-left:auto}a{color:#436969;text-decoration:none}main{max-width:740px;padding:70px 44px 120px;margin:auto}h1{font-size:46px;line-height:1.12;letter-spacing:-2px;margin:12px 0 24px;color:#1d2c32}h2{font-size:24px;letter-spacing:-.6px;margin-top:44px}p{color:#52616b}small,.eyebrow{font-size:11px;letter-spacing:1.8px;text-transform:uppercase;color:#76858d}aside{background:#edf1f2;padding:18px 24px;border-left:3px solid #a5b9b9;margin-top:30px}pre{padding:22px;background:#233439;color:#e4eded;line-height:1.7;border-radius:7px;overflow:auto}button,summary{font:inherit;cursor:pointer;border:1px solid #cbd5d8;background:white;border-radius:6px;padding:10px 18px;color:#273f46}button:focus-visible,a:focus-visible{outline:3px solid #bd9e4c}li{margin:12px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tile{padding:20px;border:1px solid #dce1e4;background:white;border-radius:8px}.tile strong{display:block;color:#33494f}.tile p{font-size:13px;margin:5px 0}footer{max-width:740px;margin:auto;padding:20px 44px;border-top:1px solid #dce1e4;font-size:12px;color:#839099}`;
 function page(title: string, body: string, script = '') {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><style>${style}</style></head><body><header><b>Fieldnotes</b><span>THE REFERENCE LIBRARY</span><nav><a href="/fixtures/docs">Docs</a><a href="/fixtures/news">Journal</a><a href="/fixtures/account">Account</a></nav></header><main>${body}</main><footer>Fieldnotes · Owned Cmd-F test fixture · No real accounts or actions</footer>${script ? `<script>${script}</script>` : ''}</body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><style>${style}</style></head><body><header><b>Local Pages</b><span>OWNED TEST CONTENT</span><nav><a href="/fixtures/docs">Handbook</a><a href="/fixtures/journal">Journal</a><a href="/fixtures/settings">Settings</a></nav></header><main>${body}</main><footer>Cmd-F · Local fixture · No external actions</footer>${script ? `<script>${script}</script>` : ''}</body></html>`;
 }
 export async function fixtureServer() {
   const app = Fastify({ logger: false });
@@ -25,43 +25,41 @@ export async function fixtureServer() {
   app.get('/sitemap.xml', async (_req, reply) =>
     reply
       .type('application/xml')
-      .send(
-        '<urlset><url><loc>http://127.0.0.1:4318/fixtures/docs/control-flow</loc></url></urlset>',
-      ),
+      .send('<urlset><url><loc>http://127.0.0.1:4318/fixtures/docs/processes</loc></url></urlset>'),
   );
-  app.get('/fixtures/biography', async (_req, reply) =>
+  app.get('/fixtures/timeline', async (_req, reply) =>
     reply.type('text/html').send(
       page(
-        'Morgan Vale',
+        'Project timeline',
         `
-      <h1>Morgan Vale</h1><h2>Career</h2>
-      <p id="testimony">Morgan testified before the committee on May 16, 2023.</p>
+      <h1>Project timeline</h1><h2>Milestone</h2>
+      <p id="event">The report was presented on May 16, 2023.</p>
       <p>${'Unrelated long material. '.repeat(450)}</p>
       <h2>References</h2><ol role="doc-bibliography" class="references">
-      ${Array.from({ length: 80 }, (_, i) => `<li>Morgan testifies before committee. Publication date May 15, 2023. <a href="/fixtures/reference-${i}">Morgan testimony source ${i}</a></li>`).join('')}
+      ${Array.from({ length: 80 }, (_, i) => `<li>Archive note ${i}. Publication date May 15, 2023. <a href="/fixtures/reference-${i}">Source note ${i}</a></li>`).join('')}
       </ol>`,
       ),
     ),
   );
-  app.get('/fixtures/large-tutorial', async (_req, reply) =>
+  app.get('/fixtures/reference-index', async (_req, reply) =>
     reply.type('text/html').send(
       page(
-        'Python Tutorial',
+        'Reference index',
         `
-      <nav>${Array.from({ length: 650 }, (_, i) => `<a href="/fixtures/topic-${i}">Tutorial ${i}</a>`).join('')}</nav>
-      <h1>Python Tutorial</h1><p>Welcome to the programming tutorial.</p>
-      <a href="/fixtures/while-loops">Python While Loops</a>
-      <a href="/fixtures/for-loops">Python For Loops</a>`,
+      <nav>${Array.from({ length: 650 }, (_, i) => `<a href="/fixtures/topic-${i}">Topic ${i}</a>`).join('')}</nav>
+      <h1>Reference index</h1><p>Welcome to the local reference.</p>
+      <a href="/fixtures/conditional-cycles">Conditional cycles</a>
+      <a href="/fixtures/fixed-cycles">Fixed cycles</a>`,
       ),
     ),
   );
-  app.get('/fixtures/for-loops', async (_req, reply) =>
+  app.get('/fixtures/fixed-cycles', async (_req, reply) =>
     reply.type('text/html').send(
       page(
-        'Python For Loops',
+        'Fixed cycles',
         `
-      <nav>${Array.from({ length: 650 }, (_, i) => `<a href="/fixtures/topic-${i}">Tutorial ${i}</a>`).join('')}</nav>
-      <h1>Python For Loops</h1><p>A for loop repeats statements for each item in a sequence.</p>`,
+      <nav>${Array.from({ length: 650 }, (_, i) => `<a href="/fixtures/topic-${i}">Topic ${i}</a>`).join('')}</nav>
+      <h1>Fixed cycles</h1><p>A fixed cycle repeats one step for each item in a sequence.</p>`,
       ),
     ),
   );
@@ -70,18 +68,18 @@ export async function fixtureServer() {
       .type('text/html')
       .send(
         page(
-          'Python, one idea at a time',
-          `<div class="eyebrow">The Python handbook / Getting started</div><h1>Small steps.<br>A whole new language.</h1><p>A practical reference for the things you’ll build. Start with the basics, follow your curiosity, and keep this handbook close.</p><aside>New to Python? You’re in the right place. Each chapter pairs a clear explanation with something you can try.</aside><h2>Explore the handbook</h2><div class="grid"><a class="tile" href="/fixtures/docs/basics"><strong>01 &nbsp; First steps</strong><p>Values, variables, and expressions.</p></a><a class="tile" href="/fixtures/docs/control-flow"><strong>02 &nbsp; Control flow</strong><p>Decide what happens next with loops and conditions.</p></a><a class="tile" href="/fixtures/docs/data"><strong>03 &nbsp; Data structures</strong><p>A place for every piece of data.</p></a><a class="tile" href="/fixtures/help/cancel"><strong>04 &nbsp; Help & support</strong><p>Find your way around.</p></a></div>`,
+          'Local handbook',
+          `<div class="eyebrow">The local handbook / Getting started</div><h1>Clear steps.<br>A useful reference.</h1><p>A practical reference for the things you’ll build. Start with the basics, follow your curiosity, and keep this handbook close.</p><aside>Each chapter pairs a clear explanation with something you can try.</aside><h2>Explore the handbook</h2><div class="grid"><a class="tile" href="/fixtures/docs/basics"><strong>01 &nbsp; First steps</strong><p>Values, variables, and expressions.</p></a><a class="tile" href="/fixtures/docs/processes"><strong>02 &nbsp; Processes — repeat work</strong><p>Decide what happens next, once or repeatedly.</p></a><a class="tile" href="/fixtures/docs/data"><strong>03 &nbsp; Collections</strong><p>A place for every piece of data.</p></a><a class="tile" href="/fixtures/help/preferences"><strong>04 &nbsp; Preferences</strong><p>Find your way around.</p></a></div>`,
         ),
       ),
   );
-  app.get('/fixtures/docs/control-flow', async (_req, reply) =>
+  app.get('/fixtures/docs/processes', async (_req, reply) =>
     reply
       .type('text/html')
       .send(
         page(
-          'Control flow · Python handbook',
-          `<div class="eyebrow">The Python handbook / Chapter 02</div><h1>Control flow</h1><p>Choose a path through your program, or take the same path more than once.</p><h2 id="for-statements">The for statement</h2><p>A for loop repeats a block of code for each item in a sequence. In Python, the for statement iterates over items in a list or string, in the order they appear.</p><pre>words = ["cat", "window", "defenestrate"]\nfor word in words:\n    print(word, len(word))</pre><h2 id="while">The while statement</h2><p>A while loop repeats as long as its condition is true. Make sure the condition eventually becomes false, or use break to leave the loop.</p>`,
+          'Processes · local handbook',
+          `<div class="eyebrow">The local handbook / Chapter 02</div><h1>Processes</h1><p>Choose a path through a task, or take the same path more than once.</p><h2 id="fixed-cycle">The fixed cycle</h2><p>A fixed cycle repeats a block of work for each item in a sequence. Items are handled in the order they appear.</p><pre>sequence: north, east, south\n  record each item</pre><h2 id="conditional-cycle">The conditional cycle</h2><p>A conditional cycle repeats as long as its condition is true. Make sure the condition eventually becomes false, or use a stop rule.</p>`,
         ),
       ),
   );
@@ -91,7 +89,7 @@ export async function fixtureServer() {
       .send(
         page(
           'First steps',
-          `<h1>First steps</h1><p>Variables store values. A string holds text, and an integer holds a whole number.</p><a href="/fixtures/docs/control-flow">Continue to control flow</a>`,
+          `<h1>First steps</h1><p>Variables store values. A string holds text, and an integer holds a whole number.</p><a href="/fixtures/docs/processes">Continue to processes</a>`,
         ),
       ),
   );
@@ -100,29 +98,29 @@ export async function fixtureServer() {
       .type('text/html')
       .send(
         page(
-          'Data structures',
-          `<h1>Data structures</h1><p>A list stores an ordered collection of items. Dictionaries map keys to values.</p>`,
+          'Collections',
+          `<h1>Collections</h1><p>A collection stores an ordered group of items. Maps connect keys to values.</p>`,
         ),
       ),
   );
-  app.get('/fixtures/news', async (_req, reply) =>
+  app.get('/fixtures/journal', async (_req, reply) =>
     reply
       .type('text/html')
       .send(
         page(
-          'A new chapter for the Park family',
-          `<div class="eyebrow">People / September 19, 2026</div><h1>A new chapter for the Park family.</h1><p>By Harper Lane · 3 min read</p><p>Musician Morgan Park and their partner Alex welcomed their first child this week, sharing the news in a handwritten note to friends.</p><h2 id="welcome">A little introduction</h2><p>The couple named their baby daughter Juniper. She was born on Tuesday morning, and the family says everyone is doing well.</p><p>“We’re taking a little time to settle in,” Morgan wrote. Their autumn performances will resume next month.</p><aside><h3>Elsewhere in the journal</h3><p>Rowan Ellis opens a new photography exhibition. Avery Chen returns to the stage.</p></aside>`,
+          'The archive opens',
+          `<div class="eyebrow">Journal / September 19, 2026</div><h1>The archive opens.</h1><p>By Rowan Ellis · 3 min read</p><p>The east archive opens this week after a careful restoration, with a small guide for first-time visitors.</p><h2 id="detail">A small detail</h2><p>The visitor beacon at the east entrance is marked amber, and the guide begins at sunrise.</p><p>“We’re taking a little time to settle in,” the curator wrote. Public tours resume next month.</p><aside><h3>Elsewhere in the journal</h3><p>A new exhibit opens in the north gallery. The reading room returns to its regular hours.</p></aside>`,
         ),
       ),
   );
-  app.get('/fixtures/account', async (_req, reply) =>
+  app.get('/fixtures/settings', async (_req, reply) =>
     reply
       .type('text/html')
       .send(
         page(
-          'Your account · Fieldnotes',
-          `<div class="eyebrow">Your space</div><h1>A little room<br>for your account.</h1><p>Manage your reading preferences and membership from your account menu.</p><button id="menu" aria-expanded="false" aria-controls="account-menu">Account menu</button><div id="account-menu" hidden><h2>Membership</h2><button id="cancel">Cancel membership</button></div><p>Your personal details stay in the form.</p><input aria-label="Email" value="private@example.com"><input type="password" value="never-collect-this"><textarea>A private unsent draft.</textarea><p><a href="/logout">Sign out</a> · <a href="/activate?token=one-click-secret">One-click action</a></p>`,
-          `document.querySelector('#menu').onclick=()=>{document.querySelector('#account-menu').hidden=false;document.querySelector('#menu').setAttribute('aria-expanded','true')};document.querySelector('#cancel').onclick=()=>fetch('/trap',{method:'POST'});`,
+          'Your settings',
+          `<div class="eyebrow">Your space</div><h1>A little room<br>for your settings.</h1><p>Manage display preferences from the settings menu.</p><button id="menu" aria-expanded="false" aria-controls="settings-menu">Preferences</button><div id="settings-menu" hidden><h2>Alerts</h2><button id="apply">Change alerts</button></div><p>Your private details stay in the form.</p><input aria-label="Email" value="hidden-value"><input type="password" value="hidden-secret"><textarea>An unsent private note.</textarea><p><a href="/logout">Sign out</a> · <a href="/activate?token=one-time-action">One-time action</a></p>`,
+          `document.querySelector('#menu').onclick=()=>{document.querySelector('#settings-menu').hidden=false;document.querySelector('#menu').setAttribute('aria-expanded','true')};document.querySelector('#apply').onclick=()=>fetch('/trap',{method:'POST'});`,
         ),
       ),
   );
@@ -131,19 +129,19 @@ export async function fixtureServer() {
       .type('text/html')
       .send(
         page(
-          'Account settings',
-          `<h1>Account settings</h1><button id="menu" aria-expanded="false" aria-controls="created-menu">Membership settings</button><div id="created-menu"></div>`,
-          `document.querySelector('#menu').onclick=()=>{document.querySelector('#created-menu').innerHTML='<button id="cancel">Cancel membership</button>';document.querySelector('#menu').setAttribute('aria-expanded','true');document.querySelector('#cancel').onclick=()=>fetch('/trap',{method:'POST'})};`,
+          'Dynamic settings',
+          `<h1>Dynamic settings</h1><button id="menu" aria-expanded="false" aria-controls="created-menu">Preferences</button><div id="created-menu"></div>`,
+          `document.querySelector('#menu').onclick=()=>{document.querySelector('#created-menu').innerHTML='<button id="apply">Change alerts</button>';document.querySelector('#menu').setAttribute('aria-expanded','true');document.querySelector('#apply').onclick=()=>fetch('/trap',{method:'POST'})};`,
         ),
       ),
   );
-  app.get('/fixtures/help/cancel', async (_req, reply) =>
+  app.get('/fixtures/help/preferences', async (_req, reply) =>
     reply
       .type('text/html')
       .send(
         page(
-          'Membership help',
-          `<h1>How to cancel</h1><p>To cancel your membership, open the Account menu, choose Membership, and select Cancel membership. Your access continues until the end of the current billing period.</p>`,
+          'Preferences help',
+          `<h1>How to change alerts</h1><p>To change alert settings, open Preferences, choose Alerts, and select Change alerts. The new setting applies on the next refresh.</p>`,
         ),
       ),
   );
@@ -156,7 +154,7 @@ export async function fixtureServer() {
           Array.from(
             { length: 160 },
             (_, i) =>
-              `<h2 id="section-${i}">Section ${i}: ${i === 159 ? 'The observatory code' : 'Archive notes'}</h2><p>${i === 159 ? 'The observatory access phrase is silver heron. This phrase opens the public visitor guide.' : 'This archive entry documents a quiet afternoon of cataloguing books, arranging shelves, and checking the reading room. '.repeat(10)}</p>`,
+              `<h2 id="section-${i}">Section ${i}: ${i === 159 ? 'The visitor phrase' : 'Archive notes'}</h2><p>${i === 159 ? 'The visitor guide phrase is quiet lantern. This phrase opens the public guide.' : 'This archive entry documents a quiet afternoon of cataloguing books, arranging shelves, and checking the reading room. '.repeat(10)}</p>`,
           ).join(''),
         ),
       ),
@@ -178,7 +176,7 @@ export async function fixtureServer() {
       .send(
         page(
           'Reading surfaces',
-          `<h1>Reading surfaces</h1><div id="shadow"></div><iframe src="/fixtures/frame"></iframe><iframe src="https://example.invalid"></iframe><canvas></canvas>`,
+          `<h1>Reading surfaces</h1><div id="shadow"></div><iframe src="/fixtures/frame"></iframe><iframe src="https://cross-origin.invalid"></iframe><canvas></canvas>`,
           `document.querySelector('#shadow').attachShadow({mode:'open'}).innerHTML='<h2>Shadow note</h2><p>The shadow library closes at sunset.</p>'`,
         ),
       ),
@@ -203,10 +201,13 @@ export async function fixtureServer() {
     reply
       .type('text/html')
       .send(
-        page('Membership controls', '<h1>Membership</h1><a href="/cancel">Cancel membership</a>'),
+        page(
+          'Preference controls',
+          '<h1>Preferences</h1><a href="/settings/apply">Change alerts</a>',
+        ),
       ),
   );
-  for (const path of ['/logout', '/activate', '/trap', '/cancel'])
+  for (const path of ['/logout', '/activate', '/trap', '/settings/apply'])
     app.all(path, async () => {
       counters.actions++;
       return { action: 'TRAP' };

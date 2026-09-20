@@ -14,6 +14,8 @@ import {
   type Provider,
   type ProviderBudget,
   type Decision,
+  type Assessment,
+  type SearchIntent,
   providerFailureReason,
 } from '../../../../packages/jev/src';
 import { extractHtml } from '../../../../packages/extraction/src/html';
@@ -92,6 +94,17 @@ export class SearchSession {
   private pendingDocument: string;
   private pendingOrigin: string;
   private publicAttempts = 0;
+  private publicPages = 0;
+  private intent?: SearchIntent;
+  private assessed = new Map<string, Assessment>();
+  private assessedRoutes = new Map<string, Assessment>();
+  private observedCandidates = new Set<string>();
+  private observedLinks = new Set<string>();
+  private localTurns = 0;
+  private localInventory = { candidates: 0, links: 0 };
+  private localObserved = new Set<string>();
+  private localObservedLinks = new Set<string>();
+  private localLinks = new Map<string, Candidate>();
   private visitedPublic = new Set<string>();
   private discoveredPublic = new Set<string>();
   private sitemapBudget = { seen: new Set<string>(), bytes: 0 };
@@ -117,6 +130,7 @@ export class SearchSession {
       revealSteps: 0,
       coverage: {
         pagesChecked: 0,
+        fetchAttempts: 0,
         urlsDiscovered: 0,
         blocked: 0,
         cacheHits: 0,
@@ -134,6 +148,13 @@ export class SearchSession {
   emit(type: SearchEvent['type']) {
     this.state.coverage.elapsedMs = this.activeTime + Date.now() - this.segmentStart;
     this.state.coverage.providerCalls = this.budget.calls;
+    this.state.coverage.candidatesAssessed = this.assessed.size;
+    this.state.coverage.candidatesObserved =
+      this.observedCandidates.size +
+      Math.max(0, this.localInventory.candidates - this.localObserved.size);
+    this.state.coverage.linksObserved =
+      this.observedLinks.size +
+      Math.max(0, this.localInventory.links - this.localObservedLinks.size);
     this.state.coverage.validationFailures = this.budget.validationFailures;
     this.state.coverage.inputTokens = this.budget.inputTokens;
     this.state.coverage.outputTokens = this.budget.outputTokens;
@@ -158,7 +179,7 @@ export class SearchSession {
       this.state.evidence === 'direct'
         ? 'Source found'
         : this.state.results.length
-          ? 'Possible sources found'
+          ? 'Matching listings found. Destination details have not been verified.'
           : this.state.coverage.limitations.includes('provider_invalid_response')
             ? 'Some sources could not be verified because the AI returned invalid responses.'
             : this.state.coverage.limitations.some((x) =>
@@ -171,6 +192,18 @@ export class SearchSession {
                 )
               ? 'No verified source found. Some pages could not be accessed.'
               : 'No answer found in the pages checked.';
+    if (
+      [
+        'deadline_reached',
+        'page_budget_reached',
+        'fetch_budget_reached',
+        'provider_budget_exhausted',
+      ].includes(reason)
+    ) {
+      this.state.message = this.state.results.length
+        ? 'Search limit reached. Matches found so far are shown.'
+        : 'Search limit reached before a match was verified.';
+    }
     this.request = undefined;
     this.emit('completed');
   }
@@ -199,13 +232,14 @@ export class SearchSession {
       throw new Error('not_waiting');
     if (snapshot.documentId !== this.pendingDocument || snapshot.origin !== this.pendingOrigin)
       throw new Error('stale_document');
-    if (this.state.revealSteps >= 4) throw new Error('reveal_budget');
+    if (this.state.revealSteps >= 24) throw new Error('reveal_budget');
     this.state.revealSteps++;
+    if (snapshot.id !== this.request.snapshot.id) this.localLinks.clear();
+    this.state.results = this.state.results.filter((r) => r.snapshotId === snapshot.id);
     this.request.snapshot = sanitizeSnapshot(snapshot);
     this.state.requestedSections = [];
     this.state.lifecycle = 'running';
-    this.state.results = [];
-    this.state.evidence = 'none';
+    this.state.evidence = this.state.results[0]?.evidence || 'none';
     this.abort = new AbortController();
     void this.run();
   }
@@ -218,6 +252,7 @@ export class SearchSession {
   ): Promise<Decision> {
     try {
       return await this.provider.select(question, candidates, signal, this.budget, purpose, {
+        intent: this.intent,
         sourceTitle: this.request?.snapshot.title || '',
         sourceUrl: this.request?.snapshot.url,
         inspectedPage: inspectedPage && { title: inspectedPage.title, url: inspectedPage.url },
@@ -230,6 +265,83 @@ export class SearchSession {
       throw new VerificationError(reason);
     }
   }
+  private listing(snapshot: PageSnapshot, assessment: Assessment, local: boolean) {
+    const c = assessment.candidate;
+    if (
+      c.kind !== 'link' ||
+      assessment.disposition !== 'match' ||
+      !c.safeUrl ||
+      c.actionPolicy !== 'read_candidate' ||
+      c.provenance === 'sitemap' ||
+      c.visibility === 'hidden' ||
+      c.disabled ||
+      c.truncated
+    )
+      return;
+    this.add({
+      id: `${snapshot.id}:${c.id}`,
+      kind: 'listing',
+      title: c.label,
+      url: c.safeUrl,
+      origin: snapshot.origin,
+      quote: c.label,
+      headingPath: c.headingPath,
+      observedAt: snapshot.observedAt,
+      evidence: 'candidate_only',
+      candidate: c,
+      snapshotId: snapshot.id,
+      documentId: snapshot.documentId,
+      local,
+      provider: this.provider.mode,
+      model: assessment.model,
+    });
+  }
+  private async screen(snapshot: PageSnapshot, candidates: Candidate[], signal: AbortSignal) {
+    const unseen = candidates.filter((c) => !this.assessed.has(`${c.snapshotId}:${c.id}`));
+    if (unseen.length && this.provider.screen) {
+      try {
+        const decisions = await this.provider.screen(
+          this.request!.question,
+          unseen,
+          signal,
+          this.budget,
+          {
+            intent: this.intent,
+            sourceTitle: this.request!.snapshot.title,
+            sourceUrl: this.request!.snapshot.url,
+            inspectedPage: { title: snapshot.title, url: snapshot.url },
+          },
+        );
+        signal.throwIfAborted();
+        for (const decision of decisions) {
+          // Bind returned judgments to the exact supplied immutable record.
+          const candidate = unseen.find((c) => c.id === decision.candidate.id);
+          if (!candidate) continue;
+          const assessment: Assessment = {
+            ...decision,
+            candidate,
+            disposition:
+              this.intent === 'information' &&
+              candidate.kind === 'link' &&
+              decision.disposition === 'match'
+                ? 'route'
+                : decision.disposition,
+          };
+          this.assessed.set(`${candidate.snapshotId}:${candidate.id}`, assessment);
+          if (candidate.safeUrl)
+            this.assessedRoutes.set(urlIdentity(candidate.safeUrl).fetchKey, assessment);
+        }
+      } catch (error) {
+        signal.throwIfAborted();
+        const reason = providerFailureReason(error);
+        this.limitation(reason);
+        throw new VerificationError(reason);
+      }
+    }
+    return candidates
+      .map((c) => this.assessed.get(`${c.snapshotId}:${c.id}`))
+      .filter((a): a is Assessment => !!a);
+  }
   private async inspect(snapshot: PageSnapshot, local: boolean, signal: AbortSignal) {
     const trace = {
       url: snapshot.url,
@@ -238,6 +350,14 @@ export class SearchSession {
         SearchState['coverage']['checkedPages']
       >[number]['outcome'],
     };
+    const previous = this.state.coverage.checkedPages!.find(
+      (p) => p.url === trace.url && p.title === trace.title,
+    );
+    if (previous)
+      this.state.coverage.checkedPages!.splice(
+        this.state.coverage.checkedPages!.indexOf(previous),
+        1,
+      );
     this.state.coverage.checkedPages!.push(trace);
     let remaining = snapshot.candidates.filter(
       (c) =>
@@ -245,35 +365,85 @@ export class SearchSession {
         !c.disabled &&
         c.visibility !== 'hidden' &&
         !c.truncated &&
-        c.textRole !== 'heading',
+        (!c.textRole || c.textRole === 'body' || !!this.provider.screen),
+    );
+    const links = snapshot.candidates.filter(
+      (c) =>
+        c.kind === 'link' &&
+        !c.disabled &&
+        c.visibility !== 'hidden' &&
+        !c.truncated &&
+        c.safeUrl &&
+        c.actionPolicy === 'read_candidate',
     );
     const failuresBefore = this.budget.validationFailures?.length || 0;
-    // Two bounded candidate windows: reject a passage, not its entire page.
-    // An abstention moves to unseen candidates rather than repeating the same call.
-    for (let attempt = 0; remaining.length && attempt < 2; attempt++) {
-      const batch = shortlist(this.request!.question, remaining, 24);
-      const decision = await this.decide(
-        this.request!.question,
-        batch,
-        signal,
-        local ? 'evidence' : 'destination',
-        snapshot,
-      );
-      const evidence = this.result(snapshot, decision, local);
-      if (evidence) {
-        trace.outcome = 'verified';
-        this.add(evidence);
-        return true;
+    const all = [...remaining, ...links];
+    all.forEach((c) => {
+      this.observedCandidates.add(`${snapshot.id}:${c.id}`);
+      if (c.kind === 'link') this.observedLinks.add(`${snapshot.id}:${c.id}`);
+      if (local) {
+        this.localObserved.add(c.id);
+        if (c.kind === 'link') this.localObservedLinks.add(c.id);
       }
-      const excluded = new Set(
-        decision.candidate ? [decision.candidate.id] : batch.map((c) => c.id),
-      );
-      remaining = remaining.filter((c) => !excluded.has(c.id));
+    });
+    this.state.message = local
+      ? 'Finding relevant text and links'
+      : `Reading ${snapshot.title || 'linked page'}`;
+    this.emit('candidate_found');
+    const ordered = rank(this.request!.question, all).map((x) => x.candidate);
+    const waves = this.provider.screen ? Math.ceil(ordered.length / 48) : 1;
+    for (let wave = 0; wave < waves; wave++) {
+      if (this.provider.screen) {
+        const judgments = await this.screen(
+          snapshot,
+          ordered.slice(wave * 48, (wave + 1) * 48),
+          signal,
+        );
+        const matches = judgments
+          .filter((a) => a.disposition === 'match')
+          .sort((a, b) => b.relevance - a.relevance);
+        for (const match of matches) this.listing(snapshot, match, local);
+        remaining = matches.filter((a) => a.candidate.kind !== 'link').map((a) => a.candidate);
+        this.emit('candidate_found');
+      }
+      for (let attempt = 0; remaining.length && attempt < 3; attempt++) {
+        const batch: Candidate[] = [];
+        let bytes = 0;
+        for (const c of shortlist(this.request!.question, remaining, 16)) {
+          const size = Buffer.byteLength(JSON.stringify(c));
+          if (batch.length && bytes + size > 18000) break;
+          batch.push(c);
+          bytes += size;
+        }
+        const decision = await this.decide(
+          this.request!.question,
+          batch,
+          signal,
+          local ? 'evidence' : 'destination',
+          snapshot,
+        );
+        const evidence = this.result(snapshot, decision, local);
+        if (evidence) {
+          trace.outcome = 'verified';
+          this.add(evidence);
+          return true;
+        }
+        const excluded = new Set(
+          decision.candidate ? [decision.candidate.id] : batch.map((c) => c.id),
+        );
+        remaining = remaining.filter((c) => !excluded.has(c.id));
+      }
+      if (this.state.results.filter((r) => r.kind === 'listing').length >= 3) {
+        if (wave + 1 < waves) this.limitation('more_candidates');
+        break;
+      }
     }
     trace.outcome =
       (this.budget.validationFailures?.length || 0) > failuresBefore
         ? 'verification_failed'
-        : 'no_evidence';
+        : this.state.results.some((r) => r.snapshotId === snapshot.id && r.kind === 'listing')
+          ? 'matched_links'
+          : 'no_evidence';
     return false;
   }
   private result(snapshot: PageSnapshot, d: Decision, local: boolean): EvidenceResult | undefined {
@@ -296,6 +466,17 @@ export class SearchSession {
       (c.truncated === undefined &&
         snapshot.limitations.includes('passage_truncated') &&
         (c.text?.length || 0) >= 9000)
+    )
+      return;
+    const sourceText = c.text || c.label;
+    const excerpt = d.excerpt;
+    if (
+      excerpt &&
+      (!Number.isInteger(excerpt.start) ||
+        !Number.isInteger(excerpt.end) ||
+        excerpt.start < 0 ||
+        excerpt.end <= excerpt.start ||
+        excerpt.end > sourceText.length)
     )
       return;
     const evidence = 'direct' as const;
@@ -321,7 +502,8 @@ export class SearchSession {
       title: snapshot.title,
       url: sourceUrl,
       origin: snapshot.origin,
-      quote: c.text || c.label,
+      quote: excerpt ? sourceText.slice(excerpt.start, excerpt.end) : sourceText,
+      excerpt,
       headingPath: c.headingPath,
       observedAt: snapshot.observedAt,
       evidence,
@@ -354,8 +536,35 @@ export class SearchSession {
     try {
       this.emit('started');
       const current = request.snapshot;
+      if (current.discovery) this.localInventory = current.discovery;
+      if (/^(just a moment[.!…]*|checking your browser|access denied)/i.test(current.title)) {
+        this.limitation('blocked');
+        this.state.coverage.checkedPages!.push({
+          url: current.url,
+          title: current.title,
+          outcome: 'blocked',
+        });
+        this.done('page_blocked');
+        return;
+      }
       current.limitations.forEach((x) => this.limitation(x));
+      if (!this.intent && this.provider.interpret) {
+        this.state.message = 'Understanding your request';
+        this.emit('candidate_found');
+        try {
+          this.intent = await this.provider.interpret(request.question, signal, this.budget, {
+            sourceTitle: current.title,
+            sourceUrl: current.url,
+          });
+        } catch (error) {
+          signal.throwIfAborted();
+          throw new VerificationError(providerFailureReason(error));
+        }
+      }
       if (this.state.coverage.pagesChecked === 0) this.state.coverage.pagesChecked++;
+      current.candidates
+        .filter((c) => c.kind === 'link')
+        .forEach((c) => this.localLinks.set(c.id, c));
       await this.inspect(current, true, signal);
       this.emit('snapshot_checked');
       if (this.state.evidence === 'direct') {
@@ -363,24 +572,36 @@ export class SearchSession {
         return;
       }
       const groups = current.candidates.filter((c) => c.kind === 'group');
-      const promisingLink = rank(
-        request.question,
-        current.candidates.filter((c) => c.kind === 'link' && c.safeUrl),
-      )[0];
+      const matchingListings = this.state.results.filter((r) => r.kind === 'listing').length;
+      if (request.scope === 'page' && matchingListings >= 3) {
+        if (groups.length) this.limitation('more_local_candidates');
+        this.done('matches_found');
+        return;
+      }
+      // Read omitted local records without spending model calls on section labels.
+      // Site searches get an early route opportunity, then continue their frontier.
       if (
         groups.length &&
-        this.state.revealSteps < 4 &&
-        !(request.scope === 'site' && promisingLink?.score > 0)
+        this.state.revealSteps < 24 &&
+        (request.scope === 'page' ||
+          (this.localTurns < 2 &&
+            !matchingListings &&
+            ![...this.assessedRoutes.values()].some((a) => a.disposition !== 'irrelevant')))
       ) {
-        const g = await this.decide(request.question, groups, signal, 'route');
-        if (g.candidate?.sectionId && current.sectionIds.includes(g.candidate.sectionId)) {
-          this.state.lifecycle = 'waiting_for_user';
-          this.state.requestedSections = [g.candidate.sectionId];
-          this.state.message = 'Reading a relevant section';
+        this.localTurns++;
+        this.state.lifecycle = 'waiting_for_user';
+        this.state.requestedSections = rank(request.question, groups)
+          .slice(0, 4)
+          .map((x) => x.candidate.sectionId!)
+          .filter((id) => current.sectionIds.includes(id));
+        if (this.state.requestedSections.length) {
+          this.state.message = 'Reading more of this page';
           this.emit('needs_local_content');
           return;
         }
+        this.state.lifecycle = 'running';
       }
+      if (groups.length) this.limitation('more_local_candidates');
       if (
         request.scope === 'site' &&
         current.url &&
@@ -393,14 +614,11 @@ export class SearchSession {
         visited.add(urlIdentity(current.url).fetchKey);
         const seenContent = new Set<string>();
 
-        const enqueue = (c: Candidate) => {
+        const depths = new Map<string, number>();
+        const enqueue = (c: Candidate, depth = 1, parentOrigin = current.origin) => {
           if (!c.safeUrl) return;
           const safe = shareableUrl(c.safeUrl);
-          if (
-            !safe ||
-            new URL(safe).origin !== current.origin ||
-            actionPolicy(safe) !== 'read_candidate'
-          ) {
+          if (!safe || actionPolicy(safe) !== 'read_candidate') {
             this.state.coverage.blocked++;
             return;
           }
@@ -409,22 +627,49 @@ export class SearchSession {
             this.limitation('rendering_needed');
             return;
           }
+          if (
+            depth > 4 ||
+            (parentOrigin !== current.origin && new URL(safe).origin !== parentOrigin)
+          )
+            return;
           if (visited.has(fetchKey) || frontier.has(fetchKey)) return;
           if (this.discoveredPublic.size >= this.limits.maxUrls) {
             this.limitation('url_budget_reached');
             return;
           }
           frontier.set(fetchKey, c);
+          depths.set(fetchKey, depth);
           this.discoveredPublic.add(fetchKey);
           this.state.coverage.urlsDiscovered = this.discoveredPublic.size;
         };
-        current.candidates.filter((c) => c.kind === 'link').forEach(enqueue);
+        this.localLinks.forEach((c) => enqueue(c));
         this.emit('page_discovered');
         try {
-          const robots = await loadRobots(this.fetcher, current.origin, signal);
+          const robotPolicies = new Map<string, Awaited<ReturnType<typeof loadRobots>>>();
+          const robotFailures = new Set<string>();
+          const policyFor = async (origin: string) => {
+            if (robotFailures.has(origin)) throw new Error('robots_unreachable');
+            if (!robotPolicies.has(origin)) {
+              try {
+                robotPolicies.set(origin, await loadRobots(this.fetcher, origin, signal));
+              } catch (error) {
+                robotFailures.add(origin);
+                throw error;
+              }
+            }
+            return robotPolicies.get(origin)!;
+          };
           let mapsLoaded = false;
           const expandSitemaps = async () => {
             mapsLoaded = true;
+            let robots: Awaited<ReturnType<typeof loadRobots>>;
+            try {
+              robots = await policyFor(current.origin);
+            } catch {
+              signal.throwIfAborted();
+              this.limitation('robots_unavailable');
+              return;
+            }
             const sitemapUrls = await discoverSitemaps(
               this.fetcher,
               current.origin,
@@ -449,8 +694,11 @@ export class SearchSession {
               }),
             );
           };
-          let lastStart = 0;
-          while (this.publicAttempts < this.limits.maxPages) {
+          const lastStarts = new Map<string, number>();
+          while (
+            this.publicPages < this.limits.maxPages &&
+            this.publicAttempts < this.limits.maxPages * 2
+          ) {
             if (!frontier.size && !mapsLoaded) await expandSitemaps();
             if (!frontier.size) break;
             signal.throwIfAborted();
@@ -459,45 +707,99 @@ export class SearchSession {
               await expandSitemaps();
               ordered = rankRoutes(request.question, [...frontier.values()], current);
             }
-            const choice = await this.decide(
-              request.question,
-              ordered.slice(0, 24).map((x) => x.candidate),
-              signal,
-              'route',
-            );
-            const candidate = choice.candidate || ordered[0]?.candidate;
+            let candidate: Candidate | undefined;
+            if (this.provider.screen) {
+              // Reuse judgments made while inspecting pages. Screen new routes in
+              // bounded waves; never let a lexical zero or one abstention end discovery.
+              const known = ordered.filter((x) => {
+                const a = this.assessedRoutes.get(urlIdentity(x.candidate.safeUrl!).fetchKey);
+                return a && a.disposition !== 'irrelevant';
+              });
+              const unseen = ordered.filter(
+                (x) => !this.assessedRoutes.has(urlIdentity(x.candidate.safeUrl!).fetchKey),
+              );
+              if (known.length) candidate = known[0].candidate;
+              else if (unseen.length) {
+                const routes = unseen.slice(0, 48).map((x) => x.candidate);
+                await this.screen(current, routes, signal);
+                candidate = routes.find((c) => {
+                  const a = this.assessedRoutes.get(urlIdentity(c.safeUrl!).fetchKey);
+                  return a && a.disposition !== 'irrelevant';
+                });
+                if (!candidate) {
+                  routes.forEach((c) => frontier.delete(urlIdentity(c.safeUrl!).fetchKey));
+                  continue;
+                }
+              } else {
+                if (!mapsLoaded) {
+                  await expandSitemaps();
+                  continue;
+                }
+                break;
+              }
+            } else {
+              const choice = await this.decide(
+                request.question,
+                ordered.slice(0, 24).map((x) => x.candidate),
+                signal,
+                'route',
+              );
+              candidate = choice.candidate || ordered[0]?.candidate;
+            }
             if (!candidate) break;
             const key = urlIdentity(candidate.safeUrl!).fetchKey;
             frontier.delete(key);
             visited.add(key);
+            const targetOrigin = new URL(key).origin;
+            let robots: Awaited<ReturnType<typeof loadRobots>>;
+            try {
+              robots = await policyFor(targetOrigin);
+            } catch {
+              signal.throwIfAborted();
+              this.limitation('robots_unavailable');
+              this.state.coverage.blocked++;
+              this.state.coverage.checkedPages!.push({
+                url: key,
+                title: candidate.label,
+                outcome: 'blocked',
+              });
+              continue;
+            }
             if (!robots.allows(key)) {
               this.state.coverage.blocked++;
               this.limitation('robots_disallowed');
+              this.state.coverage.checkedPages!.push({
+                url: key,
+                title: candidate.label,
+                outcome: 'blocked',
+              });
               continue;
             }
-            const gap = robots.delay - (Date.now() - lastStart);
+            const gap = robots.delay - (Date.now() - (lastStarts.get(targetOrigin) || 0));
             if (gap > 0)
               await new Promise<void>((resolve, reject) => {
-                const t = setTimeout(resolve, gap);
-                signal.addEventListener(
-                  'abort',
-                  () => {
-                    clearTimeout(t);
-                    reject(new Error('cancelled'));
-                  },
-                  { once: true },
-                );
+                const onAbort = () => {
+                  clearTimeout(t);
+                  reject(new Error('cancelled'));
+                };
+                const t = setTimeout(() => {
+                  signal.removeEventListener('abort', onAbort);
+                  resolve();
+                }, gap);
+                signal.addEventListener('abort', onAbort, { once: true });
+                if (signal.aborted) onAbort();
               });
             signal.throwIfAborted();
-            lastStart = Date.now();
+            lastStarts.set(targetOrigin, Date.now());
             this.publicAttempts++;
+            this.state.coverage.fetchAttempts = this.publicAttempts;
             try {
               let artifact = request.refresh ? undefined : this.cache.get(key);
               if (artifact) this.state.coverage.cacheHits++;
               else
                 artifact = await this.fetcher.get(
                   key,
-                  current.origin,
+                  targetOrigin,
                   signal,
                   2_000_000,
                   robots.allows,
@@ -537,6 +839,7 @@ export class SearchSession {
               }
               const snapshot = extractHtml(artifact.body, artifact.url, request.question);
               snapshot.observedAt = artifact.retrievedAt;
+              this.publicPages++;
               this.state.coverage.pagesChecked++;
               this.emit('page_checked');
               if (snapshot.limitations.includes('login_required')) {
@@ -559,7 +862,9 @@ export class SearchSession {
               const fingerprint = snapshot.candidates.map((x) => x.contentHash).join('-');
               if (seenContent.has(fingerprint)) continue;
               seenContent.add(fingerprint);
-              snapshot.candidates.filter((c) => c.kind === 'link').forEach(enqueue);
+              snapshot.candidates
+                .filter((c) => c.kind === 'link')
+                .forEach((c) => enqueue(c, (depths.get(key) || 1) + 1, snapshot.origin));
               if (await this.inspect(snapshot, false, signal)) {
                 this.done('direct_evidence');
                 return;
@@ -576,7 +881,11 @@ export class SearchSession {
               this.state.coverage.blocked++;
             }
           }
-          if (frontier.size && this.publicAttempts >= this.limits.maxPages) {
+          if (
+            frontier.size &&
+            (this.publicPages >= this.limits.maxPages ||
+              this.publicAttempts >= this.limits.maxPages * 2)
+          ) {
             this.limitation('budget_reached');
             this.emit('limit_reached');
           } else if (!frontier.size) this.state.coverage.scope = 'frontier_exhausted_within_scope';
@@ -586,12 +895,22 @@ export class SearchSession {
           this.limitation('public_search_unavailable');
         }
       } else if (request.scope === 'site') this.limitation('public_url_not_eligible');
-      if (request.scope === 'site' && this.publicAttempts >= this.limits.maxPages) {
-        this.done('page_budget_reached');
+      if (
+        request.scope === 'site' &&
+        (this.publicPages >= this.limits.maxPages ||
+          this.publicAttempts >= this.limits.maxPages * 2)
+      ) {
+        this.done(
+          this.publicPages >= this.limits.maxPages ? 'page_budget_reached' : 'fetch_budget_reached',
+        );
         return;
       }
       this.done(
-        this.publicAttempts >= this.limits.maxPages ? 'page_budget_reached' : 'search_finished',
+        this.publicPages >= this.limits.maxPages || this.publicAttempts >= this.limits.maxPages * 2
+          ? this.publicPages >= this.limits.maxPages
+            ? 'page_budget_reached'
+            : 'fetch_budget_reached'
+          : 'search_finished',
       );
     } catch (error) {
       if (this.state.lifecycle === 'cancelled') return;

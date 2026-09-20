@@ -3,8 +3,7 @@ import { semanticPassage, genericText, textBoundary, interactiveText } from './t
 import { randomUUID } from 'node:crypto';
 import { hash, normalize, type Candidate, type PageSnapshot } from '../../contracts/src';
 import { shareableUrl, actionPolicy, redact } from '../../security/src';
-import { rank } from '../../retrieval/src';
-export function extractHtml(html: string, url: string, question = ''): PageSnapshot {
+export function extractHtml(html: string, url: string, _question = ''): PageSnapshot {
   const $ = load(html);
   const id = randomUUID();
   const candidates: Candidate[] = [];
@@ -72,7 +71,7 @@ export function extractHtml(html: string, url: string, question = ''): PageSnaps
       snapshotId: id,
       kind,
       label: text.slice(0, 300),
-      text: kind === 'passage' ? text.slice(0, 9000) : undefined,
+      text: kind !== 'control' ? text.slice(0, 9000) : undefined,
       safeUrl,
       headingPath: [...headingPath],
       headingId,
@@ -92,26 +91,6 @@ export function extractHtml(html: string, url: string, question = ''): PageSnaps
       disabled: node.attr('disabled') !== undefined,
     });
   });
-  if (candidates.length > 500) {
-    limitations.push('snapshot_truncated');
-    // Navigation-heavy templates must not consume the budget before article text.
-    const selected = new Set([
-      ...rank(
-        question,
-        candidates.filter((c) => c.kind === 'passage'),
-      )
-        .slice(0, 300)
-        .map((x) => x.candidate),
-      ...rank(
-        question,
-        candidates.filter((c) => c.kind !== 'passage'),
-      )
-        .slice(0, 200)
-        .map((x) => x.candidate),
-    ]);
-    const retained = candidates.filter((c) => selected.has(c));
-    candidates.splice(0, candidates.length, ...retained);
-  }
   if (
     candidates.filter((c) => c.kind === 'passage').reduce((n, c) => n + (c.text?.length || 0), 0) <
     80

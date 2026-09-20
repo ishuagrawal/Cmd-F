@@ -8,7 +8,7 @@ A malicious webpage can control its text, links, ARIA attributes, menu structure
 
 ## Implemented controls
 
-- Exact-origin HTTPS public targets only, standard HTTPS port, no URL credentials or token-bearing URLs. Action and account-route policies are recomputed on the server instead of trusting client labels.
+- HTTPS public targets only, standard HTTPS port, no URL credentials or token-bearing URLs. This-page searches make no public requests. Site searches may follow observed root-page links to related public origins, then recurse within each destination origin. Each fetch is bound to that target origin; redirects cannot change it. Action and account-route policies are recomputed on the server instead of trusting client labels.
 - DNS resolves all answers and rejects a hostname if any answer is private, loopback, link-local, reserved, or otherwise nonpublic. A checked address is pinned into the actual connection lookup. Redirects repeat origin, URL, DNS, and robots validation before network access.
 - Anonymous fetches carry no browser cookies, authorization, or user profile. Static HTML parsing never executes website scripts. Compression is bounded before and after decoding; XML entities/DTDs are rejected. Requests have hard deadlines and abort signals.
 - Known mutation routes, one-click token links, executable schemes, and account management URLs are not background fetch candidates. Informational help routes remain searchable. Navigation helpers independently reapply the same policy.
@@ -26,6 +26,6 @@ No host egress firewall is installed by this repository. DNS pinning and redirec
 
 Input redaction is incomplete by nature. The pill submits selected page text immediately on Enter or Send; it does not present a per-search preview. Form values and drafts are still excluded, including on private/account pages. Closed shadow roots cannot be inspected reliably. ARIA declarations are hints; hidden controls remain unavailable until observed after a real user reveal. The extension cannot verify that a third-party site describes its controls truthfully.
 
-The optional renderer is absent and fails closed. No external-origin search approval, browser authentication export, private endpoint discovery, CAPTCHA bypass, or paywall bypass is implemented.
+The optional renderer is absent and fails closed. The site-scope disclosure includes relevant linked public websites; there is no separate approval per origin. Browser authentication export, private endpoint discovery, CAPTCHA bypass, and paywall bypass are not implemented.
 
 Tests exercise actual prohibited network/DOM effects where fixtures can observe them. See [evaluation](evaluation.md) for the exact verification scope, including what is not yet certified.

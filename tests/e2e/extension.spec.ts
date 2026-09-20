@@ -73,17 +73,19 @@ async function query(question: string, scope: 'page' | 'site' = 'page') {
   await expect(panel.getByRole('dialog')).toBeVisible();
   await panel.getByLabel('Share this page’s selected text for this search.').check();
   if (scope === 'site')
-    await panel.getByLabel('Also check public pages on this exact site anonymously.').check();
+    await panel
+      .getByLabel('Also check this site and relevant linked websites anonymously.')
+      .check();
   await panel.getByRole('button', { name: 'Find the source', exact: true }).click();
 }
 async function zeroActions() {
   expect((await (await fetch(origin + '/__stats')).json()).actions).toBe(0);
 }
-test('real extension finds a docs subpage without navigating the source tab', async () => {
+test('real extension finds a handbook subpage without navigating the source tab', async () => {
   await openFixture('docs');
   const url = site.url();
-  await query('How do loops work in Python?', 'site');
-  await expect(panel.locator('.result blockquote').first()).toContainText('for loop');
+  await query('How does a cycle repeat?', 'site');
+  await expect(panel.locator('.result blockquote').first()).toContainText('fixed cycle');
   await expect(
     panel.getByRole('button', { name: 'Open source', exact: true }).first(),
   ).toBeVisible();
@@ -92,11 +94,11 @@ test('real extension finds a docs subpage without navigating the source tab', as
   await panel.setViewportSize({ width: 390, height: 900 });
   await panel.screenshot({ path: 'docs/screenshots/extension-docs.png', fullPage: true });
 });
-test('article fact is quoted and reversibly highlighted without modifying text', async () => {
-  await openFixture('news');
+test('article detail is quoted and reversibly highlighted without modifying text', async () => {
+  await openFixture('journal');
   const before = await site.locator('main').innerText();
-  await query("What is the baby's name?");
-  await expect(panel.locator('.result blockquote')).toContainText('Juniper');
+  await query('Which beacon is marked amber?');
+  await expect(panel.locator('.result blockquote')).toContainText('amber');
   await panel.getByRole('button', { name: 'Show here' }).click();
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(1);
   expect(await site.locator('main').innerText()).toBe(before);
@@ -105,19 +107,19 @@ test('article fact is quoted and reversibly highlighted without modifying text',
   await zeroActions();
 });
 test('private preview excludes values, drafts, and token URLs', async () => {
-  await openFixture('account');
-  await panel.getByLabel('What are you looking for?').fill('cancel membership');
+  await openFixture('settings');
+  await panel.getByLabel('What are you looking for?').fill('change alerts');
   await panel.getByRole('button', { name: 'Find source', exact: true }).click();
   await expect(panel.getByRole('dialog')).toBeVisible();
   const preview = await panel.locator('.preview').textContent();
-  expect(preview).not.toMatch(/private@example|never-collect|private unsent|one-click-secret/);
+  expect(preview).not.toMatch(/hidden-value|hidden-secret|unsent private|one-time-action/);
   await expect(panel.getByRole('button', { name: 'Find the source', exact: true })).toBeDisabled();
   await zeroActions();
 });
-for (const fixture of ['account', 'dynamic'])
+for (const fixture of ['settings', 'dynamic'])
   test(`finishes without manual menu inspection in ${fixture}`, async () => {
     await openFixture(fixture);
-    await query('Where can I cancel my membership?');
+    await query('Where can I change the alert setting?');
     await expect(panel.locator('.empty-result')).toContainText('No answer found');
     await expect(panel.locator('.guidance')).toHaveCount(0);
     await expect(panel.getByRole('button', { name: /Inspect again/ })).toHaveCount(0);
@@ -126,8 +128,8 @@ for (const fixture of ['account', 'dynamic'])
     expect(site.url()).toBe(origin + '/fixtures/' + fixture);
   });
 test('no answer is honest and action links receive zero requests', async () => {
-  await openFixture('account');
-  await query('What is the temperature on Mars?', 'site');
+  await openFixture('settings');
+  await query('Which instrument measures rainfall?', 'site');
   await expect(panel.locator('.empty-result')).toContainText(
     'No answer found in the pages checked.',
   );
@@ -138,8 +140,8 @@ test('no answer is honest and action links receive zero requests', async () => {
 });
 test('late-page source is found within bounded payload', async () => {
   await openFixture('long');
-  await query('What is the observatory access phrase?');
-  await expect(panel.locator('.result blockquote').first()).toContainText('silver heron');
+  await query('What phrase opens the visitor guide?');
+  await expect(panel.locator('.result blockquote').first()).toContainText('quiet lantern');
   await panel.getByRole('button', { name: 'Show here' }).first().click();
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(1);
 });
@@ -161,8 +163,8 @@ test('same-origin frames and open shadow content are inspected; unsupported surf
   await expect(panel.locator('.coverage')).toContainText('canvas unsupported');
 });
 test('source tab navigation discards old local results', async () => {
-  await openFixture('news');
-  await query("What is the baby's name?");
+  await openFixture('journal');
+  await query('Which beacon is marked amber?');
   await expect(panel.locator('.result')).toHaveCount(1);
   await site.goto(origin + '/fixtures/docs');
   await expect(panel.locator('.result')).toHaveCount(0);
@@ -177,12 +179,12 @@ test('browser playground renders at desktop and mobile sizes', async () => {
   await panel.setViewportSize({ width: 390, height: 844 });
   expect(await panel.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await panel.screenshot({ path: 'docs/screenshots/playground-mobile.png', fullPage: true });
-  await query('How do loops work in Python?', 'site');
-  await expect(panel.locator('.result blockquote').first()).toContainText('for loop');
+  await query('How does a cycle repeat?', 'site');
+  await expect(panel.locator('.result blockquote').first()).toContainText('fixed cycle');
 });
 test('source stays pinned across tab switches and a service-worker restart', async () => {
-  await openFixture('news');
-  await query("What is the baby's name?");
+  await openFixture('journal');
+  await query('Which beacon is marked amber?');
   await expect(panel.locator('.result')).toHaveCount(1);
   const other = await context.newPage();
   await other.goto(origin + '/fixtures/docs');
@@ -202,8 +204,8 @@ test('source stays pinned across tab switches and a service-worker restart', asy
 });
 test('an action-like anchor is highlight-only and never opened or fetched', async () => {
   await openFixture('action-link');
-  await query('Where can I cancel my membership?', 'site');
-  await expect(panel.locator('.result blockquote')).toHaveText('Cancel membership');
+  await query('Where can I change the alert setting?', 'site');
+  await expect(panel.locator('.result blockquote')).toHaveText('Change alerts');
   await expect(panel.getByRole('button', { name: 'Open source', exact: true })).toHaveCount(0);
   await panel.getByRole('button', { name: 'Show here' }).click();
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(1);
@@ -222,8 +224,8 @@ test('consent discloses Gateway before any page text is submitted', async () => 
     searches++;
     await route.abort();
   });
-  await openFixture('news');
-  await panel.getByLabel('What are you looking for?').fill('What is the baby name?');
+  await openFixture('journal');
+  await panel.getByLabel('What are you looking for?').fill('Which beacon is marked amber?');
   await panel.getByRole('button', { name: 'Find source', exact: true }).click();
   await expect(panel.getByRole('dialog')).toContainText('Vercel AI Gateway, and TypeSafe/Jev');
   await expect(panel.getByRole('button', { name: 'Find the source', exact: true })).toBeDisabled();
