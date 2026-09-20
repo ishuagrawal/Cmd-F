@@ -1,78 +1,100 @@
 # Cmd-F
 
-A universal search in your browser that finds the relevant passage, page, or control on the site you’re viewing.
+**Universal search for the site you're already on.**
 
-Cmd-F is a local-first Chrome extension with a keyboard-invoked in-page prompt with a bounded, anonymous site-search backend. It searches the current page first, returns source text, and highlights only when asked. It never clicks website controls or navigates the source tab during a search.
+Ask a question. Cmd-F finds where the answer is on this site — the paragraph, the setting, the docs page — and shows you the original text. Not a summary.
 
-## Run the playground
+Open it with **Option+Shift+F** (Mac) or **Alt+Shift+F**. It looks at the current page first, then other public pages on the same site. It highlights only when you ask, and it never clicks or changes the page for you.
 
-Use Node **24.21.0 LTS** (`.node-version`) and pnpm **11.19.0**. The package supports Node 24.19+; the initial build was also exercised on Node 26.4.0.
+This is a local preview, not a Chrome Web Store listing. You run it on your own computer. Your AI keys stay on that computer, not in the extension.
+
+## Install and use
+
+You need **Node 24.19+** (`.node-version` pins 24.21.0 LTS) and **pnpm 11.19.0**.
 
 ```bash
+git clone https://github.com/ishuagrawal/Cmd-F.git
+cd Cmd-F
 pnpm install --frozen-lockfile
-pnpm demo
+cp .env.example .env
 ```
 
-Open **http://127.0.0.1:5173/overlay.html** for the pill preview, or **http://127.0.0.1:5173/sidepanel.html** for the full local fixture playground. The playground uses owned pages that exercise passages, destination pages, controls, hidden content, and honest no-answer behavior. In the pill, Enter or Send immediately searches the current page and public pages on the same site. The legacy fixture playground retains its preview and explicit consent controls. With no provider key, the backend uses a clearly labeled deterministic keyword provider.
+Put your TypeSafe key in `.env`:
 
-`pnpm demo` uses the normal public-site network policy and adds a **fixed allowlist for owned loopback fixtures**. Public websites remain searchable. The fixture exception is never imported by the production API entrypoint. `pnpm dev` runs the same UI and fixtures but uses the normal public-only fetch policy; it cannot crawl loopback fixtures. Never expose either development server to a network.
+```dotenv
+TYPESAFE_API_KEY=your-key
+```
 
-## Load the real extension
+Cmd-F calls TypeSafe/Jev directly. There is no demo mode and no Vercel Gateway. The backend will not start without this key. Shell variables override `.env`. Restart the backend after changing it. See [configuration](docs/configuration.md) for the full variable list.
+
+### Load the Chrome extension
 
 ```bash
 pnpm build
 pnpm dev:api
 ```
 
-1. Open `chrome://extensions`, enable Developer mode, and choose **Load unpacked**.
+Keep the API running. Then:
+
+1. Open `chrome://extensions`, enable **Developer mode**, and choose **Load unpacked**.
 2. Select `apps/extension/dist` in this repository.
-3. Open a website and click the **Cmd-F** toolbar action (or use the shortcut). That invocation grants temporary current-tab access.
-4. Use **Option+Shift+F** on Mac or **Alt+Shift+F** elsewhere to toggle the compact pill in the top-right corner. Change it at `chrome://extensions/shortcuts`. Escape closes it.
-5. Type a question and press Enter or Send. Cmd-F immediately searches the current page and public pages on the same site, with no additional confirmation. Select This page in settings to limit the scope. The unpacked build already includes this machine’s local connection token, so Connection settings is not required on first use. Rebuild the extension after changing `CMD_F_CLIENT_TOKEN` or deleting `.local/client-token`. Open Connection settings only if the backend is offline or you replaced the token without rebuilding.
+3. Open a normal `http` or `https` website (not a New Tab, settings page, or the Chrome Web Store).
+4. Click the **Cmd-F** toolbar icon once so Chrome grants temporary tab access.
+5. Press **Option+Shift+F** (Mac) or **Alt+Shift+F** to open the pill in the top-right corner. Change the shortcut at `chrome://extensions/shortcuts`. Escape closes it.
+6. Type a question and press Enter or Send.
 
-Enter submits a request; Shift+Enter inserts a newline. The pill expands beneath the input for search progress and the conversation. Live results include semantically matched links, labeled with unverified destination details, and independently verified source passages. Results offer **Show on page** for local passages **Open listing** for matched links, and **Open source** for a verified destination excerpt; destination links open in a new tab. Searches default to five public subpages and at most 96 AI requests including retries, with three screening requests in parallel and a 30-second deadline. Show on page tolerates unrelated layout updates and automatically relocates a uniquely matching unchanged passage after a re-render. Changed or ambiguous sources still require a new search. Rate limits, connection errors, and no-answer outcomes appear in the same conversation. The browser’s normal Cmd+F / Ctrl+F stays unchanged.
+The unpacked build already includes this machine’s local connection token. Connection settings is only needed if the backend is offline or you replaced the token without rebuilding. Rebuild after changing `CMD_F_CLIENT_TOKEN` or deleting `.local/client-token`. After updating the extension, click **Reload** on `chrome://extensions`.
 
-The unpacked production manifest has `activeTab`, `scripting`, and `storage`, plus access to the exact loopback API origin. Only the overlay HTML is web-accessible so it can be embedded; this does not grant page-reading access. The UI runs in an extension-origin iframe and inspection is bound to its actual source tab. It has no blanket website host permission, cookies, debugger, history, or automatically injected page scripts. Browser-internal pages, extension pages, and the Chrome Web Store cannot be inspected.
+`pnpm package` writes `artifacts/cmd-f-extension.zip` for this machine. Extract it before Load unpacked.
 
-The extension build is also available as `artifacts/cmd-f-extension.zip` after `pnpm package`. Extract it before using Load unpacked. That zip is for this machine: it includes the local connection token from the build that created it.
+### Search behavior
 
-## Enable Jev directly through TypeSafe
+Enter submits; Shift+Enter inserts a newline. Default scope is **This site** (current page plus a bounded set of public subpages and relevant linked public sites). Choose **This page** in settings to stay on the tab.
 
-Set the following in `.env`, then restart the backend:
+Results can include verified source passages and labeled listings whose destination details are unverified. **Show on page** highlights a local passage, **Open listing** opens a matched link, and **Open source** opens a verified destination excerpt in a new tab. The browser’s normal Cmd+F / Ctrl+F is unchanged.
 
-```dotenv
-TYPESAFE_API_KEY=your-key
-JEV_TRANSPORT=typesafe
-```
+If Cmd-F opens a help page instead of the pill, the current tab cannot be inspected. Switch to a regular website and try again.
 
-Cmd-F sends typed Choice and independent Noul verification requests directly to TypeSafe's `https://api.typesafe.ai/v1/systemone` endpoint using `jev-1.13.0`. The Gateway is not involved. Your existing local client token in the extension stays the same.
+### Local playground
 
-When `JEV_TRANSPORT` is unset, a `TYPESAFE_API_KEY` selects direct TypeSafe access even if an old Gateway key is also present. An explicit transport setting always wins. A live direct smoke test selected the correct synthetic source and returned support `0.97`; this verifies connectivity, not overall semantic accuracy.
-
-## Optional: use Vercel AI Gateway
-
-Add your Gateway key to **`.env`** (the file is gitignored):
-
-```dotenv
-AI_GATEWAY_API_KEY=your-key
-JEV_TRANSPORT=gateway
-```
-
-`VERCEL_AI_GATEWAY_KEY` in `.env` is also supported; there is no need to rename an existing key. `AI_GATEWAY_API_KEY` takes precedence if both are set.
-
-Restart `pnpm demo` or `pnpm dev:api`. Cmd-F uses AI SDK 7's `experimental_evaluate` with **`typesafe-ai/jev`**. It selects an exact candidate ID with a typed Choice, then makes a separate Boolean probability request to verify the selected source. Optional `GATEWAY_ZERO_DATA_RETENTION=true` requests zero data retention on supported Vercel plans; standard Gateway policy applies by default. Keys stay on the backend and are never bundled into the extension.
-
-Shell variables take precedence over `.env`. A key enables live mode unless `PROVIDER_MODE=mock` is set. Vercel OIDC (`VERCEL_OIDC_TOKEN`) is also supported. For an already linked Vercel project, `vercel env pull .env` refreshes its local OIDC credentials; no Vercel deployment is required when using a Gateway API key.
-
-`npx vercel@latest ai-gateway setup` configures **coding agents**, not this application's environment. Cmd-F does not need changes to your Codex or Claude configuration. Create an app key in your [Vercel Gateway dashboard](https://vercel.com/dashboard/ai-gateway).
-
-Direct TypeSafe defaults to `jev-1.13.0`; Gateway defaults to `typesafe-ai/jev`. Remove a transport-specific `JEV_MODEL` override when switching providers to use the appropriate default.
+To try the UI against owned fixture pages without loading the extension:
 
 ```bash
-pnpm test:live
+pnpm demo
 ```
 
-This runs the same evaluation corpus with real inference and writes `docs/reports/evaluation-live.json`, recording the transport and model. It exits clearly when credentials are missing. A live Gateway smoke test passed. The larger evaluation hit free-tier model rate limits and is marked incomplete; deterministic mock results and rate-limited runs are not semantic-accuracy evidence. Live searches stop with a specific error when AI verification fails; they never return keyword fallback results.
+Open [http://127.0.0.1:5173/overlay.html](http://127.0.0.1:5173/overlay.html) for the pill, or [http://127.0.0.1:5173/sidepanel.html](http://127.0.0.1:5173/sidepanel.html) for the fixture playground. This uses the same TypeSafe key as the extension. `pnpm demo` can crawl those loopback fixtures; `pnpm dev` cannot. Never expose either development server to a network.
+
+## How it works
+
+Cmd-F is two programs that talk only on this machine.
+
+```mermaid
+flowchart LR
+  P[Pill in an extension iframe] -->|validated messages| B[Background mediator]
+  B -->|activeTab inspect| D[Content script]
+  D -->|sanitized snapshot| P
+  P -->|bearer token + query| A[Local Fastify API]
+  A --> J[TypeSafe/Jev]
+  A --> F[Anonymous public fetch]
+  F --> H[Static HTML extraction]
+  A -->|SSE results| P
+  P -->|Show on page| D
+```
+
+**The extension** injects a small overlay host into the current tab. The chat UI runs in an extension-origin iframe, not in the website. A background worker is the only path to the page: it inspects the tab you invoked, sanitizes a snapshot (no passwords, drafts, or cookies), and later highlights a chosen passage. The extension has no blanket website permission, does not click controls, and cannot inspect `chrome://` pages.
+
+**The local API** (`pnpm dev:api`, `127.0.0.1:4317`) owns the search. The extension authenticates with a machine-local token compiled in at `pnpm build`. The API never receives provider keys from the browser; your TypeSafe key stays in `.env` on the backend.
+
+A search proceeds in bounded stages:
+
+1. Classify the question (item, navigation, or information).
+2. Inventory passages, controls, and safe links from the current snapshot.
+3. Screen candidates with Jev Choice.
+4. Independently verify exact source text for passages and controls. Matching links are shown as listings without claiming verified destination details.
+5. If scope is This site, follow observed public links with DNS pinning, robots checks, and no browser cookies, then extract static HTML. Default budget is five successful public pages and 30 seconds.
+
+Live results stream back over SSE. Closing the pill cancels the search and clears its highlight. Details: [architecture](docs/architecture.md), [security](docs/security.md), [privacy](docs/privacy.md).
 
 ## Commands
 
@@ -88,27 +110,11 @@ This runs the same evaluation corpus with real inference and writes `docs/report
 | `pnpm format:check` | Source formatting check                                  |
 | `pnpm test`         | Unit, security, and API integration suites               |
 | `pnpm test:e2e`     | Build and test the real extension in Chromium            |
-| `pnpm test:eval`    | deterministic evaluation report                          |
+| `pnpm test:eval`    | Deterministic evaluation report                          |
 | `pnpm test:live`    | Opt-in Jev evaluation on the same corpus                 |
 
-Browser regression tests require a mock backend. Stop a running live preview first; the test runner starts its own mock preview and refuses to reuse a live one.
+Browser tests inject a local mock provider. Stop a live preview first. Before the first run: `pnpm exec playwright install chromium`.
 
-Before the first browser test, run `pnpm exec playwright install chromium`. Tests copy the production build to `.local/test-extension` and add permission for the **owned fixture origin only**. The original fixture interface is tested in an extension tab; the pill suite embeds the actual overlay in an owned page. OS-level hotkey dispatch and a manual toolbar permission grant remain manual checks.
+Live Jev quality is unmeasured; hosted identity, store distribution, and automatic quote relocation on newly opened tabs are deferred. See [decisions](docs/decisions.md) and [evaluation](docs/evaluation.md).
 
-## Delivered and remaining
-
-Implemented: source extraction, current-page controls, bounded static public crawling, DNS-pinned requests, robots/sitemap discovery, SQLite public cache, Jev adapter, immediate pill search, legacy playground consent previews, streaming/replay, leases/cancellation, hidden-menu guidance, and reversible local highlights.
-
-This is a **working local preview**, not a store-ready hosted release. See [decisions](docs/decisions.md) for deliberate changes and [evaluation](docs/evaluation.md) for measured results and incomplete acceptance gates. In particular: live Jev quality is unmeasured; anonymous rendering, hosted identity/quotas, additional-origin approval, and automatic quote relocation on newly opened source tabs remain deferred. Source links use heading anchors where available.
-
-- [Architecture and protocol](docs/architecture.md)
-- [Security boundaries](docs/security.md)
-- [Privacy and retention](docs/privacy.md)
-- [Configuration](docs/configuration.md)
-- [Evaluation and verification](docs/evaluation.md)
-
-## If clicking the extension opens a help page
-
-Cmd-F cannot be injected into New Tab, browser settings, `chrome://extensions`, other extensions, the Chrome Web Store, or built-in document viewers. Switch to a normal HTTP/HTTPS website, then invoke Cmd-F there. The help page distinguishes browser restrictions, missing tab access, and an installation/load failure; an unknown failure is not automatically called a restricted page.
-
-After updating the unpacked extension, click **Reload** in `chrome://extensions`. Existing installations may retain the old shortcut: open `chrome://extensions/shortcuts`, find **Cmd-F → Activate the extension**, and assign **Option+Shift+F** (Mac) or **Alt+Shift+F**. If another app already uses that combination, choose another unused shortcut. Browser and OS reserved shortcuts take priority over extension commands.
+Released under the [MIT License](LICENSE).

@@ -8,7 +8,7 @@ flowchart LR
   B -->|activeTab inspection| D[Content script / DOM registry]
   D -->|sanitized snapshot| P
   P -->|explicit consent + bearer token| A[Fastify search session]
-  A --> J[Jev Choice then Noul / labeled mock]
+  A --> J[Jev Choice then Noul]
   A --> F[URL policy + DNS-pinned anonymous fetch]
   F --> H[Static HTML extraction]
   F --> C[Eligible public SQLite cache]

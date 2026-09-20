@@ -9,6 +9,3 @@ Checked September 19, 2026. Numerical application budgets and thresholds are pro
 - [Chrome sidePanel](https://developer.chrome.com/docs/extensions/reference/api/sidePanel): extension panel and user-invoked opening.
 - [Playwright extension testing](https://playwright.dev/docs/chrome-extensions): persistent Chromium context and extension service-worker testing.
 - [Node.js releases](https://nodejs.org/en/about/previous-releases): Node 24 LTS selection.
-
-- [Vercel Gateway evaluation](https://vercel.com/docs/ai-gateway/modalities/evaluation): AI SDK 7 typed Choice and Boolean requests using `typesafe-ai/jev`.
-- [Vercel CLI Gateway setup](https://vercel.com/docs/cli/ai-gateway): coding-agent setup is separate from application credentials.

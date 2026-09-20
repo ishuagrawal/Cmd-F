@@ -210,11 +210,11 @@ test('an action-like anchor is highlight-only and never opened or fetched', asyn
   await zeroActions();
 });
 
-test('consent discloses Gateway before any page text is submitted', async () => {
+test('consent discloses TypeSafe before any page text is submitted', async () => {
   await panel.route('**/v1/config', (route) =>
     route.fulfill({
       contentType: 'application/json',
-      body: JSON.stringify({ provider: 'jev', transport: 'gateway', renderer: false }),
+      body: JSON.stringify({ provider: 'jev', transport: 'typesafe', renderer: false }),
     }),
   );
   let searches = 0;
@@ -225,7 +225,8 @@ test('consent discloses Gateway before any page text is submitted', async () => 
   await openFixture('journal');
   await panel.getByLabel('What are you looking for?').fill('Which beacon is marked amber?');
   await panel.getByRole('button', { name: 'Find source', exact: true }).click();
-  await expect(panel.getByRole('dialog')).toContainText('Vercel AI Gateway, and TypeSafe/Jev');
+  await expect(panel.getByRole('dialog')).toContainText('TypeSafe/Jev');
+  await expect(panel.getByRole('dialog')).not.toContainText('Vercel');
   await expect(panel.getByRole('button', { name: 'Find the source', exact: true })).toBeDisabled();
   expect(searches).toBe(0);
 });

@@ -2,8 +2,6 @@ import { z } from 'zod';
 import { excerptOptions, type Excerpt } from './excerpts';
 import type { Candidate } from '../../contracts/src';
 import { rank, shortlist } from '../../retrieval/src';
-import { createGateway } from '@ai-sdk/gateway';
-import { experimental_evaluate as evaluate, type Experimental_EvaluationQuestion } from 'ai';
 export interface ProviderBudget {
   calls: number;
   bytes: number;
@@ -35,7 +33,7 @@ export interface Assessment {
 }
 export interface Provider {
   mode: 'mock' | 'jev';
-  transport?: 'gateway' | 'typesafe';
+  transport?: 'typesafe';
   interpret?(
     question: string,
     signal: AbortSignal,
@@ -131,7 +129,7 @@ export function validateChoice(raw: unknown, ids: string[]) {
 }
 export class JevProvider implements Provider {
   mode = 'jev' as const;
-  readonly transport: 'gateway' | 'typesafe' = 'typesafe';
+  readonly transport = 'typesafe' as const;
   constructor(
     private key: string,
     protected model = 'jev-1.13.0',
@@ -484,75 +482,6 @@ export class JevProvider implements Provider {
   }
 }
 
-// Both transports share exact candidate selection and independent support validation.
-export class GatewayJevProvider extends JevProvider {
-  override readonly transport = 'gateway' as const;
-  constructor(
-    private apiKey?: string,
-    model = 'typesafe-ai/jev',
-    fetcher: typeof fetch = fetch,
-    private zeroDataRetention = false,
-  ) {
-    super('', model, fetcher);
-    if (model !== 'typesafe-ai/jev') throw new Error('unsupported_gateway_jev_model');
-  }
-  protected override async request(
-    state: unknown,
-    questions: Record<string, unknown>,
-    signal: AbortSignal,
-    budget: ProviderBudget,
-  ) {
-    validatePayload(state, questions);
-    const mapped: Record<string, Experimental_EvaluationQuestion> = {};
-    for (const [id, raw] of Object.entries(questions)) {
-      const q = z
-        .object({
-          type: z.enum(['choice', 'noul']),
-          instructions: z.string(),
-          criteria: z.record(z.string(), z.string()),
-        })
-        .parse(raw);
-      mapped[id] =
-        q.type === 'choice'
-          ? { ...q, type: 'choice' }
-          : {
-              type: 'boolean',
-              instructions: q.instructions,
-              criteria: { true: q.criteria.true, false: q.criteria.false },
-            };
-    }
-    const gateway = createGateway({
-      apiKey: this.apiKey,
-      fetch: (url, init) => boundedFetch(url, init, signal, budget, this.fetcher),
-    });
-    const result = await evaluate({
-      model: gateway.evaluationModel(this.model),
-      state: JSON.stringify(state),
-      questions: mapped,
-      maxRetries: 0, // boundedFetch counts every attempt and permits one transient retry.
-      abortSignal: signal,
-      providerOptions: this.zeroDataRetention ? { gateway: { zeroDataRetention: true } } : {},
-    });
-    const answers = Object.fromEntries(
-      Object.entries(result.answers).map(([id, answer]) => [
-        id,
-        answer.type === 'boolean' ? { type: 'noul', noul: answer.probability } : answer,
-      ]),
-    );
-    const parsed = Response.parse({
-      model: result.response.modelId,
-      answers,
-      usage: {
-        input_tokens: result.usage.inputTokens ?? 0,
-        output_tokens: result.usage.outputTokens ?? 0,
-      },
-    });
-    budget.inputTokens += parsed.usage.input_tokens;
-    budget.outputTokens += parsed.usage.output_tokens;
-    return parsed;
-  }
-}
-
 function validatePayload(state: unknown, questions: Record<string, unknown>) {
   // Conservative UTF-8 bounds, not an exact tokenizer.
   const stateBytes = Buffer.byteLength(JSON.stringify(state));
@@ -634,28 +563,10 @@ async function boundedFetch(
 }
 
 export function providerFromEnv(env: NodeJS.ProcessEnv = process.env): Provider {
-  const transport = z
-    .enum(['gateway', 'typesafe'])
-    .parse(env.JEV_TRANSPORT || (env.TYPESAFE_API_KEY ? 'typesafe' : 'gateway'));
-  const gatewayKey = env.AI_GATEWAY_API_KEY || env.VERCEL_AI_GATEWAY_KEY;
-  const credential =
-    transport === 'gateway' ? gatewayKey || env.VERCEL_OIDC_TOKEN : env.TYPESAFE_API_KEY;
-  const mode = z.enum(['live', 'mock']).parse(env.PROVIDER_MODE || (credential ? 'live' : 'mock'));
-  if (mode === 'mock') return new MockProvider();
-  if (!credential)
-    throw new Error(
-      transport === 'gateway'
-        ? 'Live mode requires AI_GATEWAY_API_KEY, VERCEL_AI_GATEWAY_KEY, or VERCEL_OIDC_TOKEN in .env'
-        : 'Direct live mode requires TYPESAFE_API_KEY',
-    );
-  return transport === 'gateway'
-    ? new GatewayJevProvider(
-        gatewayKey,
-        env.JEV_MODEL || 'typesafe-ai/jev',
-        fetch,
-        z.enum(['true', 'false']).parse(env.GATEWAY_ZERO_DATA_RETENTION || 'false') === 'true',
-      )
-    : new JevProvider(env.TYPESAFE_API_KEY!, env.JEV_MODEL || 'jev-1.13.0');
+  if (env.CMD_F_TEST_PROVIDER === 'mock') return new MockProvider();
+  const key = env.TYPESAFE_API_KEY?.trim();
+  if (!key) throw new Error('Cmd-F requires TYPESAFE_API_KEY in .env');
+  return new JevProvider(key, env.JEV_MODEL?.trim() || 'jev-1.13.0');
 }
 
 // Return only safe categories, never provider response bodies, prompts, or credentials.

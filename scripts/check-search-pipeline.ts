@@ -8,7 +8,7 @@ import { publicNetworkPolicy } from '../packages/security/src/network';
 import { PublicCache } from '../apps/api/src/cache/public-cache';
 import { extractHtml } from '../packages/extraction/src/html';
 import type { PageSnapshot } from '../packages/contracts/src';
-const provider = providerFromEnv({ ...process.env, PROVIDER_MODE: 'live' });
+const provider = providerFromEnv();
 const rows: unknown[] = [];
 const jobs =
   '<title>Careers</title><h1>Open roles</h1>' +

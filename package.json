@@ -24,10 +24,8 @@
     "benchmark": "node --import tsx scripts/benchmark.ts"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "4.0.87",
     "@fastify/cors": "11.2.0",
     "@phosphor-icons/react": "2.1.10",
-    "ai": "7.0.107",
     "cheerio": "1.1.2",
     "dotenv": "17.2.3",
     "fastify": "5.12.5",

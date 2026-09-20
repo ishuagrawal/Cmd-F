@@ -87,13 +87,7 @@ function Chat() {
       const cfg = z
         .object({ provider: z.string(), transport: z.string().optional() })
         .parse(await api.current.call('/v1/config'));
-      setProvider(
-        cfg.provider === 'mock'
-          ? 'Demo keyword provider'
-          : cfg.transport === 'gateway'
-            ? 'Vercel AI Gateway and TypeSafe/Jev'
-            : 'TypeSafe/Jev',
-      );
+      setProvider(cfg.provider === 'mock' ? 'Demo keyword provider' : 'TypeSafe/Jev');
       setConnected(true);
       setSettings(false);
       setError('');

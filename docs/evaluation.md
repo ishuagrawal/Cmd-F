@@ -20,7 +20,7 @@ The browser suite uses the production extension bundles against owned local page
 
 The deterministic report is generated with `pnpm test:eval` and written to `docs/reports/evaluation-mock.json`. Its scores describe candidate selection over the supplied fixtures only. They do not establish real-model accuracy, public-site completeness, or highlight success on arbitrary pages.
 
-Provider transports are exercised separately. A live provider run is incomplete whenever credentials, rate limits, or transport errors prevent the planned cases from finishing; incomplete runs do not produce semantic accuracy claims.
+Provider credentials are exercised separately. A live TypeSafe run is incomplete whenever credentials, rate limits, or transport errors prevent the planned cases from finishing; incomplete runs do not produce semantic accuracy claims.
 
 ## Performance and highlight coverage
 

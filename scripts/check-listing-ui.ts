@@ -8,9 +8,7 @@ import { publicNetworkPolicy } from '../packages/security/src/network';
 import { MockProvider, providerFromEnv } from '../packages/jev/src';
 
 const live = process.argv.includes('--live');
-const provider = live
-  ? providerFromEnv({ ...process.env, PROVIDER_MODE: 'live' })
-  : new MockProvider();
+const provider = live ? providerFromEnv() : new MockProvider();
 const browser = await chromium.launch({ headless: true });
 const cache = new PublicCache();
 try {

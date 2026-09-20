@@ -52,7 +52,6 @@ function Panel() {
     import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:4317',
   );
   const [mode, setMode] = useState('');
-  const [providerTransport, setProviderTransport] = useState<'gateway' | 'typesafe'>();
   const [consentOpen, setConsentOpen] = useState(false);
   const [consent, setConsent] = useState(false);
   const [siteConsent, setSiteConsent] = useState(false);
@@ -81,12 +80,10 @@ function Panel() {
       const cfg = z
         .object({
           provider: z.enum(['mock', 'jev']),
-          transport: z.enum(['gateway', 'typesafe']).optional(),
           renderer: z.boolean(),
         })
         .parse(await api.current.call('/v1/config'));
       setMode(cfg.provider);
-      setProviderTransport(cfg.transport);
     } catch {
       const baked = bakedClientToken();
       if (fallback && baked && baked !== t) {
@@ -707,12 +704,8 @@ function Panel() {
             <h2 id="consent-title">Your page. Your permission.</h2>
             <p>
               Your question and the selected page text below will go to your configured backend
-              {mode === 'jev'
-                ? providerTransport === 'gateway'
-                  ? ', Vercel AI Gateway, and TypeSafe/Jev'
-                  : ' and TypeSafe/Jev'
-                : ''}
-              . This can include private page content. Redaction may miss personal information.
+              {mode === 'jev' ? ' and TypeSafe/Jev' : ''}. This can include private page content.
+              Redaction may miss personal information.
             </p>
             <details className="preview">
               <summary>

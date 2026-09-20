@@ -90,7 +90,9 @@ it('finds a handbook subpage without fetching actions', async () => {
   expect(stats.requests).not.toContain('/logout');
 });
 it('does not force an answer for unrelated questions', async () => {
-  const s = await finish((await search('/fixtures/journal', 'Which instrument measures rainfall?')).id);
+  const s = await finish(
+    (await search('/fixtures/journal', 'Which instrument measures rainfall?')).id,
+  );
   expect(s.evidence).toBe('none');
   expect(s.message).toBe('No answer found in the pages checked.');
 });
@@ -151,7 +153,7 @@ it('rate-limited searches stop without emitting unverified results or repeating 
     policy,
     provider: {
       mode: 'jev',
-      transport: 'gateway',
+      transport: 'typesafe',
       async select() {
         calls++;
         throw Object.assign(new Error('provider throttled'), { statusCode: 429 });

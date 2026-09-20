@@ -49,7 +49,7 @@ try {
       publicSearchConsent: scope === 'site',
       refresh: true,
     },
-    providerFromEnv({ ...process.env, PROVIDER_MODE: 'live' }),
+    providerFromEnv(),
     new SafeFetcher(publicNetworkPolicy),
     cache,
   );

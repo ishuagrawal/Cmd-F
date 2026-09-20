@@ -1,20 +1,27 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { z } from 'zod';
 import '../../scripts/load-env';
-import { providerFromEnv, providerFailureReason } from '../../packages/jev/src';
+import {
+  MockProvider,
+  providerFromEnv,
+  providerFailureReason,
+  type Provider,
+} from '../../packages/jev/src';
 import { rank } from '../../packages/retrieval/src';
 import { CandidateSchema, hash } from '../../packages/contracts/src';
 const live = process.argv.includes('--live');
-const provider = (() => {
-  try {
-    return providerFromEnv({ ...process.env, PROVIDER_MODE: live ? 'live' : 'mock' });
-  } catch (error) {
-    console.error(
-      `Evaluation not run: ${(error as Error).message}. No mock results are reported as live.`,
-    );
-    process.exit(2);
-  }
-})();
+const provider: Provider = live
+  ? (() => {
+      try {
+        return providerFromEnv();
+      } catch (error) {
+        console.error(
+          `Evaluation not run: ${(error as Error).message}. No mock results are reported as live.`,
+        );
+        process.exit(2);
+      }
+    })()
+  : new MockProvider();
 const Task = z.object({
   id: z.string(),
   split: z.enum(['dev', 'held_out']),
@@ -136,9 +143,7 @@ const report = {
   plannedTasks: tasks.length,
   mode: provider.mode,
   transport: provider.transport,
-  model: live
-    ? process.env.JEV_MODEL || (provider.transport === 'gateway' ? 'typesafe-ai/jev' : 'jev-1.13.0')
-    : 'deterministic-keyword-v1',
+  model: live ? process.env.JEV_MODEL || 'jev-1.13.0' : 'deterministic-keyword-v1',
   note: 'Offline candidate-selection corpus. No crawling or highlight-resolution claim. Top-3 is selected candidate plus lexical alternatives. Mock results only demonstrate the deterministic pipeline; they do not evaluate Jev. Template-level held-out split was fixed before evaluation. Small sample; no production accuracy claim.',
   metrics: { all: summarize('all'), dev: summarize('dev'), held_out: summarize('held_out') },
   rows,
