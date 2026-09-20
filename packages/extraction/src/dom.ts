@@ -195,12 +195,10 @@ export class DomSession {
         traversalComplete = false;
         return;
       }
-      if (
-        !(
-          el.closest(excluded) &&
-          !el.matches('input[type=button],input[type=submit],input[type=reset]')
-        )
-      ) {
+      if (!(
+        el.closest(excluded) &&
+        !el.matches('input[type=button],input[type=submit],input[type=reset]')
+      )) {
         if (el.shadowRoot) roots.push(el.shadowRoot);
         if (el.tagName === 'IFRAME') {
           try {
@@ -441,8 +439,7 @@ export class DomSession {
     return groups;
   }
   readSections(snapshotId: string, ids: string[]) {
-    if (this.doc.URL !== this.url)
-      throw new Error('Source changed. Inspect the page again.');
+    if (this.doc.URL !== this.url) throw new Error('Source changed. Inspect the page again.');
     if (this.dirty && this.liveRescues < 1) {
       this.liveRescues++;
       this.rescuing = true;

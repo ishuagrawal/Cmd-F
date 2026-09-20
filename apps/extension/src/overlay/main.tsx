@@ -350,128 +350,130 @@ export function Chat() {
             ))}
             {asked && <div className="user-message">{asked}</div>}
             {(asked || busy || state || error) && (
-            <div className="latest-reply" ref={reply}>
-            {busy && !state && (
-              <p className="reply" role="status">
-                Searching…
-              </p>
-            )}
-            {state && (
-              <>
-                <div className="coverage" aria-label="Search coverage">
-                  <span>
-                    {state.coverage.pagesChecked}{' '}
-                    {state.coverage.pagesChecked === 1 ? 'page' : 'pages'} checked
-                  </span>
-                  <span>{state.coverage.linksObserved ?? 0} links seen</span>
-                  <span>{(state.coverage.elapsedMs / 1000).toFixed(1)}s</span>
-                </div>
-                {sources.some((r) => r.kind === 'listing') && (
-                  <p className="listing-note">Destination details not verified.</p>
-                )}
-                {sources.map((r) => (
-                  <article
-                    className={`source ${r.kind === 'listing' ? 'listing' : 'passage'}`}
-                    key={r.id}
-                  >
-                    <span className="eyebrow">
-                      {r.kind === 'listing'
-                        ? 'MATCHING LISTING'
-                        : r.provider === 'mock'
-                          ? 'DEMO MATCH'
-                          : 'SOURCE FOUND'}
-                    </span>
-                    <h2>{r.title || r.origin}</h2>
-                    {r.url && <p className="source-domain">{new URL(r.url).hostname}</p>}
-                    {r.kind !== 'listing' && !!r.headingPath.length && (
-                      <p className="crumb">{r.headingPath.join(' / ')}</p>
-                    )}
-                    {r.kind !== 'listing' && <blockquote>{r.quote}</blockquote>}
-                    <div className="actions">
-                      {r.local && (
-                        <button className="primary" onClick={() => void show(r)}>
-                          <Cursor size={15} />
-                          Show on page
-                        </button>
-                      )}
-                      {((r.kind === 'page' && !r.local) || r.kind === 'listing') &&
-                        r.url &&
-                        shareableUrl(r.url) &&
-                        actionPolicy(r.url) === 'read_candidate' && (
-                          <button
-                            onClick={() =>
-                              void openSource(
-                                r.url!,
-                                r.kind === 'listing' ? undefined : r.quote,
-                              ).catch((e) => setError(e.message))
-                            }
-                          >
-                            {r.kind === 'listing' ? 'Open listing' : 'Open source'}
-                            <ArrowUpRight size={15} />
-                          </button>
-                        )}
-                    </div>
-                  </article>
-                ))}
-                <div
-                  className="search-status"
-                  role={state.lifecycle === 'running' ? 'status' : undefined}
-                >
-                  <p className={`reply ${state.lifecycle === 'failed' ? 'error' : ''}`}>
-                    {summary(state)}
+              <div className="latest-reply" ref={reply}>
+                {busy && !state && (
+                  <p className="reply" role="status">
+                    Searching…
                   </p>
-                  {state.lifecycle === 'running' && (
-                    <div className="loading" aria-label="Searching">
-                      <span />
-                      <span />
-                      <span />
+                )}
+                {state && (
+                  <>
+                    <div className="coverage" aria-label="Search coverage">
+                      <span>
+                        {state.coverage.pagesChecked}{' '}
+                        {state.coverage.pagesChecked === 1 ? 'page' : 'pages'} checked
+                      </span>
+                      <span>{state.coverage.linksObserved ?? 0} links seen</span>
+                      <span>{(state.coverage.elapsedMs / 1000).toFixed(1)}s</span>
                     </div>
-                  )}
-                </div>
-                <>
-                  {!!state.coverage.checkedPages?.length && (
-                    <details className="page-details">
-                      <summary>Search details</summary>
-                      <p>
-                        {state.coverage.candidatesAssessed ?? 0} of{' '}
-                        {state.coverage.candidatesObserved ?? 0} candidates reviewed ·{' '}
-                        {state.coverage.fetchAttempts ?? 0} page fetches ·{' '}
-                        {state.coverage.urlsDiscovered} crawl destinations
-                      </p>
-                      {state.coverage.limitations.some((x) =>
-                        ['more_local_candidates', 'more_candidates', 'snapshot_truncated'].includes(
-                          x,
-                        ),
-                      ) && <p>Some page content remains unchecked.</p>}
-                      {state.coverage.checkedPages.map((page, index) => (
-                        <p key={index}>
-                          {page.title || page.url || 'Current page'} —{' '}
-                          {page.outcome.replaceAll('_', ' ')}
-                          {page.url && (
-                            <small style={{ display: 'block', overflowWrap: 'anywhere' }}>
-                              {page.url}
-                            </small>
+                    {sources.some((r) => r.kind === 'listing') && (
+                      <p className="listing-note">Destination details not verified.</p>
+                    )}
+                    {sources.map((r) => (
+                      <article
+                        className={`source ${r.kind === 'listing' ? 'listing' : 'passage'}`}
+                        key={r.id}
+                      >
+                        <span className="eyebrow">
+                          {r.kind === 'listing'
+                            ? 'MATCHING LISTING'
+                            : r.provider === 'mock'
+                              ? 'DEMO MATCH'
+                              : 'SOURCE FOUND'}
+                        </span>
+                        <h2>{r.title || r.origin}</h2>
+                        {r.url && <p className="source-domain">{new URL(r.url).hostname}</p>}
+                        {r.kind !== 'listing' && !!r.headingPath.length && (
+                          <p className="crumb">{r.headingPath.join(' / ')}</p>
+                        )}
+                        {r.kind !== 'listing' && <blockquote>{r.quote}</blockquote>}
+                        <div className="actions">
+                          {r.local && (
+                            <button className="primary" onClick={() => void show(r)}>
+                              <Cursor size={15} />
+                              Show on page
+                            </button>
                           )}
-                        </p>
-                      ))}
-                    </details>
-                  )}
-                </>
-              </>
-            )}
-            {/extension context invalidated/i.test(error) && (
-              <button className="primary" onClick={reconnect}>
-                Reconnect Cmd-F
-              </button>
-            )}
-            {error && (
-              <p className="reply error" role="alert">
-                {/extension context invalidated/i.test(error)
-                  ? 'Cmd-F disconnected after an extension reload. Reconnect to retry your prompt.'
-                  : error}
-              </p>
-            )}
-            </div>
+                          {((r.kind === 'page' && !r.local) || r.kind === 'listing') &&
+                            r.url &&
+                            shareableUrl(r.url) &&
+                            actionPolicy(r.url) === 'read_candidate' && (
+                              <button
+                                onClick={() =>
+                                  void openSource(
+                                    r.url!,
+                                    r.kind === 'listing' ? undefined : r.quote,
+                                  ).catch((e) => setError(e.message))
+                                }
+                              >
+                                {r.kind === 'listing' ? 'Open listing' : 'Open source'}
+                                <ArrowUpRight size={15} />
+                              </button>
+                            )}
+                        </div>
+                      </article>
+                    ))}
+                    <div
+                      className="search-status"
+                      role={state.lifecycle === 'running' ? 'status' : undefined}
+                    >
+                      <p className={`reply ${state.lifecycle === 'failed' ? 'error' : ''}`}>
+                        {summary(state)}
+                      </p>
+                      {state.lifecycle === 'running' && (
+                        <div className="loading" aria-label="Searching">
+                          <span />
+                          <span />
+                          <span />
+                        </div>
+                      )}
+                    </div>
+                    <>
+                      {!!state.coverage.checkedPages?.length && (
+                        <details className="page-details">
+                          <summary>Search details</summary>
+                          <p>
+                            {state.coverage.candidatesAssessed ?? 0} of{' '}
+                            {state.coverage.candidatesObserved ?? 0} candidates reviewed ·{' '}
+                            {state.coverage.fetchAttempts ?? 0} page fetches ·{' '}
+                            {state.coverage.urlsDiscovered} crawl destinations
+                          </p>
+                          {state.coverage.limitations.some((x) =>
+                            [
+                              'more_local_candidates',
+                              'more_candidates',
+                              'snapshot_truncated',
+                            ].includes(x),
+                          ) && <p>Some page content remains unchecked.</p>}
+                          {state.coverage.checkedPages.map((page, index) => (
+                            <p key={index}>
+                              {page.title || page.url || 'Current page'} —{' '}
+                              {page.outcome.replaceAll('_', ' ')}
+                              {page.url && (
+                                <small style={{ display: 'block', overflowWrap: 'anywhere' }}>
+                                  {page.url}
+                                </small>
+                              )}
+                            </p>
+                          ))}
+                        </details>
+                      )}
+                    </>
+                  </>
+                )}
+                {/extension context invalidated/i.test(error) && (
+                  <button className="primary" onClick={reconnect}>
+                    Reconnect Cmd-F
+                  </button>
+                )}
+                {error && (
+                  <p className="reply error" role="alert">
+                    {/extension context invalidated/i.test(error)
+                      ? 'Cmd-F disconnected after an extension reload. Reconnect to retry your prompt.'
+                      : error}
+                  </p>
+                )}
+              </div>
             )}
           </>
         )}
@@ -575,43 +577,68 @@ function LaunchHelp() {
           ),
         );
   }, []);
-  const message =
+  const note =
     reason === 'restricted' || reason === '1'
-      ? 'This tab is protected by the browser. Cmd-F can open on regular websites, but not New Tab, browser settings, extension pages, the Chrome Web Store, or built-in document viewers.'
+      ? 'This tab is protected by the browser. New Tab, browser settings, extension pages, the Chrome Web Store, and built-in document viewers stay off-limits. Regular websites work.'
       : reason === 'permission'
-        ? 'The browser did not grant access to that tab. Return to the website, refresh it, and click the Cmd-F toolbar icon again. Check the extension’s site-access setting if access is still denied.'
-        : 'Cmd-F could not load its page overlay. Reload the unpacked extension in your browser’s extensions page, refresh the website, and try again. This does not necessarily mean the website is restricted.';
+        ? 'The browser did not grant access to this tab. Return to the website, refresh it, and click the Cmd-F toolbar icon again. Check the extension’s site-access setting if access is still denied.'
+        : 'Cmd-F could not load its page overlay here. Reload the unpacked extension in your browser’s extensions page, refresh the website, and try again. This does not necessarily mean the website is restricted.';
   return (
     <main className="launch-help">
       <div className="brand">
-        <Command size={22} />
+        <Command size={20} />
         Cmd-F
       </div>
-      <h1>Couldn’t open on that tab.</h1>
-      <p>{message}</p>
-      <h2>Set a shortcut that’s free</h2>
-      <p>
-        Use <strong>Option + Shift + F</strong> on Mac, or <strong>Alt + Shift + F</strong>{' '}
-        elsewhere. An existing installation may still have the old shortcut.
+      <h1>Start Cmd-F on any website</h1>
+      <p className="lead">
+        Cmd-F reads the page you are on and shows you where the answer is. It does not run on this
+        tab, so start from a regular website.
       </p>
-      {shortcut && (
-        <p className="assigned">
-          Currently assigned: <strong>{shortcut}</strong>
-        </p>
-      )}
-      <button
-        className="primary"
-        onClick={() => {
-          if (isExtension) void chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
-        }}
-      >
-        Configure keyboard shortcut <ArrowUpRight size={16} />
-      </button>
-      <p className="hint">
-        In the shortcuts page, find Cmd-F → Activate the extension. Then return to the website you
-        want to search.
-      </p>
-      <button onClick={() => window.close()}>Close this help page</button>
+      <ol className="steps">
+        <li>
+          <div>
+            <h2>Open a website</h2>
+            <p>
+              An article, documentation, a dashboard — anything outside the browser’s own pages.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h2>Press the shortcut</h2>
+            <p>
+              <strong>Option + Shift + F</strong> on Mac, <strong>Alt + Shift + F</strong>{' '}
+              elsewhere. Clicking the Cmd-F toolbar icon does the same thing.
+            </p>
+            {shortcut && (
+              <p className="assigned">
+                Currently assigned: <strong>{shortcut}</strong>
+              </p>
+            )}
+          </div>
+        </li>
+        <li>
+          <div>
+            <h2>Ask for what you want</h2>
+            <p>Cmd-F searches the page and highlights the exact text it used.</p>
+          </div>
+        </li>
+      </ol>
+      <div className="launch-actions">
+        <button
+          className="primary"
+          onClick={() => {
+            if (isExtension) void chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+          }}
+        >
+          Configure keyboard shortcut <ArrowUpRight size={16} />
+        </button>
+        <button onClick={() => window.close()}>Close</button>
+      </div>
+      <section className="launch-note">
+        <h2>Why not this tab?</h2>
+        <p>{note}</p>
+      </section>
     </main>
   );
 }

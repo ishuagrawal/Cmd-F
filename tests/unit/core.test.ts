@@ -84,12 +84,16 @@ describe('source extraction', () => {
     expect(JSON.stringify(snap)).not.toMatch(
       /input-secret|draft-secret|edited-secret|script-secret/,
     );
-    expect(snap.candidates.find((x) => x.text?.includes('record each item'))?.text).toContain('\n  ');
+    expect(snap.candidates.find((x) => x.text?.includes('record each item'))?.text).toContain(
+      '\n  ',
+    );
     expect(snap.candidates.find((x) => x.text?.includes('record each item'))?.headingPath).toEqual([
       'Reference',
       'Processes',
     ]);
-    expect(snap.candidates.find((x) => x.text?.includes('record each item'))?.headingId).toBe('process');
+    expect(snap.candidates.find((x) => x.text?.includes('record each item'))?.headingId).toBe(
+      'process',
+    );
   });
   it('resolves base and rejects dangerous destinations', () => {
     const s = extractHtml(
@@ -203,7 +207,12 @@ describe('provider validation', () => {
     }) as typeof fetch;
     const b = budget();
     await expect(
-      new JevProvider('fake', 'jev-1.13.0', transport).select('beacon color', candidates, signal, b),
+      new JevProvider('fake', 'jev-1.13.0', transport).select(
+        'beacon color',
+        candidates,
+        signal,
+        b,
+      ),
     ).rejects.toThrow('rate_limited');
     expect(calls).toBe(1);
     expect(b.calls).toBe(1);

@@ -142,20 +142,12 @@ it('uses subject context for competing route labels without overriding explicit 
   );
 });
 it('uses the destination host when ranking otherwise identical route labels', () => {
-  const candidates = ['https://docs.example.com/start', 'https://herbs.example.com/start'].map(
-    (safeUrl) => ({
-      label: 'Overview',
-      text: '',
-      context: '',
-      headingPath: [] as string[],
-      safeUrl,
-    }),
+  const page = extractHtml(
+    '<a href="https://docs.example.com/start">Overview</a><a href="https://herbs.example.com/start">Overview</a>',
+    'https://docs.example.com/index/start',
   );
   expect(
-    rankRoutes('herbs', candidates, {
-      title: 'Docs',
-      url: 'https://docs.example.com/index/start',
-    })[0].candidate.safeUrl,
+    rankRoutes('herbs', page.candidates, { title: 'Docs', url: page.url })[0].candidate.safeUrl,
   ).toBe('https://herbs.example.com/start');
 });
 
@@ -279,7 +271,11 @@ it('still fetches a working related host after the source origin blocks public p
     'what was Astra involvement in the Hugging Face incident',
     3,
   );
-  expect(visited.filter((url) => url.startsWith('https://news.example.com/') && !url.endsWith('/robots.txt')).length).toBeLessThan(6);
+  expect(
+    visited.filter(
+      (url) => url.startsWith('https://news.example.com/') && !url.endsWith('/robots.txt'),
+    ).length,
+  ).toBeLessThan(6);
   expect(visited).toContain('https://safety.example.com/gpt-6-astra');
   expect(state.evidence).toBe('direct');
 });

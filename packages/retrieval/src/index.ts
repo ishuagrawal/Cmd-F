@@ -131,9 +131,7 @@ export function rankRoutes(
       let locality = 0;
       try {
         const dest = new URL(item.candidate.safeUrl!);
-        const sameHost =
-          !!base && dest.hostname.replace(/^www\./, '') === base.hostname.replace(/^www\./, '');
-        if (sameHost) {
+        if (base && dest.hostname.replace(/^www\./, '') === base.hostname.replace(/^www\./, '')) {
           const path = dest.pathname.split('/').filter(Boolean);
           const source = base.pathname.split('/').filter(Boolean);
           for (let i = 0; i < Math.min(path.length - 1, source.length - 1); i++) {

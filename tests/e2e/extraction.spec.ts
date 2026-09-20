@@ -63,7 +63,8 @@ test('keeps late article quotes after a large chart tree', async ({ page }) => {
       complete: jane.discovery.complete,
       quote: jane.candidates.some((c) => (c.text || '').includes('trading intuition')),
       attributed: jane.candidates.some(
-        (c) => (c.text || '').includes('trading intuition') && (c.context || '').includes('Jane Street'),
+        (c) =>
+          (c.text || '').includes('trading intuition') && (c.context || '').includes('Jane Street'),
       ),
       attribution: jane.candidates.some((c) => hay(c).includes('Jane Street')),
       games: games.candidates.some((c) => (c.text || '').includes('bring games to life')),
@@ -90,10 +91,7 @@ test('retakes a live snapshot when the page mutates after inspect', async ({ pag
   const found = await page.evaluate(async () => {
     type Session = {
       inspect(q: string): { id: string; sectionIds: string[]; candidates: { text?: string }[] };
-      readSections(
-        id: string,
-        ids: string[],
-      ): { id: string; candidates: { text?: string }[] };
+      readSections(id: string, ids: string[]): { id: string; candidates: { text?: string }[] };
     };
     const session = new (
       globalThis as unknown as { TestSession: new (doc: Document) => Session }

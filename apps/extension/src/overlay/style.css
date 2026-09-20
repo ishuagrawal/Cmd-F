@@ -460,35 +460,106 @@ footer {
 
 .launch-help {
   width: min(520px, calc(100% - 40px));
-  margin: 64px auto;
-  padding: 28px;
+  margin: 56px auto;
+  padding: 32px;
   border: 1px solid #e0e4d9;
   border-radius: 20px;
   background: #fffffc;
   box-shadow: 0 6px 24px #27392812;
 }
 .launch-help h1 {
-  font-size: 26px;
-  margin-top: 28px;
+  font-size: 25px;
+  line-height: 1.2;
+  margin: 22px 0 0;
 }
-.launch-help h2 {
-  font-size: 16px;
-  margin-top: 28px;
-}
-.launch-help p {
-  color: #65705f;
+.launch-help .lead {
+  margin: 12px 0 0;
   font-size: 14px;
+  line-height: 1.6;
+  color: #65705f;
 }
-.launch-help .assigned {
+/* A real sequence, so the numerals carry order rather than decorate. */
+.launch-help .steps {
+  counter-reset: step;
+  list-style: none;
+  display: grid;
+  gap: 24px;
+  margin: 32px 0 0;
+  padding: 0;
+}
+.launch-help .steps li {
+  counter-increment: step;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.launch-help .steps li > div {
+  min-width: 0;
+}
+.launch-help .steps li::before {
+  content: counter(step);
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #eef1e8;
+  color: #3c5a49;
+  font-size: 12px;
+  font-weight: 600;
+}
+.launch-help .steps h2 {
+  margin: 3px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.launch-help .steps p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #65705f;
+}
+.launch-help .steps .assigned {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 7px 11px;
   background: #eff2e9;
   border-radius: 8px;
-  padding: 10px;
-}
-.launch-help .hint {
   font-size: 12px;
+  color: #465243;
 }
-.launch-help .brand {
+.launch-help .launch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 32px;
+}
+.launch-help .launch-actions button {
+  padding: 10px 14px;
+  font-size: 13px;
+}
+.launch-help .launch-note {
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid #e8eade;
+}
+.launch-help .launch-note h2 {
+  margin: 0;
+  font-size: 13px;
   font-weight: 600;
+}
+.launch-help .launch-note p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #6d776a;
+}
+@media (max-width: 480px) {
+  .launch-help {
+    margin: 24px auto;
+    padding: 24px 20px;
+  }
 }
 
 /* Compact source cards keep multi-result searches readable. */

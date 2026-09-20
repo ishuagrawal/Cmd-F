@@ -519,12 +519,13 @@ test('scrolls the conversation to the start of a new reply', async () => {
   await expect(chat.locator('blockquote')).toContainText('amber');
   await ask('When do public tours resume?');
   await expect(chat.locator('.latest-reply')).toContainText('next month');
-  const log = chat.locator('.conversation');
-  const latest = chat.locator('.latest-reply');
-  const logBox = await log.boundingBox();
-  const replyBox = await latest.boundingBox();
-  expect(replyBox!.y).toBeGreaterThanOrEqual(logBox!.y - 4);
-  expect(replyBox!.y).toBeLessThan(logBox!.y + 80);
+  // The card's own divider caps the pane; the coverage row scrolls above it.
+  const logBox = await chat.locator('.conversation').boundingBox();
+  const cardBox = await chat.locator('.latest-reply .source').first().boundingBox();
+  expect(cardBox!.y).toBeGreaterThanOrEqual(logBox!.y - 4);
+  expect(cardBox!.y).toBeLessThan(logBox!.y + 30);
+  const coverageBox = await chat.locator('.latest-reply .coverage').boundingBox();
+  expect(coverageBox!.y).toBeLessThan(logBox!.y);
 });
 
 test('uses the revised shortcut and gives actionable help without a full-width chat', async () => {
@@ -534,7 +535,10 @@ test('uses the revised shortcut and gives actionable help without a full-width c
     mac: 'Alt+Shift+F',
   });
   await site.goto(`chrome-extension://${extensionId}/overlay.html?unavailable=restricted`);
-  await expect(site.getByRole('heading', { name: 'Couldn’t open on that tab.' })).toBeVisible();
+  // First-time installs land here, so the page leads with how to start, not with a failure.
+  await expect(site.getByRole('heading', { name: 'Start Cmd-F on any website' })).toBeVisible();
+  await expect(site.locator('.launch-help .steps li')).toHaveCount(3);
+  await expect(site.getByRole('heading', { name: 'Why not this tab?' })).toBeVisible();
   await expect(
     site.getByText('This tab is protected by the browser.', { exact: false }),
   ).toBeVisible();

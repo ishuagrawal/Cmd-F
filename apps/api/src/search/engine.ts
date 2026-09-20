@@ -752,7 +752,8 @@ export class SearchSession {
               );
             }
             const routeId = (c: Candidate) => urlIdentity(c.safeUrl!).fetchKey;
-            const relevanceOf = (c: Candidate) => this.assessedRoutes.get(routeId(c))?.relevance || 0;
+            const relevanceOf = (c: Candidate) =>
+              this.assessedRoutes.get(routeId(c))?.relevance || 0;
             let candidate: Candidate | undefined;
             if (this.provider.screen) {
               // Reuse judgments made while inspecting pages. Screen new routes in
@@ -763,9 +764,7 @@ export class SearchSession {
                   (a, b) =>
                     relevanceOf(b.candidate) - relevanceOf(a.candidate) || b.score - a.score,
                 );
-              const unseen = ordered.filter(
-                (x) => !this.assessedRoutes.has(routeId(x.candidate)),
-              );
+              const unseen = ordered.filter((x) => !this.assessedRoutes.has(routeId(x.candidate)));
               if (known.length) candidate = known[0].candidate;
               else if (unseen.length) {
                 const buckets = new Map<string, Candidate[]>();
