@@ -163,6 +163,82 @@ p {
   font-size: 12px;
   color: #707b6f;
 }
+.preference {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px;
+  margin: 0 0 22px;
+  background: #eef1e8;
+  border-radius: 18px;
+}
+.preference-body {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  background: #fffffc;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 #ffffffd9;
+}
+.preference-body label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.preference-body p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #6a7464;
+}
+.switch {
+  flex: none;
+  width: 44px;
+  height: 26px;
+  margin-right: 8px;
+  padding: 0;
+  border-radius: 999px;
+  background: #c5cdc0;
+  position: relative;
+  transition: background-color 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.switch:hover {
+  background: #b7c0b2;
+}
+.switch[aria-checked='true'] {
+  background: #315b45;
+}
+.switch[aria-checked='true']:hover {
+  background: #254b38;
+}
+.switch .knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fffffc;
+  box-shadow: 0 1px 4px #1c241833;
+  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.switch[aria-checked='true'] .knob {
+  transform: translateX(18px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .switch,
+  .switch .knob {
+    transition: none;
+  }
+}
+.follow-note {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6a7464;
+  margin: 6px 0 0;
+}
 .actions {
   display: flex;
   gap: 8px;

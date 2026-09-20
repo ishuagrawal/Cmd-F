@@ -41,10 +41,14 @@ test.afterAll(async () => {
 });
 test.beforeEach(async () => {
   site = await context.newPage();
+  await resetJump();
 });
 test.afterEach(async () => {
   await site.close();
 });
+async function resetJump() {
+  await worker.evaluate(() => chrome.storage.local.remove('jumpToAnswer'));
+}
 async function open(name = 'journal') {
   await site.goto(origin + '/fixtures/' + name);
   // Same injected entrypoint as the action/keyboard command. OS hotkey dispatch is a manual gate.
@@ -104,7 +108,7 @@ test('keeps overlay typing out of the page search', async () => {
 test('does not steal typing from the page after connecting', async () => {
   await context.route('**/v1/config', async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 1200));
-    await route.continue();
+    await route.continue().catch(() => {});
   });
   try {
     await site.goto(origin + '/fixtures/journal');
@@ -146,12 +150,54 @@ test('registers the shortcut and opens a small pill without extracting its own U
   await expect(chat.locator('blockquote')).toContainText('amber');
   await expect(chat.getByRole('button', { name: 'Open source' })).toHaveCount(0);
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await expect(site.locator('[data-cmd-f=overlay]')).toHaveCount(1);
   await site.screenshot({ path: 'docs/screenshots/overlay-result.png' });
   await chat.getByLabel('Your request').press('Escape');
   await expect(site.locator('[data-cmd-f=overlay]')).toHaveCount(0);
+});
+async function enableJump() {
+  await chat.getByRole('button', { name: 'Connection settings' }).click();
+  const toggle = chat.getByRole('switch', { name: 'Jump to the answer' });
+  await expect(toggle).toHaveAttribute('aria-checked', 'false');
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-checked', 'true');
+  await chat.getByRole('button', { name: 'Connection settings' }).click();
+}
+test('keeps the page still until Jump to the answer is turned on', async () => {
+  await open();
+  await ask('Which beacon is marked amber?', 'page');
+  await expect(chat.locator('blockquote')).toContainText('amber');
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
+  await expect(site.locator('[data-cmd-f=cue]')).toHaveCount(0);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(0);
+});
+test('glides to the passage when Jump to the answer is on', async () => {
+  await open();
+  await enableJump();
+  await ask('Which beacon is marked amber?', 'page');
+  await expect(chat.locator('blockquote')).toContainText('amber');
+  await expect(chat.getByText('Gliding to this passage')).toBeVisible();
+  await expect
+    .poll(async () => site.evaluate(() => !!document.querySelector('[data-cmd-f=plate]')))
+    .toBe(true);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(1);
+  await expect(site.locator('[data-cmd-f=aperture]')).toHaveCount(0);
+  await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
+});
+test('opens the outgoing source in a new tab when Jump to the answer is on', async () => {
+  await open('docs');
+  await enableJump();
+  const next = context.waitForEvent('page');
+  await ask('How does a cycle repeat?');
+  await expect(chat.getByText('Opening in a new tab')).toBeVisible();
+  const reference = await next;
+  await reference.waitForLoadState();
+  expect(reference.url()).toContain('/fixtures/docs/processes');
+  await reference.close();
 });
 test('Show on page tolerates unrelated mutations and repeated highlighting', async () => {
   await open();
@@ -167,7 +213,8 @@ test('Show on page tolerates unrelated mutations and repeated highlighting', asy
     passage.style.marginTop = '200px';
   });
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await expect(chat.getByRole('alert')).toHaveCount(0);
 });
@@ -185,16 +232,48 @@ test('Show on page recovers an exact passage after a website re-render', async (
     replacement.style.marginTop = '600px';
   });
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await expect(chat.getByRole('alert')).toHaveCount(0);
-  const aligned = await site.evaluate(() => {
-    const highlight = CSS.highlights.get('cmd-f-match');
-    const range = highlight && ([...highlight][0] as Range);
-    const target = document.getElementById('rerendered-passage');
-    return !!(range && target && range.intersectsNode(target));
-  });
-  expect(aligned).toBe(true);
+  await expect
+    .poll(async () =>
+      site.evaluate(() => {
+        const plate = document.querySelector('[data-cmd-f=plate]');
+        const target = document.getElementById('rerendered-passage');
+        if (!plate || !target) return false;
+        const a = plate.getBoundingClientRect();
+        const b = target.getBoundingClientRect();
+        const caption = document.querySelector('[data-cmd-f=caption]');
+        return (
+          Math.abs(a.top + 12 - b.top) < 16 &&
+          Math.abs(b.top + b.height / 2 - window.innerHeight / 2) < 32 &&
+          caption?.textContent === 'Source'
+        );
+      }),
+    )
+    .toBe(true);
+});
+test('Show on page keeps the mark on the passage after a manual scroll', async () => {
+  await open();
+  await ask('Which beacon is marked amber?', 'page');
+  await expect(chat.locator('blockquote')).toContainText('amber');
+  await chat.getByRole('button', { name: 'Show on page' }).click();
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(1);
+  const aligned = () =>
+    site.evaluate(() => {
+      const plate = document.querySelector('[data-cmd-f=plate]');
+      const target = [...document.querySelectorAll('p')].find((p) =>
+        p.textContent?.includes('amber'),
+      );
+      if (!plate || !target) return false;
+      return (
+        Math.abs(plate.getBoundingClientRect().top + 12 - target.getBoundingClientRect().top) < 16
+      );
+    });
+  await expect.poll(aligned).toBe(true);
+  await site.evaluate(() => window.scrollBy(0, 280));
+  await expect.poll(aligned).toBe(true);
 });
 for (const change of ['changed-text', 'ambiguous-replacement', 'route-change'] as const) {
   test(`Show on page rejects ${change}`, async () => {
@@ -213,6 +292,7 @@ for (const change of ['changed-text', 'ambiguous-replacement', 'route-change'] a
     await chat.getByRole('button', { name: 'Show on page' }).click();
     await expect(chat.getByRole('alert')).toContainText(/changed|again/);
     expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
+    await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(0);
     await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   });
 }
@@ -227,6 +307,7 @@ test('a disappearing duplicate never redirects the highlight to another occurren
   await chat.getByRole('button', { name: 'Show on page' }).click();
   await expect(chat.getByRole('alert')).toContainText('could not be located reliably');
   expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(0);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
 });
 test('a hidden result can be shown after it becomes visible without another search', async () => {
@@ -243,7 +324,8 @@ test('a hidden result can be shown after it becomes visible without another sear
     (el as HTMLElement).hidden = false;
   });
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await expect(chat.getByRole('alert')).toHaveCount(0);
 });
@@ -274,13 +356,19 @@ test('finds and highlights the article event instead of references despite an un
   await expect(chat.locator('blockquote')).toHaveText('The report was presented on May 16, 2023.');
   await expect(chat.getByRole('button', { name: 'Open source' })).toHaveCount(0);
   await chat.getByRole('button', { name: 'Show on page' }).click();
-  const aligned = await site.evaluate(() => {
-    const highlight = CSS.highlights.get('cmd-f-match');
-    const range = highlight && ([...highlight][0] as Range);
-    const target = document.getElementById('event');
-    return !!(range && target && range.intersectsNode(target));
-  });
-  expect(aligned).toBe(true);
+  await expect
+    .poll(async () =>
+      site.evaluate(() => {
+        const plate = document.querySelector('[data-cmd-f=plate]');
+        const target = document.getElementById('event');
+        if (!plate || !target) return false;
+        const a = plate.getBoundingClientRect();
+        const b = target.getBoundingClientRect();
+        return Math.abs(a.top + 12 - b.top) < 16;
+      }),
+    )
+    .toBe(true);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
 });
 test('finds the fixed-cycle subpage beyond hundreds of unrelated navigation links', async () => {

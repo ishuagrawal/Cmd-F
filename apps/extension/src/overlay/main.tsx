@@ -19,6 +19,7 @@ import {
   saveClientToken,
 } from '../sidepanel/client-token';
 import { pageHoldsFocus } from './focus';
+import { jumpFor, readJumpPref, saveJumpPref, shouldFollow } from './jump';
 import { alignReply } from './scroll';
 
 export function Chat() {
@@ -38,8 +39,12 @@ export function Chat() {
   const [asked, setAsked] = useState('');
   const [busy, setBusy] = useState(false);
   const [history, setHistory] = useState<{ question: string; response: string }[]>([]);
+  const [jump, setJump] = useState(false);
+  const [follow, setFollow] = useState<'show' | 'open' | ''>('');
   const api = useRef(new Api(import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:4317', ''));
   const src = useRef(0);
+  const followed = useRef<string | undefined>(undefined);
+  const userTookOver = useRef(false);
   const snapshot = useRef<PageSnapshot | undefined>(undefined);
   const current = useRef<SearchState | undefined>(undefined);
   const stream = useRef<AbortController | undefined>(undefined);
@@ -120,6 +125,7 @@ export function Chat() {
     input.current?.focus();
     void (async () => {
       try {
+        setJump(await readJumpPref());
         const t = await readClientToken();
         if (t) {
           setToken(t);
@@ -157,6 +163,34 @@ export function Chat() {
     if (!scroller || !latest || scroller.hidden) return;
     alignReply(scroller, latest);
   }, [asked, error, history.length, state?.id, state?.lifecycle, sources.length]);
+  useEffect(() => {
+    if (!state?.id) return;
+    if (state.lifecycle !== 'completed') return;
+    if (followed.current === state.id) return;
+    followed.current = state.id;
+    if (
+      !shouldFollow({
+        enabled: jump,
+        lifecycle: state.lifecycle,
+        searchId: state.id,
+        followedId: undefined,
+        userTookOver: userTookOver.current,
+      })
+    )
+      return;
+    const action = jumpFor(sources[0]);
+    if (!action) return;
+    if (action.kind === 'show') {
+      setFollow('show');
+      void show(action.result, 'auto');
+      return;
+    }
+    setFollow('open');
+    const timer = window.setTimeout(() => {
+      void openSource(action.url, action.quote).catch((e) => setError((e as Error).message));
+    }, 320);
+    return () => window.clearTimeout(timer);
+  }, [jump, state?.id, state?.lifecycle, sources[0]?.id]);
   useEffect(() => {
     if (!state?.id) return;
     const id = state.id;
@@ -211,6 +245,9 @@ export function Chat() {
         setHistory((h) => [...h.slice(-4), { question: asked, response: summary(state) }]);
       cleanup();
       current.current = undefined;
+      followed.current = undefined;
+      userTookOver.current = false;
+      setFollow('');
       setState(undefined);
       setAsked(query);
       const page = await source();
@@ -263,7 +300,8 @@ export function Chat() {
     }
     void local(src.current, { type: 'STOP' }).catch(() => {});
   }
-  async function show(result: EvidenceResult) {
+  async function show(result: EvidenceResult, origin: 'user' | 'auto' = 'user') {
+    if (origin === 'user') userTookOver.current = true;
     setError('');
     try {
       await local(src.current, {
@@ -312,6 +350,28 @@ export function Chat() {
                   })();
                 }}
               >
+                <div className="preference">
+                  <div className="preference-body">
+                    <label id="jump-label">Jump to the answer</label>
+                    <p>
+                      When a search finishes, this page glides to the source — or a new tab opens.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="switch"
+                    role="switch"
+                    aria-checked={jump}
+                    aria-labelledby="jump-label"
+                    onClick={() => {
+                      const next = !jump;
+                      setJump(next);
+                      void saveJumpPref(next);
+                    }}
+                  >
+                    <span className="knob" />
+                  </button>
+                </div>
                 <h2>Connect to the local backend</h2>
                 <p>
                   Keep the local backend running with <code>pnpm dev:api</code>. This build already
@@ -369,9 +429,9 @@ export function Chat() {
                     {sources.some((r) => r.kind === 'listing') && (
                       <p className="listing-note">Destination details not verified.</p>
                     )}
-                    {sources.map((r) => (
+                    {sources.map((r, i) => (
                       <article
-                        className={`source ${r.kind === 'listing' ? 'listing' : 'passage'}`}
+                        className={`source ${r.kind === 'listing' ? 'listing' : 'passage'}${follow && i === 0 ? ' follow' : ''}`}
                         key={r.id}
                       >
                         <span className="eyebrow">
@@ -381,6 +441,11 @@ export function Chat() {
                               ? 'DEMO MATCH'
                               : 'SOURCE FOUND'}
                         </span>
+                        {follow && i === 0 && (
+                          <p className="follow-note" role="status">
+                            {follow === 'open' ? 'Opening in a new tab' : 'Gliding to this passage'}
+                          </p>
+                        )}
                         <h2>{r.title || r.origin}</h2>
                         {r.url && <p className="source-domain">{new URL(r.url).hostname}</p>}
                         {r.kind !== 'listing' && !!r.headingPath.length && (
@@ -389,7 +454,13 @@ export function Chat() {
                         {r.kind !== 'listing' && <blockquote>{r.quote}</blockquote>}
                         <div className="actions">
                           {r.local && (
-                            <button className="primary" onClick={() => void show(r)}>
+                            <button
+                              className="primary"
+                              onClick={() => {
+                                userTookOver.current = true;
+                                void show(r);
+                              }}
+                            >
                               <Cursor size={15} />
                               Show on page
                             </button>
@@ -399,12 +470,13 @@ export function Chat() {
                             shareableUrl(r.url) &&
                             actionPolicy(r.url) === 'read_candidate' && (
                               <button
-                                onClick={() =>
+                                onClick={() => {
+                                  userTookOver.current = true;
                                   void openSource(
                                     r.url!,
                                     r.kind === 'listing' ? undefined : r.quote,
-                                  ).catch((e) => setError(e.message))
-                                }
+                                  ).catch((e) => setError(e.message));
+                                }}
                               >
                                 {r.kind === 'listing' ? 'Open listing' : 'Open source'}
                                 <ArrowUpRight size={15} />

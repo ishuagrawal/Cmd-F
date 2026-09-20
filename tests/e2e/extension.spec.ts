@@ -98,11 +98,13 @@ test('article detail is quoted and reversibly highlighted without modifying text
   await query('Which beacon is marked amber?');
   await expect(panel.locator('.result blockquote')).toContainText('amber');
   await panel.getByRole('button', { name: 'Show here' }).click();
-  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   expect(await site.locator('main').innerText()).toBe(before);
   await panel.getByRole('button', { name: 'Clear highlight' }).click();
   expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(0);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await zeroActions();
 });
@@ -143,7 +145,8 @@ test('late-page source is found within bounded payload', async () => {
   await query('What phrase opens the visitor guide?');
   await expect(panel.locator('.result blockquote').first()).toContainText('quiet lantern');
   await panel.getByRole('button', { name: 'Show here' }).first().click();
-  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
 });
 test('changing source invalidates highlighting', async () => {
@@ -198,7 +201,8 @@ test('source stays pinned across tab switches and a service-worker restart', asy
   expect(background).toBeTruthy();
   await cdp.send('Target.closeTarget', { targetId: background!.targetId });
   await panel.getByRole('button', { name: 'Show here' }).click();
-  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(true);
+  await expect(site.locator('[data-cmd-f=plate]')).toHaveCount(1);
+  expect(await site.evaluate(() => CSS.highlights?.has('cmd-f-match') ?? false)).toBe(false);
   await expect(site.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await expect(other.locator('[data-cmd-f=outline]')).toHaveCount(0);
   await zeroActions();

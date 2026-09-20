@@ -41,6 +41,7 @@ try {
     return {
       passages,
       outlined: !!document.querySelector('[data-cmd-f="outline"]'),
+      marked: !!document.querySelector('[data-cmd-f="tick"]'),
       highlighted: CSS.highlights?.has('cmd-f-match') ?? false,
     };
   });
@@ -50,7 +51,8 @@ try {
     !JSON.stringify(result.passages).match(/Private unsent|Hidden archive|Private overlay/),
   );
   assert.equal(result.outlined, false);
-  assert.equal(result.highlighted, true);
+  assert.equal(result.marked, true);
+  assert.equal(result.highlighted, false);
   for (const tag of [
     'h1',
     'h6',

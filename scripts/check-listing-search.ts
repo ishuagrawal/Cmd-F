@@ -76,6 +76,7 @@ try {
       );
     session.show(current.id, lastPassage.id, current.documentId);
     const endOutlined = !!document.querySelector('[data-cmd-f=outline]');
+    const endMarked = !!document.querySelector('[data-cmd-f=plate]');
     const endHighlighted = CSS.highlights?.has('cmd-f-match') ?? false;
     document.querySelector('main')!.append(document.createElement('p'));
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -91,6 +92,7 @@ try {
       highlighted,
       listingUsedTextHighlight,
       endOutlined,
+      endMarked,
       endHighlighted,
       staleRejected,
     };
@@ -108,8 +110,8 @@ try {
   assert.ok(output.batches.length > 1);
   assert.ok(output.highlighted && !output.listingUsedTextHighlight, 'listings keep a bounding box');
   assert.ok(
-    output.endHighlighted && !output.endOutlined,
-    'passage text is highlighted without a bounding box',
+    output.endMarked && !output.endOutlined && !output.endHighlighted,
+    'a passage is marked in the margin without painting the text',
   );
   assert.ok(output.staleRejected, 'mutation invalidates section reads');
   console.log(

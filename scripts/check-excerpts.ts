@@ -36,9 +36,17 @@ try {
     const quote = 'The board removed the CEO because he was not consistently candid.[3][4]';
     const start = candidate.text!.indexOf(quote);
     session.show(snap.id, candidate.id, snap.documentId, { start, end: start + quote.length });
-    const highlights = (CSS as typeof CSS & { highlights: Map<string, Set<Range>> }).highlights;
-    const shown = [...highlights.get('cmd-f-match')!][0].toString();
+    const shown = lib
+      .excerptRange(document.querySelector('p')!, candidate.text!, {
+        start,
+        end: start + quote.length,
+      })
+      .toString();
+    const marked = !!document.querySelector('[data-cmd-f=plate]');
     const outlined = !!document.querySelector('[data-cmd-f=outline]');
+    const highlighted =
+      (CSS as typeof CSS & { highlights?: Map<string, unknown> }).highlights?.has('cmd-f-match') ??
+      false;
     let rejected = false;
     try {
       session.show(snap.id, candidate.id, snap.documentId, { start: 0, end: 100000 });
@@ -53,10 +61,12 @@ try {
       stale = true;
     }
     session.stop();
-    return { shown, quote, rejected, stale, outlined };
+    return { shown, quote, rejected, stale, outlined, marked, highlighted };
   });
   assert.equal(result.shown, result.quote);
   assert.equal(result.outlined, false);
+  assert.equal(result.marked, true);
+  assert.equal(result.highlighted, false);
   assert.equal(result.rejected, true);
   assert.equal(result.stale, true);
   console.log(

@@ -108,3 +108,85 @@ test('retakes a live snapshot when the page mutates after inspect', async ({ pag
   expect(found.kept).toBe(true);
   expect(found.retaken).toBe(true);
 });
+
+test('Show on page marks the passage with a source bracket', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.route('https://fixture.test/**', (route) =>
+    route.fulfill({ body: '<html></html>', contentType: 'text/html' }),
+  );
+  await page.goto('https://fixture.test/');
+  await page.setContent(
+    `<!doctype html><main>${'<p>Filler copy for scroll distance.</p>'.repeat(40)}<p id="hit">The visitor beacon at the east entrance is marked amber.</p></main>`,
+  );
+  await page.addScriptTag({ content: bundle });
+  const shown = await page.evaluate(() => {
+    type Session = {
+      inspect(q: string): {
+        id: string;
+        documentId: string;
+        candidates: { id: string; text?: string }[];
+      };
+      show(snapshotId: string, candidateId: string, documentId: string): unknown;
+    };
+    const session = new (
+      globalThis as unknown as { TestSession: new (doc: Document) => Session }
+    ).TestSession(document);
+    const snap = session.inspect('which beacon is amber');
+    const candidate = snap.candidates.find((c) => (c.text || '').includes('amber'))!;
+    session.show(snap.id, candidate.id, snap.documentId);
+    return {
+      highlight: CSS.highlights?.has('cmd-f-match') ?? false,
+      cue: !!document.querySelector('[data-cmd-f=cue]'),
+      tick: !!document.querySelector('[data-cmd-f=tick]'),
+      caption: document.querySelector('[data-cmd-f=caption]')?.textContent || '',
+      plate: !!document.querySelector('[data-cmd-f=plate]'),
+      aperture: !!document.querySelector('[data-cmd-f=aperture]'),
+    };
+  });
+  expect(shown.highlight).toBe(false);
+  expect(shown.cue).toBe(true);
+  expect(shown.tick).toBe(false);
+  expect(shown.caption).toBe('Source');
+  expect(shown.plate).toBe(true);
+  expect(shown.aperture).toBe(false);
+});
+
+test('Show on page keeps the mark on the passage after a manual scroll', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.route('https://fixture.test/**', (route) =>
+    route.fulfill({ body: '<html></html>', contentType: 'text/html' }),
+  );
+  await page.goto('https://fixture.test/');
+  await page.setContent(
+    `<!doctype html><main>${'<p>Filler copy for scroll distance.</p>'.repeat(40)}<p id="hit">The visitor beacon at the east entrance is marked amber.</p>${'<p>More filler copy for scroll distance.</p>'.repeat(40)}</main>`,
+  );
+  await page.addScriptTag({ content: bundle });
+  await page.evaluate(() => {
+    type Session = {
+      inspect(q: string): {
+        id: string;
+        documentId: string;
+        candidates: { id: string; text?: string }[];
+      };
+      show(snapshotId: string, candidateId: string, documentId: string): unknown;
+    };
+    const session = new (
+      globalThis as unknown as { TestSession: new (doc: Document) => Session }
+    ).TestSession(document);
+    const snap = session.inspect('which beacon is amber');
+    const candidate = snap.candidates.find((c) => (c.text || '').includes('amber'))!;
+    session.show(snap.id, candidate.id, snap.documentId);
+  });
+  const aligned = () =>
+    page.evaluate(() => {
+      const plate = document.querySelector('[data-cmd-f=plate]');
+      const hit = document.getElementById('hit');
+      if (!plate || !hit) return false;
+      return (
+        Math.abs(plate.getBoundingClientRect().top + 12 - hit.getBoundingClientRect().top) < 16
+      );
+    });
+  await expect.poll(aligned).toBe(true);
+  await page.evaluate(() => window.scrollBy(0, 280));
+  await expect.poll(aligned).toBe(true);
+});

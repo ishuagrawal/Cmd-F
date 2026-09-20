@@ -8,6 +8,7 @@ import {
 import { shareableUrl, actionPolicy, redact } from '../../security/src';
 import { rank } from '../../retrieval/src';
 import { semanticPassage, genericText, textBoundary, interactiveText } from './text-elements';
+import { aimAt, glideTo, mountCue, playCue, prefersReducedMotion } from './camera';
 const excluded =
   'script,style,noscript,template,input,textarea,select,[contenteditable]:not([contenteditable="false"]),[data-cmd-f]';
 export function safeText(el: Element): string {
@@ -132,6 +133,7 @@ export class DomSession {
   private sections = new Map<string, Candidate[]>();
   private outline?: HTMLElement;
   private cleanups: Array<() => void> = [];
+  private motion?: { cancelled: boolean };
   constructor(private doc: Document) {
     this.url = doc.URL;
     this.observer = new MutationObserver((records) => {
@@ -148,6 +150,7 @@ export class DomSession {
     this.observer.disconnect();
   }
   clear() {
+    if (this.motion) this.motion.cancelled = true;
     this.cleanups.splice(0).forEach((clean) => clean());
     this.doc.querySelectorAll('[data-cmd-f]:not([data-cmd-f=overlay])').forEach((x) => x.remove());
     const css = this.doc.defaultView?.CSS as typeof CSS & { highlights?: Map<string, unknown> };
@@ -531,26 +534,13 @@ export class DomSession {
       excerpt && c.kind === 'passage' ? excerptRange(el, c.text || c.label, excerpt) : undefined;
     this.observer.disconnect();
     this.clear();
+    this.motion = { cancelled: false };
+    const motion = this.motion;
     const d = el.ownerDocument;
-    const css = d.defaultView?.CSS as typeof CSS & { highlights?: Map<string, unknown> };
-    const H = (d.defaultView as unknown as { Highlight?: new (...ranges: Range[]) => unknown })
-      .Highlight;
-    const textHighlight = c.kind === 'passage' && !!css?.highlights && !!H;
-    let style: HTMLStyleElement | undefined;
-    if (textHighlight) {
-      style = d.createElement('style');
-      style.dataset.cmdF = 'style';
-      style.textContent = '::highlight(cmd-f-match){background:#f6e6a4;color:#222}';
-      d.documentElement.append(style);
-      const range = focusedRange || d.createRange();
-      if (!focusedRange) range.selectNodeContents(el);
-      css.highlights.set('cmd-f-match', new H(range));
-    }
-    el.scrollIntoView({ block: 'center', behavior: 'instant' });
-    if (focusedRange) {
-      const target = focusedRange.startContainer.parentElement;
-      target?.scrollIntoView({ block: 'center', behavior: 'instant' });
-    }
+    const win = d.defaultView;
+    const css = win?.CSS as typeof CSS & { highlights?: Map<string, unknown> };
+    const box = () => focusedRange?.getBoundingClientRect() || el.getBoundingClientRect();
+    const reduce = !win || prefersReducedMotion(win);
     let overlay: HTMLElement | undefined;
     const update = () => {
       if (!overlay) return;
@@ -558,7 +548,7 @@ export class DomSession {
         overlay.remove();
         return;
       }
-      const r = focusedRange?.getBoundingClientRect() || el.getBoundingClientRect();
+      const r = box();
       Object.assign(overlay.style, {
         left: `${r.left - 4}px`,
         top: `${r.top - 4}px`,
@@ -566,24 +556,38 @@ export class DomSession {
         height: `${r.height + 8}px`,
       });
     };
-    if (!textHighlight) {
+    if (c.kind !== 'passage') {
       overlay = d.createElement('div');
       overlay.dataset.cmdF = 'outline';
       overlay.setAttribute('aria-hidden', 'true');
       overlay.style.cssText =
-        'position:fixed;pointer-events:none;border:2px solid #b49b42;border-radius:5px;background:#d2b85814;z-index:2147483647;';
+        'position:fixed;pointer-events:none;border:2px solid #b49b42;border-radius:5px;background:#d2b85814;z-index:2147483646;';
       d.documentElement.append(overlay);
       this.outline = overlay;
       update();
-      d.defaultView?.addEventListener('scroll', update, { passive: true });
-      d.defaultView?.addEventListener('resize', update);
+      win?.addEventListener('scroll', update, { passive: true });
+      win?.addEventListener('resize', update);
+    }
+    let cueRoot: HTMLElement | undefined;
+    if (win) {
+      cueRoot = mountCue(d);
+      const cue = playCue(cueRoot, box, motion);
+      if (reduce) {
+        aimAt(el, box);
+        cue.settle();
+      } else
+        void glideTo(el, motion, box, (t) => cue.track(t)).then(() => {
+          if (motion.cancelled || !cueRoot?.isConnected) return;
+          cue.settle();
+        });
+      this.cleanups.push(() => cue.stop());
     }
     this.cleanups.push(() => {
       overlay?.remove();
-      style?.remove();
+      cueRoot?.remove();
       css?.highlights?.delete('cmd-f-match');
-      d.defaultView?.removeEventListener('scroll', update);
-      d.defaultView?.removeEventListener('resize', update);
+      win?.removeEventListener('scroll', update);
+      win?.removeEventListener('resize', update);
     });
     this.observer.observe(this.doc, {
       subtree: true,
