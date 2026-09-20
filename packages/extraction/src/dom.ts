@@ -108,6 +108,13 @@ function visibility(el: Element): Candidate['visibility'] {
   const rect = el.getBoundingClientRect();
   return rect.bottom < 0 || rect.top > win.innerHeight ? 'offscreen' : 'visible';
 }
+function nearbyAttribution(el: Element): string {
+  if (el.tagName.toLowerCase() !== 'blockquote') return '';
+  const next = el.nextElementSibling;
+  if (!next?.matches('p,cite,figcaption,footer,span')) return '';
+  const note = redact(safeText(next)).slice(0, 160);
+  return note && note.length <= 120 ? note : '';
+}
 export class DomSession {
   readonly documentId = crypto.randomUUID();
   version = 0;
@@ -126,12 +133,10 @@ export class DomSession {
     this.url = doc.URL;
     this.observer = new MutationObserver((records) => {
       if (
-        records.some(
-          (r) =>
-            !(r.target instanceof Element ? r.target : r.target.parentElement)?.closest(
-              '[data-cmd-f]',
-            ),
-        )
+        records.some((r) => {
+          const el = r.target instanceof Element ? r.target : r.target.parentElement;
+          return !el?.closest('[data-cmd-f],svg,canvas,video,audio');
+        })
       )
         this.dirty = true;
     });
@@ -172,20 +177,25 @@ export class DomSession {
     const pendingParents = new Map<string, Element>();
     const passageOwners = new Set<Element>();
     const roots: Array<Document | ShadowRoot> = [this.doc];
-    for (let ri = 0; ri < roots.length; ri++) {
-      const root = roots[ri];
-      const elements = root.querySelectorAll('*');
-      for (const el of elements) {
-        if (++count > 16000 || performance.now() - start > 500) {
-          limitations.add('snapshot_truncated');
-          traversalComplete = false;
-          break;
-        }
-        if (
+    const skipSubtree = 'svg,canvas,video,audio,script,style,noscript,template,embed,object';
+    const visit = (el: Element, root: Document | ShadowRoot) => {
+      if (!traversalComplete) return;
+      if (el.matches(skipSubtree)) {
+        if (el.tagName === 'CANVAS') limitations.add('canvas_unsupported');
+        if (el.tagName === 'EMBED' || el.tagName === 'OBJECT') limitations.add('media_unsupported');
+        return;
+      }
+      if (++count > 16000 || performance.now() - start > 500) {
+        limitations.add('snapshot_truncated');
+        traversalComplete = false;
+        return;
+      }
+      if (
+        !(
           el.closest(excluded) &&
           !el.matches('input[type=button],input[type=submit],input[type=reset]')
         )
-          continue;
+      ) {
         if (el.shadowRoot) roots.push(el.shadowRoot);
         if (el.tagName === 'IFRAME') {
           try {
@@ -196,8 +206,6 @@ export class DomSession {
             limitations.add('frame_inaccessible');
           }
         }
-        if (el.tagName === 'CANVAS') limitations.add('canvas_unsupported');
-        if (el.tagName === 'EMBED' || el.tagName === 'OBJECT') limitations.add('media_unsupported');
         if (el.tagName.includes('-') && !el.shadowRoot) limitations.add('closed_shadow_possible');
         const tag = el.tagName.toLowerCase();
         if (/^h[1-6]$/.test(tag) && visibility(el) !== 'hidden') {
@@ -216,85 +224,97 @@ export class DomSession {
           el.matches(genericText) &&
           !el.closest(interactiveText) &&
           !el.querySelector(textBoundary + ',' + interactiveText);
-        if (!interactive && !semanticBlock && !textBlock) continue;
-        if (!interactive) {
-          let parent = el.parentElement;
-          while (parent && !passageOwners.has(parent)) parent = parent.parentElement;
-          if (parent) continue;
+        if (interactive || semanticBlock || textBlock) {
+          let nested = false;
+          if (!interactive) {
+            let parent = el.parentElement;
+            while (parent && !passageOwners.has(parent)) parent = parent.parentElement;
+            nested = !!parent;
+          }
+          if (!nested) {
+            const text = tag === 'input' ? '' : safeText(el);
+            const name = accessibleName(el, root, text);
+            if (!name) {
+              if (interactive) limitations.add('missing_accessible_label');
+            } else if (redact(name) !== name || redact(text) !== text) {
+              limitations.add('redacted_content');
+            } else {
+              const vis = visibility(el);
+              if (interactive || vis !== 'hidden') {
+                const kind = tag === 'a' ? 'link' : interactive ? 'control' : 'passage';
+                const safeUrl =
+                  tag === 'a' ? shareableUrl(el.getAttribute('href') || '', el.baseURI) : undefined;
+                const region = el.closest('[role=doc-bibliography],.reflist,.references')
+                  ? 'References'
+                  : el.closest('nav,[role=navigation]')
+                    ? 'Navigation'
+                    : el.closest('footer,[role=contentinfo]')
+                      ? 'Footer'
+                      : '';
+                const candidate: Candidate = {
+                  id: `c${this.all.length}`,
+                  snapshotId: id,
+                  kind,
+                  label: name.slice(0, 500),
+                  text: kind !== 'control' ? text.slice(0, 9000) : undefined,
+                  safeUrl,
+                  headingPath: [...headingPath],
+                  headingId,
+                  context: [region, nearbyAttribution(el)].filter(Boolean).join(' '),
+                  visibility: vis,
+                  actionPolicy:
+                    kind === 'control'
+                      ? 'highlight_only'
+                      : kind === 'link'
+                        ? safeUrl
+                          ? actionPolicy(safeUrl)
+                          : 'highlight_only'
+                        : 'read_candidate',
+                  provenance: 'live_dom',
+                  textRole:
+                    kind === 'passage' ? (/^h[1-6]$/.test(tag) ? 'heading' : 'body') : undefined,
+                  contentHash: hash(text || name),
+                  truncated: kind === 'passage' && text.length > 9000,
+                  sectionId,
+                  disabled: el.matches(':disabled,[aria-disabled=true]'),
+                  expanded: el.hasAttribute('aria-expanded')
+                    ? el.getAttribute('aria-expanded') === 'true'
+                    : tag === 'summary'
+                      ? el.parentElement?.hasAttribute('open')
+                      : undefined,
+                };
+                if (text.length > 9000) limitations.add('passage_truncated');
+                if (candidate.kind === 'link' && candidate.actionPolicy !== 'read_candidate')
+                  candidate.kind = 'control';
+                if (kind === 'passage') passageOwners.add(el);
+                this.all.push(candidate);
+                this.nodes.set(candidate.id, el);
+                this.anchors.set(candidate.id, {
+                  root,
+                  tag: el.tagName,
+                  unique: false,
+                  content: text || name,
+                  href: tag === 'a' ? el.getAttribute('href') : null,
+                });
+                elementIds.set(el, candidate.id);
+                if (!this.sections.has(sectionId) && this.sections.size < 400)
+                  this.sections.set(sectionId, []);
+                this.sections.get(sectionId)?.push(candidate);
+                if (el.hasAttribute('aria-controls'))
+                  controllerByContainer.set(el.getAttribute('aria-controls')!, candidate.id);
+                pendingParents.set(candidate.id, el);
+              }
+            }
+          }
         }
-        const text = tag === 'input' ? '' : safeText(el);
-        const name = accessibleName(el, root, text);
-        if (!name) {
-          if (interactive) limitations.add('missing_accessible_label');
-          continue;
-        }
-        if (redact(name) !== name || redact(text) !== text) {
-          limitations.add('redacted_content');
-          continue;
-        }
-        const vis = visibility(el);
-        if (!interactive && vis === 'hidden') continue;
-        const kind = tag === 'a' ? 'link' : interactive ? 'control' : 'passage';
-        const safeUrl =
-          tag === 'a' ? shareableUrl(el.getAttribute('href') || '', el.baseURI) : undefined;
-        const candidate: Candidate = {
-          id: `c${this.all.length}`,
-          snapshotId: id,
-          kind,
-          label: name.slice(0, 500),
-          text: kind !== 'control' ? text.slice(0, 9000) : undefined,
-          safeUrl,
-          headingPath: [...headingPath],
-          headingId,
-          context: el.closest('[role=doc-bibliography],.reflist,.references')
-            ? 'References'
-            : el.closest('nav,[role=navigation]')
-              ? 'Navigation'
-              : el.closest('footer,[role=contentinfo]')
-                ? 'Footer'
-                : '',
-          visibility: vis,
-          actionPolicy:
-            kind === 'control'
-              ? 'highlight_only'
-              : kind === 'link'
-                ? safeUrl
-                  ? actionPolicy(safeUrl)
-                  : 'highlight_only'
-                : 'read_candidate',
-          provenance: 'live_dom',
-          textRole: kind === 'passage' ? (/^h[1-6]$/.test(tag) ? 'heading' : 'body') : undefined,
-          contentHash: hash(text || name),
-          truncated: kind === 'passage' && text.length > 9000,
-          sectionId,
-          disabled: el.matches(':disabled,[aria-disabled=true]'),
-          expanded: el.hasAttribute('aria-expanded')
-            ? el.getAttribute('aria-expanded') === 'true'
-            : tag === 'summary'
-              ? el.parentElement?.hasAttribute('open')
-              : undefined,
-        };
-        if (text.length > 9000) limitations.add('passage_truncated');
-        if (candidate.kind === 'link' && candidate.actionPolicy !== 'read_candidate')
-          candidate.kind = 'control';
-        if (kind === 'passage') passageOwners.add(el);
-        this.all.push(candidate);
-        this.nodes.set(candidate.id, el);
-        this.anchors.set(candidate.id, {
-          root,
-          tag: el.tagName,
-          unique: false,
-          content: text || name,
-          href: tag === 'a' ? el.getAttribute('href') : null,
-        });
-        elementIds.set(el, candidate.id);
-        if (!this.sections.has(sectionId) && this.sections.size < 400)
-          this.sections.set(sectionId, []);
-        this.sections.get(sectionId)?.push(candidate);
-        if (el.hasAttribute('aria-controls'))
-          controllerByContainer.set(el.getAttribute('aria-controls')!, candidate.id);
-        pendingParents.set(candidate.id, el);
       }
+      for (const child of el.children) visit(child, root);
+    };
+    for (let ri = 0; ri < roots.length; ri++) {
+      const root = roots[ri];
+      if (root instanceof Document) {
+        if (root.documentElement) visit(root.documentElement, root);
+      } else for (const child of root.children) visit(child, root);
     }
     // A duplicate quote must not silently relocate to a different occurrence if
     // the original disappears. Require uniqueness both before and after re-render.

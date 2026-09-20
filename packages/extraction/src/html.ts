@@ -66,6 +66,21 @@ export function extractHtml(html: string, url: string, _question = ''): PageSnap
             : 'highlight_only'
           : 'read_candidate';
     if (kind === 'passage') passageOwners.add(el);
+    const region = node.closest('[role=doc-bibliography],.reflist,.references').length
+      ? 'References'
+      : node.closest('nav,[role=navigation]').length
+        ? 'Navigation'
+        : node.closest('footer,[role=contentinfo]').length
+          ? 'Footer'
+          : '';
+    let follow = '';
+    if (el.tagName === 'blockquote') {
+      const next = node.next();
+      if (next.length && next.is('p,cite,figcaption,footer,span')) {
+        const note = redact(normalize(next.text())).slice(0, 160);
+        if (note && note.length <= 120) follow = note;
+      }
+    }
     candidates.push({
       id: `c${candidates.length}`,
       snapshotId: id,
@@ -75,13 +90,7 @@ export function extractHtml(html: string, url: string, _question = ''): PageSnap
       safeUrl,
       headingPath: [...headingPath],
       headingId,
-      context: node.closest('[role=doc-bibliography],.reflist,.references').length
-        ? 'References'
-        : node.closest('nav,[role=navigation]').length
-          ? 'Navigation'
-          : node.closest('footer,[role=contentinfo]').length
-            ? 'Footer'
-            : '',
+      context: [region, follow].filter(Boolean).join(' '),
       visibility: kind === 'control' ? 'unknown' : 'visible',
       actionPolicy: policy,
       provenance: 'html',

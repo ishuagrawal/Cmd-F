@@ -70,3 +70,11 @@ it('does not let a page language wrapper swallow its article paragraphs', () => 
   ).toBe(true);
   expect(snapshot.candidates.find((c) => c.textRole === 'heading')?.text).toBe('Article');
 });
+it('keeps a short citation after a blockquote as context', () => {
+  const snapshot = extractHtml(
+    '<blockquote>Trading intuition evaluations improved.</blockquote><p>John Crepezzi, AI Assistants, Jane Street</p>',
+    'https://fixture.test',
+  );
+  const quote = snapshot.candidates.find((c) => c.text?.includes('Trading intuition'));
+  expect(quote?.context).toContain('Jane Street');
+});
