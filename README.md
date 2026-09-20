@@ -28,14 +28,13 @@ pnpm dev:api
 2. Select `apps/extension/dist` in this repository.
 3. Open a website and click the **Cmd-F** toolbar action (or use the shortcut). That invocation grants temporary current-tab access.
 4. Use **Option+Shift+F** on Mac or **Alt+Shift+F** elsewhere to toggle the compact pill in the top-right corner. Change it at `chrome://extensions/shortcuts`. Escape closes it.
-5. Open Connection settings in the pill. Copy the local client token from `.local/client-token` into the token field. This is application authentication, not your Gateway API key.
-6. Type a question and press Enter or Send. Cmd-F immediately searches the current page and public pages on the same site, with no additional confirmation. Select This page in settings to limit the scope.
+5. Type a question and press Enter or Send. Cmd-F immediately searches the current page and public pages on the same site, with no additional confirmation. Select This page in settings to limit the scope. The unpacked build already includes this machine’s local connection token, so Connection settings is not required on first use. Rebuild the extension after changing `CMD_F_CLIENT_TOKEN` or deleting `.local/client-token`. Open Connection settings only if the backend is offline or you replaced the token without rebuilding.
 
 Enter submits a request; Shift+Enter inserts a newline. The pill expands beneath the input for search progress and the conversation. Live results include semantically matched links, labeled with unverified destination details, and independently verified source passages. Results offer **Show on page** for local passages **Open listing** for matched links, and **Open source** for a verified destination excerpt; destination links open in a new tab. Searches default to five public subpages and at most 96 AI requests including retries, with three screening requests in parallel and a 30-second deadline. Show on page tolerates unrelated layout updates and automatically relocates a uniquely matching unchanged passage after a re-render. Changed or ambiguous sources still require a new search. Rate limits, connection errors, and no-answer outcomes appear in the same conversation. The browser’s normal Cmd+F / Ctrl+F stays unchanged.
 
 The unpacked production manifest has `activeTab`, `scripting`, and `storage`, plus access to the exact loopback API origin. Only the overlay HTML is web-accessible so it can be embedded; this does not grant page-reading access. The UI runs in an extension-origin iframe and inspection is bound to its actual source tab. It has no blanket website host permission, cookies, debugger, history, or automatically injected page scripts. Browser-internal pages, extension pages, and the Chrome Web Store cannot be inspected.
 
-The extension build is also available as `artifacts/cmd-f-extension.zip` after `pnpm package`. Extract it before using Load unpacked.
+The extension build is also available as `artifacts/cmd-f-extension.zip` after `pnpm package`. Extract it before using Load unpacked. That zip is for this machine: it includes the local connection token from the build that created it.
 
 ## Enable Jev directly through TypeSafe
 

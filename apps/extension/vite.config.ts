@@ -3,10 +3,14 @@ import react from '@vitejs/plugin-react';
 import tailwind from '@tailwindcss/vite';
 import { resolve } from 'node:path';
 import { apiOrigin } from '../../scripts/api-origin.ts';
+import { ensureClientToken } from '../../scripts/client-token.ts';
 export default defineConfig({
   root: resolve('apps/extension'),
   base: './',
-  define: { 'import.meta.env.VITE_API_BASE_URL': JSON.stringify(apiOrigin()) },
+  define: {
+    'import.meta.env.VITE_API_BASE_URL': JSON.stringify(apiOrigin()),
+    'import.meta.env.VITE_CLIENT_TOKEN': JSON.stringify(ensureClientToken()),
+  },
   plugins: [react(), tailwind()],
   build: {
     outDir: 'dist',

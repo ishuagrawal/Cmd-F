@@ -31,6 +31,7 @@ import {
 import { actionPolicy, shareableUrl } from '../../../../packages/security/src';
 import { isExtension, source, inspect, local, openSource } from './bridge';
 import { Api } from './api';
+import { bakedClientToken, readClientToken, saveClientToken } from './client-token';
 import './style.css';
 const emptySource: { tabId: number; url?: string; title?: string } = {
   tabId: 0,
@@ -74,7 +75,7 @@ function Panel() {
   useEffect(() => {
     snapshotRef.current = snapshot;
   }, [snapshot]);
-  async function connect(t: string, base = apiBase) {
+  async function connect(t: string, base = apiBase, fallback = true) {
     api.current = new Api(base, t);
     try {
       const cfg = z
@@ -87,6 +88,13 @@ function Panel() {
       setMode(cfg.provider);
       setProviderTransport(cfg.transport);
     } catch {
+      const baked = bakedClientToken();
+      if (fallback && baked && baked !== t) {
+        await saveClientToken('');
+        setToken(baked);
+        await connect(baked, base, false);
+        return;
+      }
       setMode('offline');
     }
   }
@@ -100,14 +108,13 @@ function Panel() {
   useEffect(() => {
     async function init() {
       if (isExtension) {
-        const values = await chrome.storage.local.get(['clientToken']);
-        if (typeof values.clientToken === 'string') {
-          setToken(values.clientToken);
-          void connect(values.clientToken);
-        } else setSettings(true);
+        const t = await readClientToken();
+        setToken(t);
+        if (t) await connect(t);
+        else setSettings(true);
         await refreshSource();
         const saved = await chrome.storage.session.get('searchId');
-        if (typeof saved.searchId === 'string' && typeof values.clientToken === 'string') {
+        if (typeof saved.searchId === 'string' && t) {
           try {
             const recovered = StateSchema.parse(
               await api.current.call(`/v1/searches/${saved.searchId}`),
@@ -433,21 +440,26 @@ function Panel() {
                 <X size={16} />
               </button>
             </div>
-            <p>The local backend keeps your provider key out of the browser.</p>
+            <p>
+              The local backend keeps your provider key out of the browser. This build already
+              includes the machine-local connection token.
+            </p>
             <label htmlFor="token">Local client token</label>
             <input
               id="token"
               type="password"
               value={token}
               onChange={(e) => setToken(e.target.value)}
-              placeholder="From .local/client-token"
+              placeholder="Optional override"
               autoComplete="off"
             />
             <button
               className="primary"
               onClick={async () => {
-                if (isExtension) await chrome.storage.local.set({ clientToken: token });
-                await connect(token);
+                const next = token.trim() || bakedClientToken();
+                setToken(next);
+                await saveClientToken(next);
+                await connect(next, apiBase, false);
                 setSettings(false);
               }}
             >

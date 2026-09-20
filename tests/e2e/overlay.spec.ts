@@ -35,9 +35,6 @@ test.beforeAll(async () => {
   });
   worker = context.serviceWorkers()[0] || (await context.waitForEvent('serviceworker'));
   extensionId = new URL(worker.url()).host;
-  await worker.evaluate(async (token) => {
-    await chrome.storage.local.set({ clientToken: token });
-  }, token);
 });
 test.afterAll(async () => {
   await context?.close();
@@ -60,7 +57,11 @@ async function open(name = 'journal') {
   }, site.url());
   chat = site.frameLocator('iframe[title="Cmd-F chat"]');
   await expect(chat.getByLabel('Your request')).toBeVisible();
+  await chat.getByLabel('Your request').fill('hi');
+  await expect(chat.getByRole('button', { name: 'Send request' })).toBeEnabled();
+  await chat.getByLabel('Your request').fill('');
   await expect(chat.getByRole('button', { name: 'Connection settings' })).toBeVisible();
+  await expect(chat.getByRole('heading', { name: 'Connect to the local backend' })).toHaveCount(0);
 }
 async function ask(question: string, scope: 'site' | 'page' = 'site') {
   if (scope === 'page') {

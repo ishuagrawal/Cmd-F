@@ -1,19 +1,11 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { randomBytes } from 'node:crypto';
+import { mkdirSync } from 'node:fs';
 import { z } from 'zod';
 import '../../../scripts/load-env';
+import { ensureClientToken } from '../../../scripts/client-token';
 import { providerFromEnv } from '../../../packages/jev/src';
 export function config() {
   mkdirSync('.local', { recursive: true });
-  let token = process.env.CMD_F_CLIENT_TOKEN;
-  if (!token) {
-    try {
-      token = readFileSync('.local/client-token', 'utf8').trim();
-    } catch {
-      token = randomBytes(32).toString('hex');
-      writeFileSync('.local/client-token', token, { mode: 0o600 });
-    }
-  }
+  const token = ensureClientToken();
   const integer = (name: string, fallback: number, max: number) =>
     z.coerce
       .number()

@@ -38,10 +38,6 @@ test.beforeAll(async () => {
   });
   worker = context.serviceWorkers()[0] || (await context.waitForEvent('serviceworker'));
   extensionId = new URL(worker.url()).host;
-  const token = await readFile('.local/client-token', 'utf8');
-  await worker.evaluate(async (token) => {
-    await chrome.storage.local.set({ clientToken: token });
-  }, token.trim());
 });
 test.afterAll(async () => {
   await context?.close();
@@ -63,6 +59,8 @@ async function openFixture(name: string) {
   }, site.url());
   await panel.goto(`chrome-extension://${extensionId}/sidepanel.html`);
   await expect(panel.locator('.site-line')).toContainText('127.0.0.1');
+  await expect(panel.getByText('Demo provider', { exact: false })).toBeVisible();
+  await expect(panel.getByLabel('Local client token')).toHaveCount(0);
 }
 async function query(question: string, scope: 'page' | 'site' = 'page') {
   await panel

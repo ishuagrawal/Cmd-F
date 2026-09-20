@@ -13,6 +13,12 @@ import {
 import { actionPolicy, shareableUrl } from '../../../../packages/security/src';
 import { Api } from '../sidepanel/api';
 import { inspect, isExtension, local, openSource, source } from '../sidepanel/bridge';
+import {
+  bakedClientToken,
+  isAuthTokenError,
+  readClientToken,
+  saveClientToken,
+} from '../sidepanel/client-token';
 import './style.css';
 
 function Chat() {
@@ -74,7 +80,7 @@ function Chat() {
     observer.observe(root);
     return () => observer.disconnect();
   }, []);
-  async function connect(value: string) {
+  async function connect(value: string, fallback = true) {
     api.current = new Api(import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:4317', value);
     setConnected(false);
     try {
@@ -92,6 +98,13 @@ function Chat() {
       setSettings(false);
       setError('');
     } catch (e) {
+      const baked = bakedClientToken();
+      if (fallback && baked && baked !== value && isAuthTokenError(e)) {
+        await saveClientToken('');
+        setToken(baked);
+        await connect(baked, false);
+        return;
+      }
       setError((e as Error).message);
       setSettings(true);
     }
@@ -111,10 +124,8 @@ function Chat() {
     if (unavailable) return;
     void (async () => {
       try {
-        const t = isExtension
-          ? (await chrome.storage.local.get('clientToken')).clientToken
-          : (await fetch('/__dev/config').then((r) => r.json())).token;
-        if (typeof t === 'string' && t) {
+        const t = await readClientToken();
+        if (t) {
           setToken(t);
           await connect(t);
         } else setSettings(true);
@@ -293,13 +304,18 @@ function Chat() {
                 className="setup"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (isExtension) void chrome.storage.local.set({ clientToken: token });
-                  void connect(token);
+                  void (async () => {
+                    const next = token.trim() || bakedClientToken();
+                    setToken(next);
+                    await saveClientToken(next);
+                    await connect(next, false);
+                  })();
                 }}
               >
-                <h2>Connect once. Find anywhere.</h2>
+                <h2>Connect to the local backend</h2>
                 <p>
-                  Keep the local backend running with <code>pnpm dev:api</code>.
+                  Keep the local backend running with <code>pnpm dev:api</code>. This build already
+                  includes the machine-local connection token.
                 </p>
                 <p>
                   Submitting a request searches this page and, with This site selected, public pages
@@ -315,9 +331,12 @@ function Chat() {
                   autoComplete="off"
                   value={token}
                   onChange={(e) => setToken(e.target.value)}
-                  placeholder="From .local/client-token"
+                  placeholder="Optional override"
                 />
-                <p>This is the local connection token, not your provider API key.</p>
+                <p>
+                  Change this only if you replaced the backend token. It is not your provider API
+                  key.
+                </p>
                 <button className="primary" type="submit">
                   Connect
                 </button>

@@ -2,7 +2,7 @@
 
 ## Assets and trust
 
-Private browser text and queries belong to one consented search. The local client token authorizes backend access; a Vercel Gateway key/OIDC token (or optional direct TypeSafe key) authorizes provider calls. Both are secrets, but only the application token is entered into extension settings. Public HTML, DOM labels, URLs, sitemaps, and provider responses are untrusted.
+Private browser text and queries belong to one consented search. The local client token authorizes backend access; the unpacked build includes this machine’s token, and Connection settings remain an override. A Vercel Gateway key/OIDC token (or optional direct TypeSafe key) authorizes provider calls. Provider keys are secrets that are never entered into the extension. Public HTML, DOM labels, URLs, sitemaps, and provider responses are untrusted.
 
 A malicious webpage can control its text, links, ARIA attributes, menu structure, and redirects. A malicious API caller can send malformed DTOs or another search ID. The code does not assume a website’s GET routes are harmless, a provider response is valid, or CORS is authentication.
 
