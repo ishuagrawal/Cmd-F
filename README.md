@@ -8,6 +8,12 @@ Open it with **Option+Shift+F** (Mac) or **Alt+Shift+F**. It looks at the curren
 
 This is a local preview, not a Chrome Web Store listing. You run it on your own computer. Your AI keys stay on that computer, not in the extension.
 
+<div align="center">
+
+https://github.com/user-attachments/assets/26608da2-7f83-4229-9185-bc5d72d3c016
+
+</div>
+
 ## Install and use
 
 You need **Node 24.19+** (`.node-version` pins 24.21.0 LTS) and **pnpm 11.19.0**.
