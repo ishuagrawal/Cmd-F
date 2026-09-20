@@ -1,6 +1,6 @@
 # Configuration
 
-Copy `.env.example` to `.env.local`; keep it local. Startup loads shell values first, then `.env.local`, then `.env`. Provider keys are never printed to API logs or bundled into the extension. The local client token is compiled into the unpacked build so the extension can authenticate without a paste step.
+Copy `.env.example` to `.env`; keep it local. Startup loads shell values first, then `.env`. Provider keys are never printed to API logs or bundled into the extension. The local client token is compiled into the unpacked build so the extension can authenticate without a paste step.
 
 | Variable                      | Default                      | Meaning                                                                                                                                                             |
 | ----------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

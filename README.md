@@ -38,7 +38,7 @@ The extension build is also available as `artifacts/cmd-f-extension.zip` after `
 
 ## Enable Jev directly through TypeSafe
 
-Set the following in `.env` or `.env.local`, then restart the backend:
+Set the following in `.env`, then restart the backend:
 
 ```dotenv
 TYPESAFE_API_KEY=your-key
@@ -51,7 +51,7 @@ When `JEV_TRANSPORT` is unset, a `TYPESAFE_API_KEY` selects direct TypeSafe acce
 
 ## Optional: use Vercel AI Gateway
 
-Add your Gateway key to **`.env.local`** (the file is gitignored):
+Add your Gateway key to **`.env`** (the file is gitignored):
 
 ```dotenv
 AI_GATEWAY_API_KEY=your-key
@@ -62,7 +62,7 @@ JEV_TRANSPORT=gateway
 
 Restart `pnpm demo` or `pnpm dev:api`. Cmd-F uses AI SDK 7's `experimental_evaluate` with **`typesafe-ai/jev`**. It selects an exact candidate ID with a typed Choice, then makes a separate Boolean probability request to verify the selected source. Optional `GATEWAY_ZERO_DATA_RETENTION=true` requests zero data retention on supported Vercel plans; standard Gateway policy applies by default. Keys stay on the backend and are never bundled into the extension.
 
-Shell variables take precedence over `.env.local`, then `.env`. A key enables live mode unless `PROVIDER_MODE=mock` is set. Vercel OIDC (`VERCEL_OIDC_TOKEN`) is also supported. For an already linked Vercel project, `vercel env pull .env.local` refreshes its local OIDC credentials; no Vercel deployment is required when using a Gateway API key.
+Shell variables take precedence over `.env`. A key enables live mode unless `PROVIDER_MODE=mock` is set. Vercel OIDC (`VERCEL_OIDC_TOKEN`) is also supported. For an already linked Vercel project, `vercel env pull .env` refreshes its local OIDC credentials; no Vercel deployment is required when using a Gateway API key.
 
 `npx vercel@latest ai-gateway setup` configures **coding agents**, not this application's environment. Cmd-F does not need changes to your Codex or Claude configuration. Create an app key in your [Vercel Gateway dashboard](https://vercel.com/dashboard/ai-gateway).
 

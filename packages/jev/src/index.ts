@@ -645,7 +645,7 @@ export function providerFromEnv(env: NodeJS.ProcessEnv = process.env): Provider 
   if (!credential)
     throw new Error(
       transport === 'gateway'
-        ? 'Live mode requires AI_GATEWAY_API_KEY, VERCEL_AI_GATEWAY_KEY, or VERCEL_OIDC_TOKEN in .env.local or .env'
+        ? 'Live mode requires AI_GATEWAY_API_KEY, VERCEL_AI_GATEWAY_KEY, or VERCEL_OIDC_TOKEN in .env'
         : 'Direct live mode requires TYPESAFE_API_KEY',
     );
   return transport === 'gateway'
