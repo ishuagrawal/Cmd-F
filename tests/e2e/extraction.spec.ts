@@ -77,3 +77,36 @@ test('keeps late article quotes after a large chart tree', async ({ page }) => {
   expect(found.games).toBe(true);
   expect(found.chartMutationIgnored).toBe(true);
 });
+
+test('retakes a live snapshot when the page mutates after inspect', async ({ page }) => {
+  await page.route('https://fixture.test/**', (route) =>
+    route.fulfill({ body: '<html></html>', contentType: 'text/html' }),
+  );
+  await page.goto('https://fixture.test/');
+  await page.setContent(
+    '<!doctype html><main><h2>Coding</h2><p>Following the Hugging Face incident, Astra added controls.</p></main>',
+  );
+  await page.addScriptTag({ content: bundle });
+  const found = await page.evaluate(async () => {
+    type Session = {
+      inspect(q: string): { id: string; sectionIds: string[]; candidates: { text?: string }[] };
+      readSections(
+        id: string,
+        ids: string[],
+      ): { id: string; candidates: { text?: string }[] };
+    };
+    const session = new (
+      globalThis as unknown as { TestSession: new (doc: Document) => Session }
+    ).TestSession(document);
+    const first = session.inspect('what did Astra do after the Hugging Face incident');
+    document.querySelector('main')?.setAttribute('class', 'hydrated');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const next = session.readSections(first.id, first.sectionIds.slice(0, 1));
+    return {
+      kept: next.candidates.some((c) => (c.text || '').includes('Hugging Face incident')),
+      retaken: next.id !== first.id,
+    };
+  });
+  expect(found.kept).toBe(true);
+  expect(found.retaken).toBe(true);
+});

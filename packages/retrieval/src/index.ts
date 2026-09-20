@@ -48,7 +48,9 @@ export function rank<
     .filter((pair) => pair.some((word) => !stop.has(word)));
   const paths = candidates.map((c) => {
     try {
-      return c.safeUrl ? new URL(c.safeUrl).pathname : '';
+      if (!c.safeUrl) return '';
+      const u = new URL(c.safeUrl);
+      return `${u.hostname.replace(/^www\./, '')} ${u.pathname}`;
     } catch {
       return '';
     }
@@ -128,11 +130,16 @@ export function rankRoutes(
       const affinity = label.filter((word) => subject.has(word)).length / Math.max(1, label.length);
       let locality = 0;
       try {
-        const path = new URL(item.candidate.safeUrl!).pathname.split('/').filter(Boolean);
-        const source = base?.pathname.split('/').filter(Boolean) || [];
-        for (let i = 0; i < Math.min(path.length - 1, source.length - 1); i++) {
-          if (path[i] !== source[i]) break;
-          locality += 1;
+        const dest = new URL(item.candidate.safeUrl!);
+        const sameHost =
+          !!base && dest.hostname.replace(/^www\./, '') === base.hostname.replace(/^www\./, '');
+        if (sameHost) {
+          const path = dest.pathname.split('/').filter(Boolean);
+          const source = base.pathname.split('/').filter(Boolean);
+          for (let i = 0; i < Math.min(path.length - 1, source.length - 1); i++) {
+            if (path[i] !== source[i]) break;
+            locality += 1;
+          }
         }
       } catch {
         /* no URL */

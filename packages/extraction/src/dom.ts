@@ -121,6 +121,9 @@ export class DomSession {
   private url: string;
   private observer: MutationObserver;
   private dirty = false;
+  private lastQuestion = '';
+  private liveRescues = 0;
+  private rescuing = false;
   private snapshot?: PageSnapshot;
   private nodes = new Map<string, Element>();
   private all: Candidate[] = [];
@@ -152,6 +155,8 @@ export class DomSession {
     this.outline = undefined;
   }
   inspect(question = '', sectionIds?: string[]): PageSnapshot {
+    if (!this.rescuing) this.liveRescues = 0;
+    if (question) this.lastQuestion = question;
     this.observer.disconnect();
     this.clear();
     if (this.dirty || this.doc.URL !== this.url) {
@@ -436,13 +441,20 @@ export class DomSession {
     return groups;
   }
   readSections(snapshotId: string, ids: string[]) {
-    if (
-      this.dirty ||
-      this.doc.URL !== this.url ||
-      this.snapshot?.id !== snapshotId ||
-      ids.some((id) => !this.sections.has(id))
-    )
+    if (this.doc.URL !== this.url)
       throw new Error('Source changed. Inspect the page again.');
+    if (this.dirty && this.liveRescues < 1) {
+      this.liveRescues++;
+      this.rescuing = true;
+      try {
+        return this.inspect(this.lastQuestion);
+      } finally {
+        this.rescuing = false;
+      }
+    }
+    if (this.snapshot?.id !== snapshotId || ids.some((id) => !this.sections.has(id)))
+      throw new Error('Source changed. Inspect the page again.');
+    this.dirty = false;
     // Page through the immutable extraction, retaining the node identities used by SHOW.
     // Re-extracting used to return the same first window on every section request.
     const wanted = new Set(ids);

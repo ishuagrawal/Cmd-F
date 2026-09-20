@@ -141,3 +141,145 @@ it('uses subject context for competing route labels without overriding explicit 
     'Programming Sets',
   );
 });
+it('uses the destination host when ranking otherwise identical route labels', () => {
+  const candidates = ['https://docs.example.com/start', 'https://herbs.example.com/start'].map(
+    (safeUrl) => ({
+      label: 'Overview',
+      text: '',
+      context: '',
+      headingPath: [] as string[],
+      safeUrl,
+    }),
+  );
+  expect(
+    rankRoutes('herbs', candidates, {
+      title: 'Docs',
+      url: 'https://docs.example.com/index/start',
+    })[0].candidate.safeUrl,
+  ).toBe('https://herbs.example.com/start');
+});
+
+async function runHosts(
+  html: string,
+  pages: Record<string, { body?: string; status?: number }>,
+  provider: Provider,
+  question: string,
+  maxPages = 3,
+) {
+  const origin = 'https://news.example.com';
+  const fetcher = new SafeFetcher(publicNetworkPolicy);
+  const visited: string[] = [];
+  vi.spyOn(fetcher, 'get').mockImplementation(async (url) => {
+    visited.push(url);
+    const page = pages[url];
+    const robots = url.endsWith('/robots.txt');
+    return {
+      url,
+      body: page?.body || (robots ? 'User-agent: *\nAllow: /\n' : ''),
+      status: page?.status ?? (robots || page ? 200 : 404),
+      headers: { 'content-type': robots ? 'text/plain' : 'text/html' },
+      retrievedAt: new Date().toISOString(),
+    };
+  });
+  const cache = new PublicCache();
+  const session = new SearchSession(
+    'test',
+    {
+      protocol: 1,
+      question,
+      scope: 'site',
+      snapshot: extractHtml(html, origin + '/index/gpt-6-astra'),
+      consent: true,
+      publicSearchConsent: true,
+      refresh: true,
+    },
+    provider,
+    fetcher,
+    cache,
+    { ...defaultLimits, maxPages },
+  );
+  try {
+    await session.run();
+    return { state: session.state, visited };
+  } finally {
+    cache.close();
+  }
+}
+const quote = 'Following the Hugging Face incident, we implemented strict controls.';
+it('follows the most relevant outbound host before same-path siblings', async () => {
+  const siblings = Array.from({ length: 3 }, (_, i) => `/index/astra-note-${i}`);
+  const html = [
+    ...siblings.map((path) => `<a href="${path}">Astra notes</a>`),
+    '<a href="https://safety.example.com/gpt-6-astra">Astra system card</a>',
+  ].join('');
+  const pages: Record<string, { body?: string; status?: number }> = {
+    'https://safety.example.com/gpt-6-astra': { body: `<p>${quote}</p>` },
+  };
+  for (const path of siblings)
+    pages[`https://news.example.com${path}`] = { body: '<p>Astra product update.</p>' };
+  const { state, visited } = await runHosts(
+    html,
+    pages,
+    {
+      mode: 'jev',
+      async screen(_q, candidates) {
+        return candidates.map((candidate) => ({
+          candidate,
+          disposition:
+            candidate.kind === 'link'
+              ? 'route'
+              : candidate.text?.includes('Hugging Face incident')
+                ? 'match'
+                : 'irrelevant',
+          relevance: /system card/i.test(candidate.label)
+            ? 0.9
+            : candidate.text?.includes('Hugging Face incident')
+              ? 0.9
+              : 0.1,
+        }));
+      },
+      async select(_q, candidates, _s, _b, purpose) {
+        const candidate =
+          purpose === 'route'
+            ? candidates[0]
+            : candidates.find((c) => c.text?.includes('Hugging Face incident'));
+        return { mode: 'jev', candidate, verified: !!candidate, support: candidate ? 0.9 : 0 };
+      },
+    },
+    'what was Astra involvement in the Hugging Face incident',
+    2,
+  );
+  expect(visited).toContain('https://safety.example.com/gpt-6-astra');
+  expect(state.evidence).toBe('direct');
+  expect(state.results[0].quote).toContain('Hugging Face incident');
+});
+it('still fetches a working related host after the source origin blocks public pages', async () => {
+  const siblings = Array.from({ length: 8 }, (_, i) => `/index/astra-note-${i}`);
+  const html = [
+    ...siblings.map((path) => `<a href="${path}">Astra notes</a>`),
+    '<a href="https://safety.example.com/gpt-6-astra">Astra system card</a>',
+  ].join('');
+  const pages: Record<string, { body?: string; status?: number }> = {
+    'https://safety.example.com/gpt-6-astra': { body: `<p>${quote}</p>` },
+  };
+  for (const path of siblings) pages[`https://news.example.com${path}`] = { status: 403 };
+  const { state, visited } = await runHosts(
+    html,
+    pages,
+    {
+      ...abstainingRouter,
+      async select(_q, candidates, _s, _b, purpose) {
+        const candidate =
+          purpose !== 'route'
+            ? candidates.find((c) => c.text?.includes('Hugging Face incident'))
+            : undefined;
+        return { mode: 'jev', candidate, verified: !!candidate, support: candidate ? 0.9 : 0 };
+      },
+    },
+    'what was Astra involvement in the Hugging Face incident',
+    3,
+  );
+  expect(visited.filter((url) => url.startsWith('https://news.example.com/') && !url.endsWith('/robots.txt')).length).toBeLessThan(6);
+  expect(visited).toContain('https://safety.example.com/gpt-6-astra');
+  expect(state.evidence).toBe('direct');
+});

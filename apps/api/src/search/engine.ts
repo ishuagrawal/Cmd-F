@@ -617,6 +617,30 @@ export class SearchSession {
         const visited = this.visitedPublic;
         visited.add(urlIdentity(current.url).fetchKey);
         const seenContent = new Set<string>();
+        const blockedOrigins = new Set<string>();
+        const originBlocks = new Map<string, number>();
+        const originOf = (url: string) => {
+          try {
+            return new URL(url).origin;
+          } catch {
+            return '';
+          }
+        };
+        const dropOrigin = (origin: string) => {
+          blockedOrigins.add(origin);
+          for (const [k, c] of frontier)
+            if (c.safeUrl && originOf(c.safeUrl) === origin) frontier.delete(k);
+        };
+        const noteBlock = (origin: string) => {
+          const n = (originBlocks.get(origin) || 0) + 1;
+          originBlocks.set(origin, n);
+          if (n < 2) return;
+          const otherOrigin = [...frontier.values()].some((c) => {
+            const next = c.safeUrl && originOf(c.safeUrl);
+            return next && next !== origin && !blockedOrigins.has(next);
+          });
+          if (otherOrigin) dropOrigin(origin);
+        };
 
         const depths = new Map<string, number>();
         const enqueue = (c: Candidate, depth = 1, parentOrigin = current.origin) => {
@@ -627,6 +651,7 @@ export class SearchSession {
             return;
           }
           const { fetchKey, routeKey } = urlIdentity(safe);
+          if (blockedOrigins.has(originOf(safe))) return;
           if (routeKey.includes('#/') || routeKey.includes('#!')) {
             this.limitation('rendering_needed');
             return;
@@ -666,6 +691,7 @@ export class SearchSession {
           let mapsLoaded = false;
           const expandSitemaps = async () => {
             mapsLoaded = true;
+            if (blockedOrigins.has(current.origin)) return;
             let robots: Awaited<ReturnType<typeof loadRobots>>;
             try {
               robots = await policyFor(current.origin);
@@ -706,32 +732,64 @@ export class SearchSession {
             if (!frontier.size && !mapsLoaded) await expandSitemaps();
             if (!frontier.size) break;
             signal.throwIfAborted();
-            let ordered = rankRoutes(request.question, [...frontier.values()], current);
+            const usable = [...frontier.values()].filter(
+              (c) => c.safeUrl && !blockedOrigins.has(originOf(c.safeUrl)),
+            );
+            if (!usable.length) {
+              if (!mapsLoaded) await expandSitemaps();
+              else break;
+              continue;
+            }
+            let ordered = rankRoutes(request.question, usable, current);
             if (!mapsLoaded && !(ordered[0]?.score > 0)) {
               await expandSitemaps();
-              ordered = rankRoutes(request.question, [...frontier.values()], current);
+              ordered = rankRoutes(
+                request.question,
+                [...frontier.values()].filter(
+                  (c) => c.safeUrl && !blockedOrigins.has(originOf(c.safeUrl)),
+                ),
+                current,
+              );
             }
+            const routeId = (c: Candidate) => urlIdentity(c.safeUrl!).fetchKey;
+            const relevanceOf = (c: Candidate) => this.assessedRoutes.get(routeId(c))?.relevance || 0;
             let candidate: Candidate | undefined;
             if (this.provider.screen) {
               // Reuse judgments made while inspecting pages. Screen new routes in
               // bounded waves; never let a lexical zero or one abstention end discovery.
-              const known = ordered.filter((x) => {
-                const a = this.assessedRoutes.get(urlIdentity(x.candidate.safeUrl!).fetchKey);
-                return this.followable(a);
-              });
+              const known = ordered
+                .filter((x) => this.followable(this.assessedRoutes.get(routeId(x.candidate))))
+                .sort(
+                  (a, b) =>
+                    relevanceOf(b.candidate) - relevanceOf(a.candidate) || b.score - a.score,
+                );
               const unseen = ordered.filter(
-                (x) => !this.assessedRoutes.has(urlIdentity(x.candidate.safeUrl!).fetchKey),
+                (x) => !this.assessedRoutes.has(routeId(x.candidate)),
               );
               if (known.length) candidate = known[0].candidate;
               else if (unseen.length) {
-                const routes = unseen.slice(0, 48).map((x) => x.candidate);
+                const buckets = new Map<string, Candidate[]>();
+                for (const x of unseen) {
+                  const origin = originOf(x.candidate.safeUrl!);
+                  const list = buckets.get(origin) || [];
+                  list.push(x.candidate);
+                  buckets.set(origin, list);
+                }
+                const routes: Candidate[] = [];
+                const queues = [...buckets.values()];
+                while (routes.length < 48 && queues.some((q) => q.length)) {
+                  for (const q of queues) {
+                    if (routes.length >= 48) break;
+                    const next = q.shift();
+                    if (next) routes.push(next);
+                  }
+                }
                 await this.screen(current, routes, signal);
-                candidate = routes.find((c) => {
-                  const a = this.assessedRoutes.get(urlIdentity(c.safeUrl!).fetchKey);
-                  return this.followable(a);
-                });
+                candidate = [...routes]
+                  .filter((c) => this.followable(this.assessedRoutes.get(routeId(c))))
+                  .sort((a, b) => relevanceOf(b) - relevanceOf(a))[0];
                 if (!candidate) {
-                  routes.forEach((c) => frontier.delete(urlIdentity(c.safeUrl!).fetchKey));
+                  routes.forEach((c) => frontier.delete(routeId(c)));
                   continue;
                 }
               } else {
@@ -767,6 +825,7 @@ export class SearchSession {
                 title: candidate.label,
                 outcome: 'blocked',
               });
+              dropOrigin(targetOrigin);
               continue;
             }
             if (!robots.allows(key)) {
@@ -819,6 +878,7 @@ export class SearchSession {
                   title: candidate.label,
                   outcome: 'blocked',
                 });
+                noteBlock(targetOrigin);
                 continue;
               }
               if (artifact.status !== 200) {
@@ -859,6 +919,7 @@ export class SearchSession {
                   title: candidate.label,
                   outcome: 'blocked',
                 });
+                noteBlock(targetOrigin);
                 continue;
               }
               this.cache.put(artifact);
