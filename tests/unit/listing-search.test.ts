@@ -20,6 +20,7 @@ const provider: Provider = {
 };
 async function run({
   html = '<a href="/jobs/software">Software engineer</a>',
+  url = '/careers',
   question = 'software engineer',
   scope = 'site' as 'page' | 'site',
   pages = {} as Record<string, string>,
@@ -28,7 +29,7 @@ async function run({
   mutate = (_s: ReturnType<typeof extractHtml>) => {},
 } = {}) {
   const origin = 'https://example.com';
-  const snapshot = extractHtml(html, origin + '/careers');
+  const snapshot = extractHtml(html, origin + url);
   snapshot.candidates.forEach((c) => {
     c.provenance = 'live_dom';
   });
@@ -97,6 +98,113 @@ it('continues through a matching listing and a second hop to verified destinatio
     url: 'https://example.com/details',
   });
   expect(state.coverage.stopReason).toBe('direct_evidence');
+});
+it('returns catalog item titles on this-site without fetching their destination pages', async () => {
+  const { state, visited } = await run({
+    question: 'backend software engineering roles in Codex',
+    html: [
+      '<a href="/jobs/backend-evals">Backend Software Engineer (Evals)</a>',
+      '<a href="/jobs/codex-munich">Manager, Applied AI Engineering (Codex)</a>',
+      '<a href="/jobs/codex-sf">Manager, Applied AI Engineering (Codex) San Francisco</a>',
+    ].join(''),
+    pages: {
+      '/robots.txt': '',
+      '/jobs/backend-evals': '<p>Verified destination detail about the evals role.</p>',
+      '/jobs/codex-munich': '<p>Verified destination detail about Codex in Munich.</p>',
+      '/jobs/codex-sf': '<p>Verified destination detail about Codex in San Francisco.</p>',
+    },
+    select: {
+      ...provider,
+      interpret: async () => 'items',
+      async screen(_q, cs) {
+        return cs.map((candidate) => ({
+          candidate,
+          disposition: candidate.kind === 'link' ? 'match' : 'irrelevant',
+          relevance: 1,
+        }));
+      },
+    },
+  });
+  expect(visited).toEqual([]);
+  expect(state.results).toHaveLength(3);
+  expect(state.results.every((r) => r.kind === 'listing')).toBe(true);
+  expect(state.results.map((r) => r.quote)).toEqual([
+    'Backend Software Engineer (Evals)',
+    'Manager, Applied AI Engineering (Codex)',
+    'Manager, Applied AI Engineering (Codex) San Francisco',
+  ]);
+  expect(state.coverage.stopReason).toBe('matches_found');
+});
+it('follows an index route for catalog search then stops on listings instead of opening each item', async () => {
+  const { state, visited } = await run({
+    question: 'backend software engineering roles',
+    url: '/',
+    html: '<a href="/careers">Engineering jobs</a>',
+    pages: {
+      '/robots.txt': '',
+      '/careers': [
+        '<a href="/jobs/one">Backend Software Engineer</a>',
+        '<a href="/jobs/two">Backend Software Engineer, Platform</a>',
+        '<a href="/jobs/three">Senior Backend Software Engineer</a>',
+      ].join(''),
+      '/jobs/one': '<p>Verified destination detail about backend role one.</p>',
+      '/jobs/two': '<p>Verified destination detail about backend role two.</p>',
+      '/jobs/three': '<p>Verified destination detail about backend role three.</p>',
+    },
+    select: {
+      ...provider,
+      interpret: async () => 'items',
+      async screen(_q, cs) {
+        return cs.map((candidate) => ({
+          candidate,
+          disposition:
+            candidate.kind !== 'link'
+              ? 'irrelevant'
+              : candidate.label === 'Engineering jobs'
+                ? 'route'
+                : 'match',
+          relevance: 1,
+        }));
+      },
+    },
+  });
+  expect(visited.filter((path) => path !== '/robots.txt')).toEqual(['/careers']);
+  expect(state.results).toHaveLength(3);
+  expect(state.results.every((r) => r.kind === 'listing')).toBe(true);
+  expect(state.coverage.stopReason).toBe('matches_found');
+});
+it('still fetches outgoing pages when an information request needs destination evidence', async () => {
+  const { state, visited } = await run({
+    question: 'salary of software engineers',
+    html: '<a href="/jobs/software">Software engineer</a>',
+    pages: {
+      '/robots.txt': '',
+      '/jobs/software': '<a href="/details">Software engineer compensation</a>',
+      '/details': '<p>Verified destination detail: software engineer salary is $100,000.</p>',
+    },
+    select: {
+      ...provider,
+      interpret: async () => 'information',
+      async screen(_q, cs) {
+        return cs.map((candidate) => ({
+          candidate,
+          disposition:
+            candidate.kind === 'link'
+              ? 'route'
+              : candidate.text?.includes('Verified destination detail')
+                ? 'match'
+                : 'irrelevant',
+          relevance: 1,
+        }));
+      },
+    },
+  });
+  expect(visited).toContain('/details');
+  expect(state.results[0]).toMatchObject({
+    kind: 'page',
+    evidence: 'direct',
+    url: 'https://example.com/details',
+  });
 });
 it('page scope returns a matching listing without making public requests', async () => {
   const { state, visited } = await run({ scope: 'page' });

@@ -265,6 +265,10 @@ export class SearchSession {
       throw new VerificationError(reason);
     }
   }
+  private followable(assessment: Assessment | undefined) {
+    if (!assessment || assessment.disposition === 'irrelevant') return false;
+    return this.intent !== 'items' || assessment.disposition === 'route';
+  }
   private listing(snapshot: PageSnapshot, assessment: Assessment, local: boolean) {
     const c = assessment.candidate;
     if (
@@ -573,7 +577,7 @@ export class SearchSession {
       }
       const groups = current.candidates.filter((c) => c.kind === 'group');
       const matchingListings = this.state.results.filter((r) => r.kind === 'listing').length;
-      if (request.scope === 'page' && matchingListings >= 3) {
+      if (matchingListings >= 3 && (request.scope === 'page' || this.intent === 'items')) {
         if (groups.length) this.limitation('more_local_candidates');
         this.done('matches_found');
         return;
@@ -713,7 +717,7 @@ export class SearchSession {
               // bounded waves; never let a lexical zero or one abstention end discovery.
               const known = ordered.filter((x) => {
                 const a = this.assessedRoutes.get(urlIdentity(x.candidate.safeUrl!).fetchKey);
-                return a && a.disposition !== 'irrelevant';
+                return this.followable(a);
               });
               const unseen = ordered.filter(
                 (x) => !this.assessedRoutes.has(urlIdentity(x.candidate.safeUrl!).fetchKey),
@@ -724,7 +728,7 @@ export class SearchSession {
                 await this.screen(current, routes, signal);
                 candidate = routes.find((c) => {
                   const a = this.assessedRoutes.get(urlIdentity(c.safeUrl!).fetchKey);
-                  return a && a.disposition !== 'irrelevant';
+                  return this.followable(a);
                 });
                 if (!candidate) {
                   routes.forEach((c) => frontier.delete(urlIdentity(c.safeUrl!).fetchKey));
@@ -867,6 +871,13 @@ export class SearchSession {
                 .forEach((c) => enqueue(c, (depths.get(key) || 1) + 1, snapshot.origin));
               if (await this.inspect(snapshot, false, signal)) {
                 this.done('direct_evidence');
+                return;
+              }
+              if (
+                this.intent === 'items' &&
+                this.state.results.filter((r) => r.kind === 'listing').length >= 3
+              ) {
+                this.done('matches_found');
                 return;
               }
             } catch (error) {
