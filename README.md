@@ -1,12 +1,12 @@
 # Cmd-F
 
-**Universal search for the site you're already on.**
+**Universal search for your browser.**
 
-Ask a question. Cmd-F finds where the answer is on this site — the paragraph, the setting, the docs page — and shows you the original text. Not a summary.
+Ask a question. Cmd-F finds where the answer is on this site and shows you the original text. Not a summary.
 
 Open it with **Option+Shift+F** (Mac) or **Alt+Shift+F**. It looks at the current page first, then other public pages on the same site. It highlights only when you ask, and it never clicks or changes the page for you.
 
-This is a local preview, not a Chrome Web Store listing. You run it on your own computer. Your AI keys stay on that computer, not in the extension.
+This runs locally on your own computer. Your AI keys stay on that computer, not in the extension.
 
 <div align="center">
 
@@ -31,7 +31,7 @@ Put your TypeSafe key in `.env`:
 TYPESAFE_API_KEY=your-key
 ```
 
-Cmd-F calls TypeSafe/Jev directly. There is no demo mode and no Vercel Gateway. The backend will not start without this key. Shell variables override `.env`. Restart the backend after changing it. See [configuration](docs/configuration.md) for the full variable list.
+Cmd-F calls TypeSafe/Jev directly. The backend will not start without this key. Shell variables override `.env`. Restart the backend after changing it. See [configuration](docs/configuration.md) for the full variable list.
 
 ### Load the Chrome extension
 

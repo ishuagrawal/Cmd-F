@@ -7,10 +7,30 @@
     "expectedId": "c0",
     "expectedQuote": "A fixed cycle repeats a block of work for each item in a sequence.",
     "candidates": [
-      { "kind": "passage", "label": "Fixed cycle", "text": "A fixed cycle repeats a block of work for each item in a sequence.", "headingPath": ["Processes"] },
-      { "kind": "passage", "label": "Introduction", "text": "This reference begins with a short overview of the available material.", "headingPath": ["Overview"] },
-      { "kind": "passage", "label": "Archive", "text": "Older notes remain available in the archive.", "headingPath": ["Archive"] },
-      { "kind": "passage", "label": "Accessibility", "text": "Keyboard focus follows the reading order.", "headingPath": ["Guide"] }
+      {
+        "kind": "passage",
+        "label": "Fixed cycle",
+        "text": "A fixed cycle repeats a block of work for each item in a sequence.",
+        "headingPath": ["Processes"]
+      },
+      {
+        "kind": "passage",
+        "label": "Introduction",
+        "text": "This reference begins with a short overview of the available material.",
+        "headingPath": ["Overview"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "Older notes remain available in the archive.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Keyboard focus follows the reading order.",
+        "headingPath": ["Guide"]
+      }
     ]
   },
   {
@@ -21,10 +41,30 @@
     "expectedId": "c3",
     "expectedQuote": "A fixed cycle repeats a block of work for each item in a sequence.",
     "candidates": [
-      { "kind": "passage", "label": "Overview", "text": "This reference begins with a short overview of the available material.", "headingPath": ["Overview"] },
-      { "kind": "passage", "label": "Archive", "text": "Older notes remain available in the archive.", "headingPath": ["Archive"] },
-      { "kind": "passage", "label": "Accessibility", "text": "Keyboard focus follows the reading order.", "headingPath": ["Guide"] },
-      { "kind": "passage", "label": "Fixed cycle", "text": "A fixed cycle repeats a block of work for each item in a sequence.", "headingPath": ["Processes"] }
+      {
+        "kind": "passage",
+        "label": "Overview",
+        "text": "This reference begins with a short overview of the available material.",
+        "headingPath": ["Overview"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "Older notes remain available in the archive.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Keyboard focus follows the reading order.",
+        "headingPath": ["Guide"]
+      },
+      {
+        "kind": "passage",
+        "label": "Fixed cycle",
+        "text": "A fixed cycle repeats a block of work for each item in a sequence.",
+        "headingPath": ["Processes"]
+      }
     ]
   },
   {
@@ -35,10 +75,30 @@
     "expectedId": "c1",
     "expectedQuote": "A conditional cycle repeats while its condition remains true.",
     "candidates": [
-      { "kind": "passage", "label": "Fixed cycle", "text": "A fixed cycle repeats a block of work for each item in a sequence.", "headingPath": ["Processes"] },
-      { "kind": "passage", "label": "Conditional cycle", "text": "A conditional cycle repeats while its condition remains true.", "headingPath": ["Processes"] },
-      { "kind": "passage", "label": "Overview", "text": "This reference begins with a short overview of the available material.", "headingPath": ["Overview"] },
-      { "kind": "passage", "label": "Archive", "text": "Older notes remain available in the archive.", "headingPath": ["Archive"] }
+      {
+        "kind": "passage",
+        "label": "Fixed cycle",
+        "text": "A fixed cycle repeats a block of work for each item in a sequence.",
+        "headingPath": ["Processes"]
+      },
+      {
+        "kind": "passage",
+        "label": "Conditional cycle",
+        "text": "A conditional cycle repeats while its condition remains true.",
+        "headingPath": ["Processes"]
+      },
+      {
+        "kind": "passage",
+        "label": "Overview",
+        "text": "This reference begins with a short overview of the available material.",
+        "headingPath": ["Overview"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "Older notes remain available in the archive.",
+        "headingPath": ["Archive"]
+      }
     ]
   },
   {
@@ -49,10 +109,30 @@
     "expectedId": "c2",
     "expectedQuote": "A conditional cycle repeats while its condition remains true.",
     "candidates": [
-      { "kind": "passage", "label": "Overview", "text": "This reference begins with a short overview of the available material.", "headingPath": ["Overview"] },
-      { "kind": "passage", "label": "Archive", "text": "Older notes remain available in the archive.", "headingPath": ["Archive"] },
-      { "kind": "passage", "label": "Conditional cycle", "text": "A conditional cycle repeats while its condition remains true.", "headingPath": ["Processes"] },
-      { "kind": "passage", "label": "Accessibility", "text": "Keyboard focus follows the reading order.", "headingPath": ["Guide"] }
+      {
+        "kind": "passage",
+        "label": "Overview",
+        "text": "This reference begins with a short overview of the available material.",
+        "headingPath": ["Overview"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "Older notes remain available in the archive.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Conditional cycle",
+        "text": "A conditional cycle repeats while its condition remains true.",
+        "headingPath": ["Processes"]
+      },
+      {
+        "kind": "passage",
+        "label": "Accessibility",
+        "text": "Keyboard focus follows the reading order.",
+        "headingPath": ["Guide"]
+      }
     ]
   },
   {
@@ -63,10 +143,30 @@
     "expectedId": "c1",
     "expectedQuote": "The visitor beacon is marked amber.",
     "candidates": [
-      { "kind": "passage", "label": "Visitor guide", "text": "The guide begins at sunrise.", "headingPath": ["Details"] },
-      { "kind": "passage", "label": "Beacon", "text": "The visitor beacon is marked amber.", "headingPath": ["Details"] },
-      { "kind": "passage", "label": "Archive", "text": "The archive opens after a careful restoration.", "headingPath": ["Journal"] },
-      { "kind": "passage", "label": "Hours", "text": "Public tours resume next month.", "headingPath": ["Journal"] }
+      {
+        "kind": "passage",
+        "label": "Visitor guide",
+        "text": "The guide begins at sunrise.",
+        "headingPath": ["Details"]
+      },
+      {
+        "kind": "passage",
+        "label": "Beacon",
+        "text": "The visitor beacon is marked amber.",
+        "headingPath": ["Details"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive opens after a careful restoration.",
+        "headingPath": ["Journal"]
+      },
+      {
+        "kind": "passage",
+        "label": "Hours",
+        "text": "Public tours resume next month.",
+        "headingPath": ["Journal"]
+      }
     ]
   },
   {
@@ -77,10 +177,30 @@
     "expectedId": "c0",
     "expectedQuote": "The visitor beacon is marked amber.",
     "candidates": [
-      { "kind": "passage", "label": "Beacon", "text": "The visitor beacon is marked amber.", "headingPath": ["Details"] },
-      { "kind": "passage", "label": "Hours", "text": "Public tours resume next month.", "headingPath": ["Journal"] },
-      { "kind": "passage", "label": "Guide", "text": "The guide begins at sunrise.", "headingPath": ["Details"] },
-      { "kind": "passage", "label": "Archive", "text": "The archive opens after a careful restoration.", "headingPath": ["Journal"] }
+      {
+        "kind": "passage",
+        "label": "Beacon",
+        "text": "The visitor beacon is marked amber.",
+        "headingPath": ["Details"]
+      },
+      {
+        "kind": "passage",
+        "label": "Hours",
+        "text": "Public tours resume next month.",
+        "headingPath": ["Journal"]
+      },
+      {
+        "kind": "passage",
+        "label": "Guide",
+        "text": "The guide begins at sunrise.",
+        "headingPath": ["Details"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive opens after a careful restoration.",
+        "headingPath": ["Journal"]
+      }
     ]
   },
   {
@@ -91,10 +211,30 @@
     "expectedId": "c2",
     "expectedQuote": "The guide begins at sunrise.",
     "candidates": [
-      { "kind": "passage", "label": "Beacon", "text": "The visitor beacon is marked amber.", "headingPath": ["Details"] },
-      { "kind": "passage", "label": "Hours", "text": "Public tours resume next month.", "headingPath": ["Journal"] },
-      { "kind": "passage", "label": "Visitor guide", "text": "The guide begins at sunrise.", "headingPath": ["Details"] },
-      { "kind": "passage", "label": "Archive", "text": "The archive opens after a careful restoration.", "headingPath": ["Journal"] }
+      {
+        "kind": "passage",
+        "label": "Beacon",
+        "text": "The visitor beacon is marked amber.",
+        "headingPath": ["Details"]
+      },
+      {
+        "kind": "passage",
+        "label": "Hours",
+        "text": "Public tours resume next month.",
+        "headingPath": ["Journal"]
+      },
+      {
+        "kind": "passage",
+        "label": "Visitor guide",
+        "text": "The guide begins at sunrise.",
+        "headingPath": ["Details"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive opens after a careful restoration.",
+        "headingPath": ["Journal"]
+      }
     ]
   },
   {
@@ -107,8 +247,18 @@
     "candidates": [
       { "kind": "control", "label": "Change alerts", "text": null, "headingPath": ["Preferences"] },
       { "kind": "control", "label": "Preferences", "text": null, "headingPath": ["Navigation"] },
-      { "kind": "passage", "label": "Private details", "text": "Private details stay in the form.", "headingPath": ["Settings"] },
-      { "kind": "passage", "label": "Refresh", "text": "The new setting applies on the next refresh.", "headingPath": ["Help"] }
+      {
+        "kind": "passage",
+        "label": "Private details",
+        "text": "Private details stay in the form.",
+        "headingPath": ["Settings"]
+      },
+      {
+        "kind": "passage",
+        "label": "Refresh",
+        "text": "The new setting applies on the next refresh.",
+        "headingPath": ["Help"]
+      }
     ]
   },
   {
@@ -119,8 +269,18 @@
     "expectedId": "c3",
     "expectedQuote": "Change alerts",
     "candidates": [
-      { "kind": "passage", "label": "Private details", "text": "Private details stay in the form.", "headingPath": ["Settings"] },
-      { "kind": "passage", "label": "Refresh", "text": "The new setting applies on the next refresh.", "headingPath": ["Help"] },
+      {
+        "kind": "passage",
+        "label": "Private details",
+        "text": "Private details stay in the form.",
+        "headingPath": ["Settings"]
+      },
+      {
+        "kind": "passage",
+        "label": "Refresh",
+        "text": "The new setting applies on the next refresh.",
+        "headingPath": ["Help"]
+      },
       { "kind": "control", "label": "Preferences", "text": null, "headingPath": ["Navigation"] },
       { "kind": "control", "label": "Change alerts", "text": null, "headingPath": ["Preferences"] }
     ]
@@ -133,10 +293,25 @@
     "expectedId": null,
     "expectedQuote": null,
     "candidates": [
-      { "kind": "passage", "label": "Visitor guide", "text": "The guide begins at sunrise.", "headingPath": ["Details"] },
-      { "kind": "passage", "label": "Beacon", "text": "The visitor beacon is marked amber.", "headingPath": ["Details"] },
+      {
+        "kind": "passage",
+        "label": "Visitor guide",
+        "text": "The guide begins at sunrise.",
+        "headingPath": ["Details"]
+      },
+      {
+        "kind": "passage",
+        "label": "Beacon",
+        "text": "The visitor beacon is marked amber.",
+        "headingPath": ["Details"]
+      },
       { "kind": "control", "label": "Change alerts", "text": null, "headingPath": ["Preferences"] },
-      { "kind": "passage", "label": "Archive", "text": "The archive opens after a careful restoration.", "headingPath": ["Journal"] }
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive opens after a careful restoration.",
+        "headingPath": ["Journal"]
+      }
     ]
   },
   {
@@ -147,9 +322,24 @@
     "expectedId": null,
     "expectedQuote": null,
     "candidates": [
-      { "kind": "passage", "label": "Overview", "text": "This reference begins with a short overview of the available material.", "headingPath": ["Overview"] },
-      { "kind": "passage", "label": "Archive", "text": "Older notes remain available in the archive.", "headingPath": ["Archive"] },
-      { "kind": "passage", "label": "Hours", "text": "Public tours resume next month.", "headingPath": ["Journal"] },
+      {
+        "kind": "passage",
+        "label": "Overview",
+        "text": "This reference begins with a short overview of the available material.",
+        "headingPath": ["Overview"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "Older notes remain available in the archive.",
+        "headingPath": ["Archive"]
+      },
+      {
+        "kind": "passage",
+        "label": "Hours",
+        "text": "Public tours resume next month.",
+        "headingPath": ["Journal"]
+      },
       { "kind": "control", "label": "Preferences", "text": null, "headingPath": ["Navigation"] }
     ]
   },
@@ -161,10 +351,30 @@
     "expectedId": null,
     "expectedQuote": null,
     "candidates": [
-      { "kind": "passage", "label": "Beacon", "text": "The visitor beacon is marked amber.", "headingPath": ["Details"] },
-      { "kind": "passage", "label": "Guide", "text": "The guide begins at sunrise.", "headingPath": ["Details"] },
-      { "kind": "passage", "label": "Archive", "text": "The archive opens after a careful restoration.", "headingPath": ["Journal"] },
-      { "kind": "passage", "label": "Overview", "text": "This reference begins with a short overview of the available material.", "headingPath": ["Overview"] }
+      {
+        "kind": "passage",
+        "label": "Beacon",
+        "text": "The visitor beacon is marked amber.",
+        "headingPath": ["Details"]
+      },
+      {
+        "kind": "passage",
+        "label": "Guide",
+        "text": "The guide begins at sunrise.",
+        "headingPath": ["Details"]
+      },
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive opens after a careful restoration.",
+        "headingPath": ["Journal"]
+      },
+      {
+        "kind": "passage",
+        "label": "Overview",
+        "text": "This reference begins with a short overview of the available material.",
+        "headingPath": ["Overview"]
+      }
     ]
   },
   {
@@ -175,10 +385,25 @@
     "expectedId": null,
     "expectedQuote": null,
     "candidates": [
-      { "kind": "passage", "label": "Visitor guide", "text": "The guide begins at sunrise.", "headingPath": ["Details"] },
-      { "kind": "passage", "label": "Public hours", "text": "Public tours resume next month.", "headingPath": ["Journal"] },
+      {
+        "kind": "passage",
+        "label": "Visitor guide",
+        "text": "The guide begins at sunrise.",
+        "headingPath": ["Details"]
+      },
+      {
+        "kind": "passage",
+        "label": "Public hours",
+        "text": "Public tours resume next month.",
+        "headingPath": ["Journal"]
+      },
       { "kind": "control", "label": "Change alerts", "text": null, "headingPath": ["Preferences"] },
-      { "kind": "passage", "label": "Archive", "text": "The archive opens after a careful restoration.", "headingPath": ["Journal"] }
+      {
+        "kind": "passage",
+        "label": "Archive",
+        "text": "The archive opens after a careful restoration.",
+        "headingPath": ["Journal"]
+      }
     ]
   }
 ]
