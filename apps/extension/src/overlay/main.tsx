@@ -19,6 +19,7 @@ import {
   saveClientToken,
 } from '../sidepanel/client-token';
 import { pageHoldsFocus } from './focus';
+import { alignReply } from './scroll';
 
 export function Chat() {
   const [question, setQuestion] = useState(() => {
@@ -56,6 +57,7 @@ export function Chat() {
     new URLSearchParams(location.search).has('unavailable')
   );
   const log = useRef<HTMLDivElement>(null);
+  const reply = useRef<HTMLDivElement>(null);
   const running = busy || state?.lifecycle === 'running';
   const sources =
     state?.results.filter(
@@ -150,8 +152,11 @@ export function Chat() {
     };
   }, []);
   useEffect(() => {
-    log.current?.scrollTo({ top: log.current.scrollHeight, behavior: 'instant' });
-  }, [asked, error, history]);
+    const scroller = log.current;
+    const latest = reply.current;
+    if (!scroller || !latest || scroller.hidden) return;
+    alignReply(scroller, latest);
+  }, [asked, error, history.length, state?.id, state?.lifecycle, sources.length]);
   useEffect(() => {
     if (!state?.id) return;
     const id = state.id;
@@ -344,6 +349,8 @@ export function Chat() {
               </React.Fragment>
             ))}
             {asked && <div className="user-message">{asked}</div>}
+            {(asked || busy || state || error) && (
+            <div className="latest-reply" ref={reply}>
             {busy && !state && (
               <p className="reply" role="status">
                 Searching…
@@ -463,6 +470,8 @@ export function Chat() {
                   ? 'Cmd-F disconnected after an extension reload. Reconnect to retry your prompt.'
                   : error}
               </p>
+            )}
+            </div>
             )}
           </>
         )}

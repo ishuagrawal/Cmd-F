@@ -508,6 +508,25 @@ for (const failure of ['rate_limit', 'failed'] as const) {
   });
 }
 
+test('scrolls the conversation to the start of a new reply', async () => {
+  await open();
+  await chat.evaluate((host: HTMLElement) => {
+    const style = document.createElement('style');
+    style.textContent = '.user-message,.reply,.source{min-height:220px}';
+    host.shadowRoot?.appendChild(style);
+  });
+  await ask('Which beacon is marked amber?', 'page');
+  await expect(chat.locator('blockquote')).toContainText('amber');
+  await ask('When do public tours resume?');
+  await expect(chat.locator('.latest-reply')).toContainText('next month');
+  const log = chat.locator('.conversation');
+  const latest = chat.locator('.latest-reply');
+  const logBox = await log.boundingBox();
+  const replyBox = await latest.boundingBox();
+  expect(replyBox!.y).toBeGreaterThanOrEqual(logBox!.y - 4);
+  expect(replyBox!.y).toBeLessThan(logBox!.y + 80);
+});
+
 test('uses the revised shortcut and gives actionable help without a full-width chat', async () => {
   const manifest = await worker.evaluate(() => chrome.runtime.getManifest());
   expect(manifest.commands?._execute_action.suggested_key).toEqual({
